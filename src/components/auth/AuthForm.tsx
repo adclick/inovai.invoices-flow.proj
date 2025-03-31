@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import AuthCard from "./AuthCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 type FormMode = "login" | "register";
 
@@ -18,6 +20,7 @@ const AuthForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const toggleMode = () => {
     setMode(mode === "login" ? "register" : "login");
@@ -35,25 +38,48 @@ const AuthForm: React.FC = () => {
     setLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For now just show a success toast
-      toast({
-        title: mode === "login" ? "Welcome back!" : "Account created!",
-        description: mode === "login" 
-          ? "You have successfully logged in." 
-          : "Your account has been created successfully.",
-      });
-      
-      // Reset form
-      if (mode === "register") {
+      if (mode === "login") {
+        // Handle login
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        });
+
+        // Redirect to dashboard or home page
+        navigate("/");
+      } else {
+        // Handle registration
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name,
+            },
+          },
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Account created!",
+          description: "Your account has been created successfully. Please check your email for confirmation.",
+        });
+
+        // Switch to login mode after successful registration
         setMode("login");
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
