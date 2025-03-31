@@ -12,7 +12,7 @@ const Index: React.FC = () => {
       </div>
 
       {/* Right Side - Auth Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-4 sm:p-6 h-lvh">
         {/* Mobile logo (only visible on small screens) */}
         <div className="md:hidden w-full text-center mb-6">
           <div className="inline-block p-3 rounded-full gradient-bg mb-2">
