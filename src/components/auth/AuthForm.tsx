@@ -63,18 +63,18 @@ const AuthForm: React.FC = () => {
 
   return (
     <AuthCard>
-      <div className="mb-6 text-center">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <div className="mb-4 sm:mb-6 text-center">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
           {mode === "login" ? "Sign in to your account" : "Create an account"}
         </h2>
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
           {mode === "login"
             ? "Enter your credentials to access your account"
             : "Fill out the form to create your account"}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 animate-slide-up">
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 animate-slide-up">
         {mode === "register" && (
           <div className="form-group">
             <Label htmlFor="name" className="auth-label">Full Name</Label>
@@ -142,7 +142,7 @@ const AuthForm: React.FC = () => {
           <div className="flex items-center justify-end">
             <a
               href="#"
-              className="text-sm font-medium text-primary hover:underline dark:text-primary"
+              className="text-xs sm:text-sm font-medium text-primary hover:underline dark:text-primary"
             >
               Forgot password?
             </a>
@@ -151,7 +151,7 @@ const AuthForm: React.FC = () => {
 
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full mt-2" 
           disabled={loading}
         >
           {loading ? (
@@ -160,14 +160,16 @@ const AuthForm: React.FC = () => {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              {mode === "login" ? "Signing in..." : "Creating account..."}
+              <span className="text-sm">
+                {mode === "login" ? "Signing in..." : "Creating account..."}
+              </span>
             </div>
           ) : (
-            <>{mode === "login" ? "Sign in" : "Create account"}</>
+            <span className="text-sm">{mode === "login" ? "Sign in" : "Create account"}</span>
           )}
         </Button>
 
-        <div className="text-center text-sm">
+        <div className="text-center text-xs sm:text-sm mt-4">
           {mode === "login" ? "Don't have an account?" : "Already have an account?"}
           <button
             type="button"
