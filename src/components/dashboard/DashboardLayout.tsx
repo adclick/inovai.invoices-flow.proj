@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,7 +12,7 @@ import {
   X,
   Bell,
   Search,
-  Filter
+  PlusCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -30,7 +31,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const isActiveRoute = (path: string) => {
-    return location.pathname === path;
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
   const navItems = [
@@ -81,6 +82,30 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </li>
             ))}
           </ul>
+          
+          {/* Quick Actions Section */}
+          {sidebarOpen && (
+            <>
+              <Separator className="my-4" />
+              <div className="mb-2">
+                <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-3 mb-2">
+                  QUICK ACTIONS
+                </h3>
+                <ul className="space-y-1">
+                  <li>
+                    <Link
+                      to="/dashboard/clients/create"
+                      className="flex items-center px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
+                    >
+                      <PlusCircle size={18} />
+                      <span className="ml-3 text-sm">New Client</span>
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </>
+          )}
+          
           <Separator className="my-4" />
           <button
             onClick={signOut}
