@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import AuthCard from "./AuthCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 type FormMode = "login" | "register";
 
@@ -21,6 +22,14 @@ const AuthForm: React.FC = () => {
   
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
   const toggleMode = () => {
     setMode(mode === "login" ? "register" : "login");
@@ -52,8 +61,8 @@ const AuthForm: React.FC = () => {
           description: "You have successfully logged in.",
         });
 
-        // Redirect to dashboard or home page
-        navigate("/");
+        // Redirect to dashboard
+        navigate("/dashboard");
       } else {
         // Handle registration
         const { data, error } = await supabase.auth.signUp({
