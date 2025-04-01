@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -76,7 +75,7 @@ const CreateCampaign = () => {
     mutationFn: async (values: CampaignFormValues) => {
       const { data, error } = await supabase
         .from("campaigns")
-        .insert([values])
+        .insert(values)
         .select("id")
         .single();
       
