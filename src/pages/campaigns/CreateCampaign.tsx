@@ -36,8 +36,7 @@ const campaignSchema = z.object({
   active: z.boolean().default(true),
 }).required();
 
-type CampaignFormValues = Required<Pick<z.infer<typeof campaignSchema>, 'name' | 'client_id' | 'duration' | 'active'>> & 
-  Partial<Pick<z.infer<typeof campaignSchema>, 'estimated_cost' | 'revenue'>>;
+type CampaignFormValues = z.infer<typeof campaignSchema>;
 
 const CreateCampaign = () => {
   const navigate = useNavigate();
@@ -65,8 +64,8 @@ const CreateCampaign = () => {
       name: "",
       client_id: "",
       duration: 30,
-      estimated_cost: undefined,
-      revenue: undefined,
+      estimated_cost: null,
+      revenue: null,
       active: true,
     },
   });
@@ -76,7 +75,14 @@ const CreateCampaign = () => {
     mutationFn: async (values: CampaignFormValues) => {
       const { data, error } = await supabase
         .from("campaigns")
-        .insert(values)
+        .insert({
+          name: values.name,
+          client_id: values.client_id,
+          duration: values.duration,
+          estimated_cost: values.estimated_cost,
+          revenue: values.revenue,
+          active: values.active
+        })
         .select("id")
         .single();
       

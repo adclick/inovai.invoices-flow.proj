@@ -7,13 +7,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import { AuthProvider } from "./contexts/AuthContext";
 import ClientsList from "./pages/clients/ClientsList";
 import CreateClient from "./pages/clients/CreateClient";
 import EditClient from "./pages/clients/EditClient";
 import CampaignsList from "./pages/campaigns/CampaignsList";
 import CreateCampaign from "./pages/campaigns/CreateCampaign";
 import EditCampaign from "./pages/campaigns/EditCampaign";
+import ManagersList from "./pages/managers/ManagersList";
+import CreateManager from "./pages/managers/CreateManager";
+import EditManager from "./pages/managers/EditManager";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,9 @@ const App = () => (
             <Route path="/dashboard/campaigns" element={<CampaignsList />} />
             <Route path="/dashboard/campaigns/create" element={<CreateCampaign />} />
             <Route path="/dashboard/campaigns/edit/:id" element={<EditCampaign />} />
+            <Route path="/dashboard/managers" element={<ManagersList />} />
+            <Route path="/dashboard/managers/create" element={<CreateManager />} />
+            <Route path="/dashboard/managers/edit/:id" element={<EditManager />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
