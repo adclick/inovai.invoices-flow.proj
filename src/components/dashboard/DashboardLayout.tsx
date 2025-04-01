@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   LayoutDashboard, 
@@ -9,7 +8,10 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  Bell,
+  Search,
+  Filter
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -21,93 +23,105 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, signOut } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const isActiveRoute = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const navItems = [
+    { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { path: "/dashboard/clients", icon: Users, label: "Clients" },
+    { path: "/dashboard/jobs", icon: BarChart2, label: "Jobs" },
+    { path: "/dashboard/settings", icon: Settings, label: "Settings" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
       {/* Sidebar */}
       <div 
-        className={`bg-white dark:bg-gray-800 shadow-md transition-all duration-300 ease-in-out
+        className={`bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ease-in-out
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10`}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-slate-700">
           <div className={`flex items-center ${sidebarOpen ? '' : 'hidden'}`}>
-            <span className="text-xl font-bold">InvoicesFlow</span>
+            <div className="p-2 rounded-full bg-primary/10 mr-2">
+              <div className="text-primary font-bold text-lg">IF</div>
+            </div>
+            <span className="text-lg font-semibold text-slate-900 dark:text-white">InvoicesFlow</span>
           </div>
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="rounded-full"
+            className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
           >
             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </Button>
         </div>
         <nav className="flex-1 p-4">
           <ul className="space-y-1">
-            <li>
-              <Link
-                to="/dashboard"
-                className="flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <LayoutDashboard size={20} />
-                {sidebarOpen && <span className="ml-3">Dashboard</span>}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/dashboard/clients"
-                className="flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Users size={20} />
-                {sidebarOpen && <span className="ml-3">Clients</span>}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/dashboard/jobs"
-                className="flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <BarChart2 size={20} />
-                {sidebarOpen && <span className="ml-3">Jobs</span>}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/dashboard/settings"
-                className="flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                <Settings size={20} />
-                {sidebarOpen && <span className="ml-3">Settings</span>}
-              </Link>
-            </li>
+            {navItems.map((item) => (
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200
+                    ${isActiveRoute(item.path)
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                >
+                  <item.icon size={20} />
+                  {sidebarOpen && <span className="ml-3 text-sm">{item.label}</span>}
+                </Link>
+              </li>
+            ))}
           </ul>
           <Separator className="my-4" />
           <button
             onClick={signOut}
-            className="flex w-full items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
+            className="flex w-full items-center px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
           >
             <LogOut size={20} />
-            {sidebarOpen && <span className="ml-3">Sign Out</span>}
+            {sidebarOpen && <span className="ml-3 text-sm font-medium">Sign Out</span>}
           </button>
         </nav>
       </div>
 
       {/* Main content */}
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
-        <header className="bg-white dark:bg-gray-800 shadow-sm h-16 flex items-center px-6">
-          <div className="ml-auto">
-            <div className="flex items-center space-x-2">
-              <div className="text-sm">
-                <div className="font-medium">{user?.email}</div>
+        <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center px-6 sticky top-0">
+          <div className="flex-1 flex items-center">
+            <div className="relative w-full max-w-md hidden md:block">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              />
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="icon" className="rounded-lg">
+              <Bell size={20} className="text-slate-600 dark:text-slate-400" />
+            </Button>
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <span className="text-primary font-medium text-sm">
+                  {user?.email?.[0].toUpperCase()}
+                </span>
+              </div>
+              <div className="hidden md:block">
+                <div className="text-sm font-medium text-slate-900 dark:text-white">{user?.email}</div>
               </div>
             </div>
           </div>
         </header>
-        <main className="p-4">{children}</main>
+        <main className="p-0">{children}</main>
       </div>
     </div>
   );
