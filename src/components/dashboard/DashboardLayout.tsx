@@ -31,13 +31,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const isActiveRoute = (path: string) => {
-    return location.pathname === path;
+    return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
   const navItems = [
     { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/dashboard/clients", icon: Users, label: "Clients" },
-    { path: "/dashboard/jobs", icon: BarChart2, label: "Jobs" },
+    { path: "/dashboard/campaigns", icon: BarChart2, label: "Campaigns" },
     { path: "/dashboard/settings", icon: Settings, label: "Settings" },
   ];
 
@@ -99,6 +99,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     >
                       <PlusCircle size={18} />
                       <span className="ml-3 text-sm">New Client</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/dashboard/campaigns/create"
+                      className="flex items-center px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
+                    >
+                      <PlusCircle size={18} />
+                      <span className="ml-3 text-sm">New Campaign</span>
                     </Link>
                   </li>
                 </ul>

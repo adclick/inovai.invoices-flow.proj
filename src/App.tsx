@@ -11,6 +11,9 @@ import { AuthProvider } from "./contexts/AuthContext";
 import ClientsList from "./pages/clients/ClientsList";
 import CreateClient from "./pages/clients/CreateClient";
 import EditClient from "./pages/clients/EditClient";
+import CampaignsList from "./pages/campaigns/CampaignsList";
+import CreateCampaign from "./pages/campaigns/CreateCampaign";
+import EditCampaign from "./pages/campaigns/EditCampaign";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +30,9 @@ const App = () => (
             <Route path="/dashboard/clients" element={<ClientsList />} />
             <Route path="/dashboard/clients/create" element={<CreateClient />} />
             <Route path="/dashboard/clients/edit/:id" element={<EditClient />} />
+            <Route path="/dashboard/campaigns" element={<CampaignsList />} />
+            <Route path="/dashboard/campaigns/create" element={<CreateCampaign />} />
+            <Route path="/dashboard/campaigns/edit/:id" element={<EditCampaign />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
