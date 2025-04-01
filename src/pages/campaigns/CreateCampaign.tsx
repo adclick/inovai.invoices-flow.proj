@@ -31,12 +31,13 @@ const campaignSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   client_id: z.string().min(1, "Please select a client"),
   duration: z.coerce.number().min(1, "Duration must be at least 1 day"),
-  estimated_cost: z.coerce.number().optional(),
-  revenue: z.coerce.number().optional(),
+  estimated_cost: z.coerce.number().nullable().optional(),
+  revenue: z.coerce.number().nullable().optional(),
   active: z.boolean().default(true),
-});
+}).required();
 
-type CampaignFormValues = z.infer<typeof campaignSchema>;
+type CampaignFormValues = Required<Pick<z.infer<typeof campaignSchema>, 'name' | 'client_id' | 'duration' | 'active'>> & 
+  Partial<Pick<z.infer<typeof campaignSchema>, 'estimated_cost' | 'revenue'>>;
 
 const CreateCampaign = () => {
   const navigate = useNavigate();
