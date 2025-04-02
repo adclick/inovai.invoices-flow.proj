@@ -20,6 +20,9 @@ import EditManager from "./pages/managers/EditManager";
 import ProvidersList from "./pages/providers/ProvidersList";
 import CreateProvider from "./pages/providers/CreateProvider";
 import EditProvider from "./pages/providers/EditProvider";
+import JobsList from "./pages/jobs/JobsList";
+import CreateJob from "./pages/jobs/CreateJob";
+import EditJob from "./pages/jobs/EditJob";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -48,6 +51,9 @@ const App = () => (
 							<Route path="/dashboard/providers" element={<ProvidersList />} />
 							<Route path="/dashboard/providers/create" element={<CreateProvider />} />
 							<Route path="/dashboard/providers/edit/:id" element={<EditProvider />} />
+							<Route path="/dashboard/jobs" element={<JobsList />} />
+							<Route path="/dashboard/jobs/create" element={<CreateJob />} />
+							<Route path="/dashboard/jobs/edit/:id" element={<EditJob />} />
 							{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
 							<Route path="*" element={<NotFound />} />
 						</Route>
