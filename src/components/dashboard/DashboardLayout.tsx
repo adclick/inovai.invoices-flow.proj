@@ -11,7 +11,8 @@ import {
 	Bell,
 	Search, UserCog,
 	Briefcase,
-	BriefcaseBusiness
+	BriefcaseBusiness,
+	UserPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -21,7 +22,7 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-	const { user, signOut } = useAuth();
+	const { user, signOut, checkHasRole } = useAuth();
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const location = useLocation();
 
@@ -45,6 +46,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 		{ path: "/campaigns", icon: BarChart2, label: "Campaigns" },
 	];
 
+	// Only show the users management for super_admin users
+	const isSuperAdmin = checkHasRole('super_admin');
+	
 	return (
 		<div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
 			{/* Sidebar */}
@@ -109,6 +113,33 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 											</li>
 										))
 									}
+								</ul>
+							</div>
+						</>
+					)}
+
+					{/* Super Admin Section */}
+					{sidebarOpen && isSuperAdmin && (
+						<>
+							<Separator className="my-4" />
+							<div className="mb-2">
+								<h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-3 mb-2">
+									SUPER ADMIN
+								</h3>
+								<ul className="space-y-1">
+									<li>
+										<Link
+											to="/users"
+											className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200
+												${isActiveRoute("/users")
+													? 'bg-primary/10 text-primary font-medium'
+													: 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+												}`}
+										>
+											<UserPlus size={18} />
+											<span className="ml-3 text-sm">Users</span>
+										</Link>
+									</li>
 								</ul>
 							</div>
 						</>
