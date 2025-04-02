@@ -17,6 +17,9 @@ import EditCampaign from "./pages/campaigns/EditCampaign";
 import ManagersList from "./pages/managers/ManagersList";
 import CreateManager from "./pages/managers/CreateManager";
 import EditManager from "./pages/managers/EditManager";
+import ProvidersList from "./pages/providers/ProvidersList";
+import CreateProvider from "./pages/providers/CreateProvider";
+import EditProvider from "./pages/providers/EditProvider";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +42,9 @@ const App = () => (
             <Route path="/dashboard/managers" element={<ManagersList />} />
             <Route path="/dashboard/managers/create" element={<CreateManager />} />
             <Route path="/dashboard/managers/edit/:id" element={<EditManager />} />
+            <Route path="/dashboard/providers" element={<ProvidersList />} />
+            <Route path="/dashboard/providers/create" element={<CreateProvider />} />
+            <Route path="/dashboard/providers/edit/:id" element={<EditProvider />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
