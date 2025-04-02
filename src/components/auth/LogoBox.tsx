@@ -30,7 +30,7 @@ const LogoBox: React.FC = () => {
       </div>
       
       <div className="mt-6 sm:mt-10 text-white/50 text-xs sm:text-sm">
-        © 2024 InvoicesFlow. All rights reserved.
+        © 2025 InvoicesFlow. All rights reserved.
       </div>
     </div>
   );

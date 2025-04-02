@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,8 +83,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         
         // Show toast notifications for auth events
-        if (event === 'SIGNED_IN') {
+        if (event === 'SIGNED_IN' && !session?.user?.user_metadata?.hasSeenSignInToast) {
           toast.success('Signed in successfully');
+          // Mark that we've shown the toast for this session
+          if (session?.user) {
+            supabase.auth.updateUser({
+              data: { hasSeenSignInToast: true }
+			});
+          }
         } else if (event === 'SIGNED_OUT') {
           toast.info('Signed out successfully');
         }

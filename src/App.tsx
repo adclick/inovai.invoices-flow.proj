@@ -20,38 +20,42 @@ import EditManager from "./pages/managers/EditManager";
 import ProvidersList from "./pages/providers/ProvidersList";
 import CreateProvider from "./pages/providers/CreateProvider";
 import EditProvider from "./pages/providers/EditProvider";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/dashboard/clients" element={<ClientsList />} />
-            <Route path="/dashboard/clients/create" element={<CreateClient />} />
-            <Route path="/dashboard/clients/edit/:id" element={<EditClient />} />
-            <Route path="/dashboard/campaigns" element={<CampaignsList />} />
-            <Route path="/dashboard/campaigns/create" element={<CreateCampaign />} />
-            <Route path="/dashboard/campaigns/edit/:id" element={<EditCampaign />} />
-            <Route path="/dashboard/managers" element={<ManagersList />} />
-            <Route path="/dashboard/managers/create" element={<CreateManager />} />
-            <Route path="/dashboard/managers/edit/:id" element={<EditManager />} />
-            <Route path="/dashboard/providers" element={<ProvidersList />} />
-            <Route path="/dashboard/providers/create" element={<CreateProvider />} />
-            <Route path="/dashboard/providers/edit/:id" element={<EditProvider />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+	<QueryClientProvider client={queryClient}>
+		<AuthProvider>
+			<TooltipProvider>
+				<Toaster />
+				<Sonner />
+				<BrowserRouter>
+					<Routes>
+						<Route path="/" element={<Index />} />
+
+						<Route element={<ProtectedRoute />}>
+							<Route path="/dashboard" element={<Dashboard />} />
+							<Route path="/dashboard/clients" element={<ClientsList />} />
+							<Route path="/dashboard/clients/create" element={<CreateClient />} />
+							<Route path="/dashboard/clients/edit/:id" element={<EditClient />} />
+							<Route path="/dashboard/campaigns" element={<CampaignsList />} />
+							<Route path="/dashboard/campaigns/create" element={<CreateCampaign />} />
+							<Route path="/dashboard/campaigns/edit/:id" element={<EditCampaign />} />
+							<Route path="/dashboard/managers" element={<ManagersList />} />
+							<Route path="/dashboard/managers/create" element={<CreateManager />} />
+							<Route path="/dashboard/managers/edit/:id" element={<EditManager />} />
+							<Route path="/dashboard/providers" element={<ProvidersList />} />
+							<Route path="/dashboard/providers/create" element={<CreateProvider />} />
+							<Route path="/dashboard/providers/edit/:id" element={<EditProvider />} />
+							{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+							<Route path="*" element={<NotFound />} />
+						</Route>
+					</Routes>
+				</BrowserRouter>
+			</TooltipProvider>
+		</AuthProvider>
+	</QueryClientProvider>
 );
 
 export default App;
