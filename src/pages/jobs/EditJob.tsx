@@ -245,7 +245,7 @@ const EditJob = () => {
         title: "Job updated",
         description: "The job has been successfully updated.",
       });
-      navigate("/dashboard/jobs");
+      navigate("/jobs");
     },
     onError: (error) => {
       console.error("Error updating job:", error);
@@ -288,7 +288,7 @@ const EditJob = () => {
             <p className="text-red-600 dark:text-red-400">Job not found</p>
             <Button
               className="mt-4"
-              onClick={() => navigate("/dashboard/jobs")}
+              onClick={() => navigate("/jobs")}
             >
               Back to Jobs
             </Button>
@@ -701,7 +701,7 @@ const EditJob = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate("/dashboard/jobs")}
+                    onClick={() => navigate("/jobs")}
                   >
                     Cancel
                   </Button>

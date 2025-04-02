@@ -104,7 +104,7 @@ const ManagersList = () => {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Managers</h1>
             <Button asChild>
-              <Link to="/dashboard/managers/create">
+              <Link to="/managers/create">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 New Manager
               </Link>
@@ -125,7 +125,7 @@ const ManagersList = () => {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Managers</h1>
             <Button asChild>
-              <Link to="/dashboard/managers/create">
+              <Link to="/managers/create">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 New Manager
               </Link>
@@ -145,7 +145,7 @@ const ManagersList = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Managers</h1>
           <Button asChild>
-            <Link to="/dashboard/managers/create">
+            <Link to="/managers/create">
               <PlusCircle className="mr-2 h-4 w-4" />
               New Manager
             </Link>
@@ -183,7 +183,7 @@ const ManagersList = () => {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          onClick={() => navigate(`/dashboard/managers/edit/${manager.id}`)}
+                          onClick={() => navigate(`/managers/edit/${manager.id}`)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -205,7 +205,7 @@ const ManagersList = () => {
           <div className="flex flex-col items-center justify-center border rounded-lg p-8 bg-slate-50 dark:bg-slate-800">
             <p className="text-slate-500 dark:text-slate-400 mb-4">No managers found</p>
             <Button asChild>
-              <Link to="/dashboard/managers/create">
+              <Link to="/managers/create">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Create your first manager
               </Link>

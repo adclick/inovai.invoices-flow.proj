@@ -108,7 +108,7 @@ const EditProvider = () => {
         title: "Provider updated",
         description: "The provider has been successfully updated.",
       });
-      navigate("/dashboard/providers");
+      navigate("/providers");
     },
     onError: (error) => {
       console.error("Error updating provider:", error);
@@ -151,7 +151,7 @@ const EditProvider = () => {
             <p className="text-red-600 dark:text-red-400">Provider not found</p>
             <Button
               className="mt-4"
-              onClick={() => navigate("/dashboard/providers")}
+              onClick={() => navigate("/providers")}
             >
               Back to Providers
             </Button>
@@ -265,7 +265,7 @@ const EditProvider = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("/dashboard/providers")}
+                  onClick={() => navigate("/providers")}
                 >
                   Cancel
                 </Button>

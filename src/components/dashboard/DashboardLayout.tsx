@@ -33,13 +33,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 	const navItems = [
 		{ path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+		{ path: "/jobs", icon: LayoutDashboard, label: "Jobs" },
 	];
 
 	const managementItems = [
-		{ path: "/dashboard/providers", icon: UserCog, label: "Providers" },
-		{ path: "/dashboard/managers", icon: UserCog, label: "Managers" },
-		{ path: "/dashboard/clients", icon: Users, label: "Clients" },
-		{ path: "/dashboard/campaigns", icon: BarChart2, label: "Campaigns" },
+		{ path: "/providers", icon: UserCog, label: "Providers" },
+		{ path: "/managers", icon: UserCog, label: "Managers" },
+		{ path: "/clients", icon: Users, label: "Clients" },
+		{ path: "/campaigns", icon: BarChart2, label: "Campaigns" },
 	];
 
 	return (

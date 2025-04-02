@@ -207,7 +207,7 @@ const CampaignsList = () => {
       <div className="p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Campaigns</h1>
-          <Button onClick={() => navigate("/dashboard/campaigns/create")} className="shrink-0">
+          <Button onClick={() => navigate("/campaigns/create")} className="shrink-0">
             <PlusCircle className="mr-2 h-4 w-4" />
             New Campaign
           </Button>
@@ -217,7 +217,7 @@ const CampaignsList = () => {
           <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
             <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No campaigns found</h3>
             <p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first campaign.</p>
-            <Button onClick={() => navigate("/dashboard/campaigns/create")}>
+            <Button onClick={() => navigate("/campaigns/create")}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Campaign
             </Button>
@@ -263,7 +263,7 @@ const CampaignsList = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => navigate(`/dashboard/campaigns/edit/${campaign.id}`)}
+                            onClick={() => navigate(`/campaigns/edit/${campaign.id}`)}
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>

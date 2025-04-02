@@ -59,7 +59,7 @@ const CreateClient = () => {
         title: "Client created",
         description: "The client has been successfully created.",
       });
-      navigate("/dashboard/clients");
+      navigate("/clients");
     },
     onError: (error) => {
       toast({
@@ -79,7 +79,7 @@ const CreateClient = () => {
     <DashboardLayout>
       <div className="p-6">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate("/dashboard/clients")}>
+          <Button variant="ghost" onClick={() => navigate("/clients")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Clients
           </Button>
@@ -112,7 +112,7 @@ const CreateClient = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => navigate("/dashboard/clients")}
+                  onClick={() => navigate("/clients")}
                 >
                   Cancel
                 </Button>

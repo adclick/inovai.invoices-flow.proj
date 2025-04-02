@@ -126,7 +126,7 @@ const EditCampaign = () => {
         title: "Campaign updated",
         description: "The campaign has been successfully updated.",
       });
-      navigate("/dashboard/campaigns");
+      navigate("/campaigns");
     },
     onError: (error) => {
       console.error("Error updating campaign:", error);
@@ -169,7 +169,7 @@ const EditCampaign = () => {
             <p className="text-red-600 dark:text-red-400">Campaign not found</p>
             <Button
               className="mt-4"
-              onClick={() => navigate("/dashboard/campaigns")}
+              onClick={() => navigate("/campaigns")}
             >
               Back to Campaigns
             </Button>
@@ -340,7 +340,7 @@ const EditCampaign = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("/dashboard/campaigns")}
+                  onClick={() => navigate("/campaigns")}
                 >
                   Cancel
                 </Button>

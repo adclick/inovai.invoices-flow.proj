@@ -198,7 +198,7 @@ const CreateJob = () => {
         title: "Job created",
         description: "The job has been successfully created.",
       });
-      navigate("/dashboard/jobs");
+      navigate("/jobs");
     },
     onError: (error) => {
       console.error("Error creating job:", error);
@@ -617,7 +617,7 @@ const CreateJob = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => navigate("/dashboard/jobs")}
+                    onClick={() => navigate("/jobs")}
                   >
                     Cancel
                   </Button>

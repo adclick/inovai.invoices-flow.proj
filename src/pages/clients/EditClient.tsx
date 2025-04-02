@@ -101,7 +101,7 @@ const EditClient = () => {
         title: "Client updated",
         description: "The client has been successfully updated.",
       });
-      navigate("/dashboard/clients");
+      navigate("/clients");
     },
     onError: (error) => {
       toast({
@@ -122,7 +122,7 @@ const EditClient = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate("/dashboard/clients")}>
+            <Button variant="ghost" onClick={() => navigate("/clients")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Clients
             </Button>
@@ -140,7 +140,7 @@ const EditClient = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate("/dashboard/clients")}>
+            <Button variant="ghost" onClick={() => navigate("/clients")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Clients
             </Button>
@@ -157,7 +157,7 @@ const EditClient = () => {
     <DashboardLayout>
       <div className="p-6">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate("/dashboard/clients")}>
+          <Button variant="ghost" onClick={() => navigate("/clients")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Clients
           </Button>
@@ -211,7 +211,7 @@ const EditClient = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => navigate("/dashboard/clients")}
+                  onClick={() => navigate("/clients")}
                 >
                   Cancel
                 </Button>

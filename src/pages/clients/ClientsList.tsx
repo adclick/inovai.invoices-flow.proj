@@ -103,7 +103,7 @@ const ClientsList = () => {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Clients</h1>
             <Button asChild>
-              <Link to="/dashboard/clients/create">
+              <Link to="/clients/create">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 New Client
               </Link>
@@ -124,7 +124,7 @@ const ClientsList = () => {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Clients</h1>
             <Button asChild>
-              <Link to="/dashboard/clients/create">
+              <Link to="/clients/create">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 New Client
               </Link>
@@ -144,7 +144,7 @@ const ClientsList = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Clients</h1>
           <Button asChild>
-            <Link to="/dashboard/clients/create">
+            <Link to="/clients/create">
               <PlusCircle className="mr-2 h-4 w-4" />
               New Client
             </Link>
@@ -175,7 +175,7 @@ const ClientsList = () => {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          onClick={() => navigate(`/dashboard/clients/edit/${client.id}`)}
+                          onClick={() => navigate(`/clients/edit/${client.id}`)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -197,7 +197,7 @@ const ClientsList = () => {
           <div className="flex flex-col items-center justify-center border rounded-lg p-8 bg-slate-50 dark:bg-slate-800">
             <p className="text-slate-500 dark:text-slate-400 mb-4">No clients found</p>
             <Button asChild>
-              <Link to="/dashboard/clients/create">
+              <Link to="/clients/create">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Create your first client
               </Link>

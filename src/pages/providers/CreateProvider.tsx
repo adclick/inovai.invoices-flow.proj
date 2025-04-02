@@ -72,7 +72,7 @@ const CreateProvider = () => {
         title: "Provider created",
         description: "The provider has been successfully created.",
       });
-      navigate("/dashboard/providers");
+      navigate("/providers");
     },
     onError: (error) => {
       console.error("Error creating provider:", error);
@@ -193,7 +193,7 @@ const CreateProvider = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("/dashboard/providers")}
+                  onClick={() => navigate("/providers")}
                 >
                   Cancel
                 </Button>

@@ -186,7 +186,7 @@ const ProvidersList = () => {
       <div className="p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Providers</h1>
-          <Button onClick={() => navigate("/dashboard/providers/create")} className="shrink-0">
+          <Button onClick={() => navigate("/providers/create")} className="shrink-0">
             <PlusCircle className="mr-2 h-4 w-4" />
             New Provider
           </Button>
@@ -196,7 +196,7 @@ const ProvidersList = () => {
           <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
             <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No providers found</h3>
             <p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first provider.</p>
-            <Button onClick={() => navigate("/dashboard/providers/create")}>
+            <Button onClick={() => navigate("/providers/create")}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Provider
             </Button>

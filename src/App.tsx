@@ -39,21 +39,21 @@ const App = () => (
 
 						<Route element={<ProtectedRoute />}>
 							<Route path="/dashboard" element={<Dashboard />} />
-							<Route path="/dashboard/clients" element={<ClientsList />} />
-							<Route path="/dashboard/clients/create" element={<CreateClient />} />
-							<Route path="/dashboard/clients/edit/:id" element={<EditClient />} />
-							<Route path="/dashboard/campaigns" element={<CampaignsList />} />
-							<Route path="/dashboard/campaigns/create" element={<CreateCampaign />} />
-							<Route path="/dashboard/campaigns/edit/:id" element={<EditCampaign />} />
-							<Route path="/dashboard/managers" element={<ManagersList />} />
-							<Route path="/dashboard/managers/create" element={<CreateManager />} />
-							<Route path="/dashboard/managers/edit/:id" element={<EditManager />} />
-							<Route path="/dashboard/providers" element={<ProvidersList />} />
-							<Route path="/dashboard/providers/create" element={<CreateProvider />} />
-							<Route path="/dashboard/providers/edit/:id" element={<EditProvider />} />
-							<Route path="/dashboard/jobs" element={<JobsList />} />
-							<Route path="/dashboard/jobs/create" element={<CreateJob />} />
-							<Route path="/dashboard/jobs/edit/:id" element={<EditJob />} />
+							<Route path="/clients" element={<ClientsList />} />
+							<Route path="/clients/create" element={<CreateClient />} />
+							<Route path="/clients/edit/:id" element={<EditClient />} />
+							<Route path="/campaigns" element={<CampaignsList />} />
+							<Route path="/campaigns/create" element={<CreateCampaign />} />
+							<Route path="/campaigns/edit/:id" element={<EditCampaign />} />
+							<Route path="/managers" element={<ManagersList />} />
+							<Route path="/managers/create" element={<CreateManager />} />
+							<Route path="/managers/edit/:id" element={<EditManager />} />
+							<Route path="/providers" element={<ProvidersList />} />
+							<Route path="/providers/create" element={<CreateProvider />} />
+							<Route path="/providers/edit/:id" element={<EditProvider />} />
+							<Route path="/jobs" element={<JobsList />} />
+							<Route path="/jobs/create" element={<CreateJob />} />
+							<Route path="/jobs/edit/:id" element={<EditJob />} />
 							{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
 							<Route path="*" element={<NotFound />} />
 						</Route>

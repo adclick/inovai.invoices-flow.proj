@@ -105,7 +105,7 @@ const EditManager = () => {
         title: "Manager updated",
         description: "The manager has been successfully updated.",
       });
-      navigate("/dashboard/managers");
+      navigate("/managers");
     },
     onError: (error) => {
       toast({
@@ -126,7 +126,7 @@ const EditManager = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate("/dashboard/managers")}>
+            <Button variant="ghost" onClick={() => navigate("/managers")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Managers
             </Button>
@@ -144,7 +144,7 @@ const EditManager = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate("/dashboard/managers")}>
+            <Button variant="ghost" onClick={() => navigate("/managers")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Managers
             </Button>
@@ -161,7 +161,7 @@ const EditManager = () => {
     <DashboardLayout>
       <div className="p-6">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate("/dashboard/managers")}>
+          <Button variant="ghost" onClick={() => navigate("/managers")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Managers
           </Button>
@@ -233,7 +233,7 @@ const EditManager = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={() => navigate("/dashboard/managers")}
+                  onClick={() => navigate("/managers")}
                 >
                   Cancel
                 </Button>

@@ -267,7 +267,7 @@ const JobsList = () => {
       <div className="p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Jobs</h1>
-          <Button onClick={() => navigate("/dashboard/jobs/create")} className="shrink-0">
+          <Button onClick={() => navigate("/jobs/create")} className="shrink-0">
             <PlusCircle className="mr-2 h-4 w-4" />
             New Job
           </Button>
@@ -277,7 +277,7 @@ const JobsList = () => {
           <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
             <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No jobs found</h3>
             <p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first job.</p>
-            <Button onClick={() => navigate("/dashboard/jobs/create")}>
+            <Button onClick={() => navigate("/jobs/create")}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Job
             </Button>
@@ -321,7 +321,7 @@ const JobsList = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => navigate(`/dashboard/jobs/edit/${job.id}`)}
+                            onClick={() => navigate(`/jobs/edit/${job.id}`)}
                           >
                             <Edit className="h-4 w-4" />
                             <span className="sr-only">Edit</span>

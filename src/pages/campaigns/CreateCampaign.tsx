@@ -95,7 +95,7 @@ const CreateCampaign = () => {
         title: "Campaign created",
         description: "The campaign has been successfully created.",
       });
-      navigate("/dashboard/campaigns");
+      navigate("/campaigns");
     },
     onError: (error) => {
       console.error("Error creating campaign:", error);
@@ -273,7 +273,7 @@ const CreateCampaign = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("/dashboard/campaigns")}
+                  onClick={() => navigate("/campaigns")}
                 >
                   Cancel
                 </Button>
