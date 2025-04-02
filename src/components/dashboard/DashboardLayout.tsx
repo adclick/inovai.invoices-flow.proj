@@ -9,7 +9,9 @@ import {
 	Menu,
 	X,
 	Bell,
-	Search, UserCog
+	Search, UserCog,
+	Briefcase,
+	BriefcaseBusiness
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -33,7 +35,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 	const navItems = [
 		{ path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-		{ path: "/jobs", icon: LayoutDashboard, label: "Jobs" },
+		{ path: "/jobs", icon: BriefcaseBusiness, label: "Jobs" },
 	];
 
 	const managementItems = [
