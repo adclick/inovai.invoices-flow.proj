@@ -34,7 +34,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
-  fullname: z.string().min(1, "Full name is required"),
   email: z.string().email("Please enter a valid email address"),
   role: z.enum(["admin", "finance", "super_admin"], {
     required_error: "Please select a role",
@@ -45,7 +44,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 const CreateUser = () => {
   const navigate = useNavigate();
-  const { checkHasRole } = useAuth();
+  const { user, checkHasRole } = useAuth();
   
   // Check if the current user is a super_admin
   const isSuperAdmin = checkHasRole('super_admin');
@@ -61,7 +60,6 @@ const CreateUser = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullname: "",
       email: "",
       role: "admin",
     },
@@ -69,29 +67,29 @@ const CreateUser = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      // Call our edge function instead of direct auth.admin calls
-      const { data: responseData, error } = await supabase.functions.invoke('create-user', {
+      // Call the edge function to send invitation
+      const { data: responseData, error } = await supabase.functions.invoke('send-invitation', {
         body: {
           email: data.email,
-          fullname: data.fullname,
-          role: data.role
+          role: data.role,
+          created_by: user?.id
         }
       });
       
       if (error) {
-        toast.error(`Error creating user: ${error.message}`);
+        toast.error(`Error sending invitation: ${error.message}`);
         return;
       }
       
       if (!responseData.success) {
-        toast.error(responseData.error || "Failed to create user");
+        toast.error(responseData.error || "Failed to send invitation");
         return;
       }
 
-      toast.success("User created successfully");
+      toast.success("Invitation sent successfully");
       navigate("/users");
     } catch (error: any) {
-      toast.error(`Error creating user: ${error.message}`);
+      toast.error(`Error sending invitation: ${error.message}`);
     }
   };
 
@@ -104,9 +102,9 @@ const CreateUser = () => {
       <div className="p-6">
         <Card>
           <CardHeader>
-            <CardTitle>Create User</CardTitle>
+            <CardTitle>Send User Invitation</CardTitle>
             <CardDescription>
-              Create a new user account with appropriate role
+              Send an invitation to a new user with a specific role
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -115,23 +113,6 @@ const CreateUser = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6"
               >
-                <FormField
-                  control={form.control}
-                  name="fullname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter user's full name"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <FormField
                   control={form.control}
                   name="email"
@@ -185,7 +166,7 @@ const CreateUser = () => {
                     Cancel
                   </Button>
                   <Button type="submit">
-                    Create User
+                    Send Invitation
                   </Button>
                 </div>
               </form>

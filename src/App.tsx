@@ -26,6 +26,7 @@ import EditJob from "./pages/jobs/EditJob";
 import UsersList from "./pages/users/UsersList";
 import CreateUser from "./pages/users/CreateUser";
 import EditUser from "./pages/users/EditUser";
+import AcceptInvitation from "./pages/AcceptInvitation";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
 				<BrowserRouter>
 					<Routes>
 						<Route path="/" element={<Index />} />
+            <Route path="/accept-invitation" element={<AcceptInvitation />} />
 
 						<Route element={<ProtectedRoute />}>
 							<Route path="/dashboard" element={<Dashboard />} />

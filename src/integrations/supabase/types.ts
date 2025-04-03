@@ -104,6 +104,39 @@ export type Database = {
         }
         Relationships: []
       }
+      invitations: {
+        Row: {
+          created_at: string
+          created_by: string
+          email: string
+          expires_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          token: string
+          used: boolean
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          email: string
+          expires_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          token: string
+          used?: boolean
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          token?: string
+          used?: boolean
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           campaign_id: string
@@ -396,6 +429,17 @@ export type Database = {
       is_finance: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      validate_invitation_token: {
+        Args: {
+          token_value: string
+        }
+        Returns: {
+          is_valid: boolean
+          invitation_id: string
+          email: string
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
       }
     }
     Enums: {
