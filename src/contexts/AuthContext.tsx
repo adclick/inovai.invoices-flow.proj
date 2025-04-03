@@ -75,8 +75,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Defer fetching user roles with setTimeout to avoid deadlock
         if (session?.user) {
-          setTimeout(() => {
-            fetchUserRoles(session.user.id);
+					setTimeout(() => {
+						fetchUserRoles(session.user.id);
           }, 0);
         } else {
           setRoles(defaultRoles);

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -34,6 +33,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
+  fullname: z.string().min(1, "Full name is required"),
   email: z.string().email("Please enter a valid email address"),
   role: z.enum(["admin", "finance"], {
     required_error: "Please select a role",
@@ -60,6 +60,7 @@ const CreateUser = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullname: "",
       email: "",
       role: "admin",
     },
@@ -67,54 +68,59 @@ const CreateUser = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      // Check if the user exists in profiles
-      const { data: existingUser, error: userError } = await supabase
+      // First, create the user in Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: data.email,
+        password: 'temporary-password', // User will need to reset this
+        email_confirm: true,
+        user_metadata: {
+          full_name: data.fullname
+        }
+      });
+
+      if (authError) {
+        toast.error(`Error creating user: ${authError.message}`);
+        return;
+      }
+
+      if (!authData.user) {
+        toast.error("Failed to create user");
+        return;
+      }
+
+      const userId = authData.user.id;
+
+      // Create the user profile
+      const { error: profileError } = await supabase
         .from('profiles')
-        .select('id')
-        .eq('email', data.email)
-        .single();
+        .insert({
+          id: userId,
+          email: data.email,
+          full_name: data.fullname
+        });
 
-      if (userError) {
-        toast.error(`User not found with email: ${data.email}. They must sign up first.`);
+      if (profileError) {
+        toast.error(`Error creating profile: ${profileError.message}`);
         return;
       }
 
-      const userId = existingUser.id;
-
-      // Check if the user already has this role
-      const { data: existingRole, error: roleCheckError } = await supabase
-        .from('user_roles')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('role', data.role);
-
-      if (roleCheckError) {
-        toast.error(`Error checking existing roles: ${roleCheckError.message}`);
-        return;
-      }
-
-      if (existingRole && existingRole.length > 0) {
-        toast.error(`User already has the ${data.role} role`);
-        return;
-      }
-
-      // Add the new role to the user
-      const { error: insertError } = await supabase
+      // Add the role to the user
+      const { error: roleError } = await supabase
         .from('user_roles')
         .insert({
           user_id: userId,
-          role: data.role,
+          role: data.role
         });
 
-      if (insertError) {
-        toast.error(`Error assigning role: ${insertError.message}`);
+      if (roleError) {
+        toast.error(`Error assigning role: ${roleError.message}`);
         return;
       }
 
-      toast.success("User role assigned successfully");
+      toast.success("User created successfully");
       navigate("/users");
     } catch (error: any) {
-      toast.error(`Error creating user role: ${error.message}`);
+      toast.error(`Error creating user: ${error.message}`);
     }
   };
 
@@ -127,9 +133,9 @@ const CreateUser = () => {
       <div className="p-6">
         <Card>
           <CardHeader>
-            <CardTitle>Assign User Role</CardTitle>
+            <CardTitle>Create User</CardTitle>
             <CardDescription>
-              Assign a role to an existing user account.
+              Create a new user account
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -138,6 +144,23 @@ const CreateUser = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-6"
               >
+                <FormField
+                  control={form.control}
+                  name="fullname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Full Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter user's full name"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="email"
@@ -189,7 +212,7 @@ const CreateUser = () => {
                     Cancel
                   </Button>
                   <Button type="submit">
-                    Assign Role
+                    Create User
                   </Button>
                 </div>
               </form>

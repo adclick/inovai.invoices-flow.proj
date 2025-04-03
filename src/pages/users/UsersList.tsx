@@ -125,7 +125,7 @@ const UsersList = () => {
           <Link to="/users/create">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
-              Add User Role
+              New User
             </Button>
           </Link>
         </div>
