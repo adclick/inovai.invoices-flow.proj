@@ -69,52 +69,22 @@ const CreateUser = () => {
 
   const onSubmit = async (data: FormValues) => {
     try {
-      // First, create the user in Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: data.email,
-        password: generateRandomPassword(), // Generate a temporary password
-        email_confirm: true, // Auto-confirm email so user can log in
-        user_metadata: {
-          full_name: data.fullname
+      // Call our edge function instead of direct auth.admin calls
+      const { data: responseData, error } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: data.email,
+          fullname: data.fullname,
+          role: data.role
         }
       });
-
-      if (authError) {
-        toast.error(`Error creating user: ${authError.message}`);
+      
+      if (error) {
+        toast.error(`Error creating user: ${error.message}`);
         return;
       }
-
-      if (!authData.user) {
-        toast.error("Failed to create user");
-        return;
-      }
-
-      const userId = authData.user.id;
-
-      // Create the user profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          email: data.email,
-          full_name: data.fullname
-        });
-
-      if (profileError) {
-        toast.error(`Error creating profile: ${profileError.message}`);
-        return;
-      }
-
-      // Add the role to the user
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role: data.role
-        });
-
-      if (roleError) {
-        toast.error(`Error assigning role: ${roleError.message}`);
+      
+      if (!responseData.success) {
+        toast.error(responseData.error || "Failed to create user");
         return;
       }
 
@@ -123,18 +93,6 @@ const CreateUser = () => {
     } catch (error: any) {
       toast.error(`Error creating user: ${error.message}`);
     }
-  };
-
-  // Generate a random password for new users
-  const generateRandomPassword = (): string => {
-    const length = 12;
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-    let password = "";
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      password += charset[randomIndex];
-    }
-    return password;
   };
 
   if (!isSuperAdmin) {
