@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -35,7 +36,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const formSchema = z.object({
   fullname: z.string().min(1, "Full name is required"),
   email: z.string().email("Please enter a valid email address"),
-  role: z.enum(["admin", "finance"], {
+  role: z.enum(["admin", "finance", "super_admin"], {
     required_error: "Please select a role",
   }),
 });
@@ -71,8 +72,8 @@ const CreateUser = () => {
       // First, create the user in Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: data.email,
-        password: 'temporary-password', // User will need to reset this
-        email_confirm: true,
+        password: generateRandomPassword(), // Generate a temporary password
+        email_confirm: true, // Auto-confirm email so user can log in
         user_metadata: {
           full_name: data.fullname
         }
@@ -124,6 +125,18 @@ const CreateUser = () => {
     }
   };
 
+  // Generate a random password for new users
+  const generateRandomPassword = (): string => {
+    const length = 12;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      password += charset[randomIndex];
+    }
+    return password;
+  };
+
   if (!isSuperAdmin) {
     return null;
   }
@@ -135,7 +148,7 @@ const CreateUser = () => {
           <CardHeader>
             <CardTitle>Create User</CardTitle>
             <CardDescription>
-              Create a new user account
+              Create a new user account with appropriate role
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -166,9 +179,10 @@ const CreateUser = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>User Email</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
+                          type="email"
                           placeholder="Enter user's email address"
                           {...field}
                         />
@@ -196,6 +210,7 @@ const CreateUser = () => {
                         <SelectContent>
                           <SelectItem value="admin">Admin</SelectItem>
                           <SelectItem value="finance">Finance</SelectItem>
+                          <SelectItem value="super_admin">Super Admin</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
