@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -46,7 +45,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 	return (
 		<div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
-			{/* Sidebar */}
 			<div
 				className={`bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ease-in-out
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10`}
@@ -124,7 +122,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 				</nav>
 			</div>
 
-			{/* Main content */}
 			<div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
 				<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center px-6 sticky top-0">
 					<div className="flex-1 flex items-center">

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,7 +6,6 @@ import { toast } from "sonner";
 
 interface UserRoles {
   isAdmin: boolean;
-  isFinance: boolean;
   isSuperAdmin: boolean;
 }
 
@@ -20,7 +20,6 @@ interface AuthContextType {
 
 const defaultRoles: UserRoles = {
   isAdmin: false,
-  isFinance: false,
   isSuperAdmin: false,
 };
 
@@ -58,7 +57,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setRoles({
         isAdmin: userRoles.some(r => r.role === 'admin'),
         isSuperAdmin: userRoles.some(r => r.role === 'super_admin'),
-        isFinance: userRoles.some(r => r.role === 'finance'),
       });
     } catch (error: any) {
       console.error('Error fetching user roles:', error.message);
@@ -127,8 +125,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return roles.isAdmin || roles.isSuperAdmin;
       case 'super_admin':
         return roles.isSuperAdmin;
-      case 'finance':
-        return roles.isFinance;
       default:
         return false;
     }
