@@ -23,9 +23,6 @@ import EditProvider from "./pages/providers/EditProvider";
 import JobsList from "./pages/jobs/JobsList";
 import CreateJob from "./pages/jobs/CreateJob";
 import EditJob from "./pages/jobs/EditJob";
-import UsersList from "./pages/users/UsersList";
-import CreateUser from "./pages/users/CreateUser";
-import EditUser from "./pages/users/EditUser";
 import AcceptInvitation from "./pages/AcceptInvitation";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
@@ -59,9 +56,6 @@ const App = () => (
 							<Route path="/jobs" element={<JobsList />} />
 							<Route path="/jobs/create" element={<CreateJob />} />
 							<Route path="/jobs/edit/:id" element={<EditJob />} />
-							<Route path="/users" element={<UsersList />} />
-							<Route path="/users/create" element={<CreateUser />} />
-							<Route path="/users/edit/:id" element={<EditUser />} />
 							{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
 							<Route path="*" element={<NotFound />} />
 						</Route>
