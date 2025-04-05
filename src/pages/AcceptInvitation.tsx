@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 import {
   Form,
   FormControl,
@@ -31,13 +32,15 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+// Define the role type to match the database enum
+type AppRole = Database["public"]["Enums"]["app_role"];
 
 const AcceptInvitation: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [invitationDetails, setInvitationDetails] = useState<{
     email: string;
-    role: string;
+    role: AppRole;
   } | null>(null);
 
   const token = searchParams.get('token');
@@ -61,7 +64,7 @@ const AcceptInvitation: React.FC = () => {
 
         setInvitationDetails({
           email: data[0].email,
-          role: data[0].role
+          role: data[0].role as AppRole
         });
       } catch (error: any) {
         toast.error(`Error validating invitation: ${error.message}`);
@@ -82,7 +85,7 @@ const AcceptInvitation: React.FC = () => {
   });
 
   const onSubmit = async (data: FormValues) => {
-    if (!token) return;
+    if (!token || !invitationDetails) return;
 
     try {
       // Sign up the user
@@ -112,7 +115,7 @@ const AcceptInvitation: React.FC = () => {
         .from('user_roles')
         .insert({
           user_id: authData.user?.id,
-          role: invitationDetails?.role
+          role: invitationDetails.role
         });
 
       if (roleError) throw roleError;
@@ -138,7 +141,7 @@ const AcceptInvitation: React.FC = () => {
         <CardHeader>
           <CardTitle>Accept Invitation</CardTitle>
           <CardDescription>
-            Complete your registration for {invitationDetails.email}
+            Complete your registration for {invitationDetails?.email}
           </CardDescription>
         </CardHeader>
         <CardContent>
