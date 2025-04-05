@@ -13,7 +13,7 @@ import {
 	TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Edit, Trash2, ChevronRight, ChevronDown } from "lucide-react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -34,6 +34,17 @@ import {
 	PaginationPrevious
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger
+} from "@/components/ui/collapsible";
 
 type Job = {
 	id: string;
@@ -54,6 +65,18 @@ type Job = {
 	manager_name?: string;
 };
 
+type GroupedJobs = {
+	[clientId: string]: {
+		clientName: string;
+		campaigns: {
+			[campaignId: string]: {
+				campaignName: string;
+				jobs: Job[];
+			};
+		};
+	};
+};
+
 const formatCurrency = (value: number, currency: string) => {
 	const symbols: Record<string, string> = {
 		euro: "€",
@@ -69,6 +92,8 @@ const JobsList = () => {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
+	const [expandedClients, setExpandedClients] = useState<Record<string, boolean>>({});
+	const [expandedCampaigns, setExpandedCampaigns] = useState<Record<string, boolean>>({});
 	const itemsPerPage = 10;
 	const { toast } = useToast();
 	const navigate = useNavigate();
@@ -135,6 +160,43 @@ const JobsList = () => {
 		},
 	});
 
+	// Group jobs by client and then by campaign
+	const groupJobsByClientAndCampaign = (jobs: Job[] = []): GroupedJobs => {
+		return jobs.reduce((acc: GroupedJobs, job) => {
+			// Initialize client if not exists
+			if (!acc[job.client_id]) {
+				acc[job.client_id] = {
+					clientName: job.client_name || "Unknown Client",
+					campaigns: {}
+				};
+				// Initialize expanded state for this client
+				if (expandedClients[job.client_id] === undefined) {
+					setExpandedClients(prev => ({ ...prev, [job.client_id]: false }));
+				}
+			}
+
+			// Initialize campaign if not exists
+			if (!acc[job.client_id].campaigns[job.campaign_id]) {
+				acc[job.client_id].campaigns[job.campaign_id] = {
+					campaignName: job.campaign_name || "Unknown Campaign",
+					jobs: []
+				};
+				// Initialize expanded state for this campaign
+				const campaignKey = `${job.client_id}-${job.campaign_id}`;
+				if (expandedCampaigns[campaignKey] === undefined) {
+					setExpandedCampaigns(prev => ({ ...prev, [campaignKey]: false }));
+				}
+			}
+
+			// Add job to campaign
+			acc[job.client_id].campaigns[job.campaign_id].jobs.push(job);
+			return acc;
+		}, {});
+	};
+
+	const groupedJobs = groupJobsByClientAndCampaign(data);
+	const clientIds = Object.keys(groupedJobs);
+
 	// Delete job mutation
 	const deleteJob = useMutation({
 		mutationFn: async (id: string) => {
@@ -166,7 +228,8 @@ const JobsList = () => {
 	});
 
 	// Handle delete confirmation
-	const handleDeleteClick = (job: Job) => {
+	const handleDeleteClick = (e: React.MouseEvent, job: Job) => {
+		e.stopPropagation();
 		setJobToDelete(job);
 		setIsDeleteDialogOpen(true);
 	};
@@ -177,11 +240,30 @@ const JobsList = () => {
 		}
 	};
 
+	// Toggle client expansion
+	const toggleClientExpansion = (clientId: string) => {
+		setExpandedClients(prev => ({
+			...prev,
+			[clientId]: !prev[clientId]
+		}));
+	};
+
+	// Toggle campaign expansion
+	const toggleCampaignExpansion = (clientId: string, campaignId: string) => {
+		const campaignKey = `${clientId}-${campaignId}`;
+		setExpandedCampaigns(prev => ({
+			...prev,
+			[campaignKey]: !prev[campaignKey]
+		}));
+	};
+
 	// Pagination
-	const totalPages = data ? Math.ceil(data.length / itemsPerPage) : 0;
-	const paginatedData = data
-		? data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-		: [];
+	const totalItems = clientIds.length;
+	const totalPages = Math.ceil(totalItems / itemsPerPage);
+	const paginatedClientIds = clientIds.slice(
+		(currentPage - 1) * itemsPerPage,
+		currentPage * itemsPerPage
+	);
 
 	const renderPagination = () => {
 		if (totalPages <= 1) return null;
@@ -273,7 +355,7 @@ const JobsList = () => {
 					</Button>
 				</div>
 
-				{paginatedData.length === 0 ? (
+				{data.length === 0 ? (
 					<div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
 						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No jobs found</h3>
 						<p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first job.</p>
@@ -285,59 +367,132 @@ const JobsList = () => {
 				) : (
 					<>
 						<div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-hidden">
-							<Table>
-								<TableHeader>
-									<TableRow>
-										<TableHead>Client</TableHead>
-										<TableHead>Campaign</TableHead>
-										<TableHead>Provider</TableHead>
-										<TableHead>Manager</TableHead>
-										<TableHead>Value</TableHead>
-										<TableHead>Status</TableHead>
-										<TableHead>Payment</TableHead>
-										<TableHead className="text-right">Actions</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{paginatedData.map((job) => (
-										<TableRow key={job.id} onClick={() => navigate(`/jobs/edit/${job.id}`)} className="cursor-pointer">
-											<TableCell>{job.client_name}</TableCell>
-											<TableCell>{job.campaign_name}</TableCell>
-											<TableCell>{job.provider_name}</TableCell>
-											<TableCell>{job.manager_name}</TableCell>
-											<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
-											<TableCell>{getStatusBadge(job.status)}</TableCell>
-											<TableCell>
-												<span className={`px-2 py-1 rounded-full text-xs font-medium ${job.paid
-													? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-													: "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
-													}`}>
-													{job.paid ? "Paid" : "Pending"}
-												</span>
-											</TableCell>
-											<TableCell className="text-right">
-												<div className="flex justify-end gap-2">
-													<Link
-														to={`/jobs/edit/${job.id}`}
-														className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 hover:bg-gray-200 dark:text-gray-700 dark:hover:bg-red-950/20"
-													>
-														<Edit className="h-4 w-4" />
-														<span className="sr-only">Edit</span>
-													</Link>
-													<Link
-														onClick={e =>{ e.stopPropagation(); handleDeleteClick(job)}}
-														to={null}
-														className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
-													>
-														<Trash2 className="h-4 w-4" />
-														<span className="sr-only">Delete</span>
-													</Link>
-												</div>
-											</TableCell>
-										</TableRow>
-									))}
-								</TableBody>
-							</Table>
+							<div className="bg-slate-50 dark:bg-slate-800/50 p-3 border-b border-slate-200 dark:border-slate-700">
+								<div className="flex justify-between items-center">
+									<h3 className="font-medium text-slate-900 dark:text-slate-200">Jobs by Client and Campaign</h3>
+									<div className="text-sm text-slate-600 dark:text-slate-400">
+										Total: {data.length} job{data.length !== 1 ? 's' : ''}
+									</div>
+								</div>
+							</div>
+
+							{paginatedClientIds.length > 0 ? (
+								paginatedClientIds.map((clientId) => (
+									<Collapsible
+										key={clientId}
+										open={expandedClients[clientId]}
+										onOpenChange={() => toggleClientExpansion(clientId)}
+										className="border-b border-slate-200 dark:border-slate-700 last:border-b-0"
+									>
+										<CollapsibleTrigger className="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/80 cursor-pointer">
+											<div className="flex items-center gap-2 font-medium text-slate-900 dark:text-white">
+												{expandedClients[clientId] ? (
+													<ChevronDown className="h-4 w-4 text-slate-500" />
+												) : (
+													<ChevronRight className="h-4 w-4 text-slate-500" />
+												)}
+												{groupedJobs[clientId].clientName}
+											</div>
+											<div className="text-sm text-slate-500 dark:text-slate-400">
+												{Object.keys(groupedJobs[clientId].campaigns).length} campaign(s)
+											</div>
+										</CollapsibleTrigger>
+										<CollapsibleContent>
+											<div className="pl-6 pr-4 pb-1">
+												{Object.keys(groupedJobs[clientId].campaigns).map((campaignId) => {
+													const campaignData = groupedJobs[clientId].campaigns[campaignId];
+													const campaignKey = `${clientId}-${campaignId}`;
+													
+													return (
+														<Collapsible
+															key={campaignId}
+															open={expandedCampaigns[campaignKey]}
+															onOpenChange={() => toggleCampaignExpansion(clientId, campaignId)}
+															className="mb-2 border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden"
+														>
+															<CollapsibleTrigger className="w-full flex items-center justify-between p-3 hover:bg-slate-50 dark:hover:bg-slate-800/80 cursor-pointer border-b border-slate-200 dark:border-slate-700">
+																<div className="flex items-center gap-2">
+																	{expandedCampaigns[campaignKey] ? (
+																		<ChevronDown className="h-4 w-4 text-slate-500" />
+																	) : (
+																		<ChevronRight className="h-4 w-4 text-slate-500" />
+																	)}
+																	<span className="font-medium text-slate-800 dark:text-slate-200">
+																		{campaignData.campaignName}
+																	</span>
+																</div>
+																<div className="text-sm text-slate-500 dark:text-slate-400">
+																	{campaignData.jobs.length} job(s)
+																</div>
+															</CollapsibleTrigger>
+															
+															<CollapsibleContent>
+																<Table>
+																	<TableHeader>
+																		<TableRow>
+																			<TableHead>Provider</TableHead>
+																			<TableHead>Manager</TableHead>
+																			<TableHead>Value</TableHead>
+																			<TableHead>Status</TableHead>
+																			<TableHead>Payment</TableHead>
+																			<TableHead className="text-right">Actions</TableHead>
+																		</TableRow>
+																	</TableHeader>
+																	<TableBody>
+																		{campaignData.jobs.map((job) => (
+																			<TableRow 
+																				key={job.id} 
+																				onClick={() => navigate(`/jobs/edit/${job.id}`)} 
+																				className="cursor-pointer"
+																			>
+																				<TableCell>{job.provider_name}</TableCell>
+																				<TableCell>{job.manager_name}</TableCell>
+																				<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
+																				<TableCell>{getStatusBadge(job.status)}</TableCell>
+																				<TableCell>
+																					<span className={`px-2 py-1 rounded-full text-xs font-medium ${job.paid
+																						? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+																						: "bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
+																						}`}>
+																						{job.paid ? "Paid" : "Pending"}
+																					</span>
+																				</TableCell>
+																				<TableCell className="text-right">
+																					<div className="flex justify-end gap-2">
+																						<Link
+																							to={`/jobs/edit/${job.id}`}
+																							className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 hover:bg-gray-200 dark:hover:bg-slate-700"
+																							onClick={(e) => e.stopPropagation()}
+																						>
+																							<Edit className="h-4 w-4" />
+																							<span className="sr-only">Edit</span>
+																						</Link>
+																						<button
+																							onClick={(e) => handleDeleteClick(e, job)}
+																							className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
+																						>
+																							<Trash2 className="h-4 w-4" />
+																							<span className="sr-only">Delete</span>
+																						</button>
+																					</div>
+																				</TableCell>
+																			</TableRow>
+																		))}
+																	</TableBody>
+																</Table>
+															</CollapsibleContent>
+														</Collapsible>
+													);
+												})}
+											</div>
+										</CollapsibleContent>
+									</Collapsible>
+								))
+							) : (
+								<div className="p-4 text-center text-slate-500 dark:text-slate-400">
+									No jobs to display on this page
+								</div>
+							)}
 						</div>
 
 						{renderPagination()}
