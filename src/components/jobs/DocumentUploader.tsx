@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -73,21 +72,25 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
       const fileName = `${jobId}/${uuidv4()}.${fileExt}`;
       const filePath = fileName;
       
+      // Start with 0 progress
+      setUploadingFiles(prev =>
+        prev.map(fs => fs.id === id ? { ...fs, progress: 0 } : fs)
+      );
+      
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
         .from('job-documents')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false,
-          onUploadProgress: (progress) => {
-            const percent = Math.round((progress.loaded / progress.total) * 100);
-            setUploadingFiles(prev =>
-              prev.map(fs => fs.id === id ? { ...fs, progress: percent } : fs)
-            );
-          }
+          upsert: false
         });
       
       if (error) throw error;
+      
+      // Set progress to 100% after successful upload
+      setUploadingFiles(prev =>
+        prev.map(fs => fs.id === id ? { ...fs, progress: 100 } : fs)
+      );
       
       // Get the public URL for the file
       const { data: { publicUrl } } = supabase.storage
@@ -133,6 +136,8 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
       
       // Update job documents in database
       const newDocuments = [...(existingDocuments || []), publicUrl];
+      
+      // Use the correct field name in the database update
       const { error: updateError } = await supabase
         .from('jobs')
         .update({ documents: newDocuments })

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -58,6 +57,27 @@ const jobSchema = z.object({
 
 type JobFormValues = z.infer<typeof jobSchema>;
 
+// Augment the job type to include documents
+type Job = {
+	client_id: string;
+	campaign_id: string;
+	provider_id: string;
+	manager_id: string;
+	value: number;
+	currency: "euro" | "usd" | "gbp";
+	status: "inactive" | "active" | "closed";
+	paid: boolean;
+	manager_ok: boolean;
+	months: string[];
+	due_date: string;
+	public_notes?: string;
+	private_notes?: string;
+	created_at: string;
+	updated_at: string;
+	id: string;
+	documents?: string[];
+}
+
 const months = [
 	{ value: "january", label: "January" },
 	{ value: "february", label: "February" },
@@ -94,7 +114,7 @@ const EditJob = () => {
 	const [documents, setDocuments] = useState<string[] | null>(null);
 
 	// Fetch job details
-	const { data: job, isLoading: isLoadingJob } = useQuery({
+	const { data: job, isLoading: isLoadingJob } = useQuery<Job>({
 		queryKey: ["job", id],
 		queryFn: async () => {
 			if (!id) throw new Error("Job ID is required");
@@ -106,7 +126,7 @@ const EditJob = () => {
 				.single();
 
 			if (error) throw error;
-			return data;
+			return data as Job;
 		},
 		enabled: !!id,
 	});
