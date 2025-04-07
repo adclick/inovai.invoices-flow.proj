@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -44,15 +45,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
+		<div className="min-h-screen bg-background flex">
 			<div
-				className={`bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ease-in-out
+				className={`bg-white dark:bg-slate-800 border-r border-border transition-all duration-300 ease-in-out shadow-md
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10`}
 			>
-				<div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-slate-700">
+				<div className="flex items-center justify-between h-16 px-4 border-b border-border">
 					<div className={`flex items-center ${sidebarOpen ? '' : 'hidden'}`}>
-						<div className="p-2 rounded-full bg-primary/10 mr-2">
-							<div className="text-primary font-bold text-lg">IF</div>
+						<div className="p-2 rounded-full bg-accent/10 mr-2">
+							<div className="text-accent font-bold text-lg">IF</div>
 						</div>
 						<span className="text-lg font-semibold text-slate-900 dark:text-white">InvoicesFlow</span>
 					</div>
@@ -60,7 +61,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						variant="ghost"
 						size="icon"
 						onClick={toggleSidebar}
-						className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+						className="rounded-lg hover:bg-accent/10 hover:text-accent dark:hover:bg-slate-700"
 					>
 						{sidebarOpen ? <X size={18} /> : <Menu size={18} />}
 					</Button>
@@ -73,11 +74,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 									to={item.path}
 									className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200
                     ${isActiveRoute(item.path)
-											? 'bg-primary/10 text-primary font-medium'
-											: 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+											? 'sidebar-item-active'
+											: 'sidebar-item-inactive'
 										}`}
 								>
-									<item.icon size={20} />
+									<item.icon size={20} className={isActiveRoute(item.path) ? 'text-accent' : ''} />
 									{sidebarOpen && <span className="ml-3 text-sm">{item.label}</span>}
 								</Link>
 							</li>
@@ -98,9 +99,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 											<li key={item.path}>
 												<Link
 													to={item.path}
-													className="flex items-center px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
+													className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200
+														${isActiveRoute(item.path)
+														? 'sidebar-item-active'
+														: 'sidebar-item-inactive'
+														}`}
 												>
-													<item.icon size={18} />
+													<item.icon size={18} className={isActiveRoute(item.path) ? 'text-accent' : ''} />
 													<span className="ml-3 text-sm">{item.label}</span>
 												</Link>
 											</li>
@@ -123,21 +128,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 			</div>
 
 			<div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
-				<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center px-6 sticky top-0">
+				<header className="bg-white dark:bg-slate-800 border-b border-border h-16 flex items-center px-6 sticky top-0 shadow-sm z-10">
 					<div className="flex-1 flex items-center">
 						<div className="relative w-full max-w-md hidden md:block">
 							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
 							<input
 								type="text"
 								placeholder="Search..."
-								className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
+								className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-border bg-background/50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-accent/20"
 							/>
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
 						<div className="flex items-center space-x-3">
-							<div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-								<span className="text-primary font-medium text-sm">
+							<div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+								<span className="text-accent font-medium text-sm">
 									{user?.email?.[0].toUpperCase()}
 								</span>
 							</div>
@@ -147,7 +152,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</div>
 					</div>
 				</header>
-				<main className="p-0">{children}</main>
+				<main className="p-0 bg-background">{children}</main>
 			</div>
 		</div>
 	);
