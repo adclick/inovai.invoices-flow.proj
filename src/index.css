@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%; /* Softer background */
+    --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -17,7 +17,7 @@
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 217 91% 60%; /* New accent color - indigo-500 */
+    --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -25,14 +25,6 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-    --sidebar-background: 217 33% 17%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 25%;
-    --sidebar-ring: 224.3 76.3% 48%;
   }
 
   .dark {
@@ -48,21 +40,13 @@
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 91.2% 59.8%;
+    --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 224.3 76.3% 48%;
   }
 }
 
@@ -78,34 +62,5 @@
 @layer components {
   .gradient-bg {
     @apply bg-gradient-to-br from-primary to-purple-700;
-  }
-  
-  /* New component classes */
-  .card-shadow {
-    @apply shadow-md hover:shadow-lg transition-shadow duration-200;
-  }
-  
-  .accent-border {
-    @apply border-l-4 border-accent pl-4;
-  }
-  
-  .subtle-card {
-    @apply bg-card rounded-lg border border-border/60 shadow-sm hover:shadow-md transition-all;
-  }
-  
-  .section-heading {
-    @apply text-lg font-medium text-foreground/90 border-l-4 border-accent pl-3 py-1;
-  }
-  
-  .stat-card {
-    @apply bg-gradient-to-br from-card to-secondary/30 backdrop-blur-sm p-6 rounded-lg border border-border shadow-md hover:shadow-lg transition-all;
-  }
-  
-  .sidebar-item-active {
-    @apply bg-primary/10 text-primary font-medium;
-  }
-  
-  .sidebar-item-inactive {
-    @apply text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white;
   }
 }
