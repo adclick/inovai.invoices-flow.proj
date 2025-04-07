@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -12,7 +11,6 @@ type DocumentUploaderProps = {
   jobId: string;
   existingDocuments: string[] | null;
   onDocumentsUpdated: (newDocuments: string[]) => void;
-  webhookUrl?: string;
 };
 
 type FileUploadState = {
@@ -28,7 +26,6 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
   jobId,
   existingDocuments = [],
   onDocumentsUpdated,
-  webhookUrl,
 }) => {
   const [uploadingFiles, setUploadingFiles] = useState<FileUploadState[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -98,34 +95,6 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
         .from('job-documents')
         .getPublicUrl(filePath);
       
-      // If webhook URL is provided, send file data to webhook
-      if (webhookUrl) {
-        try {
-          await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            mode: 'no-cors',
-            body: JSON.stringify({
-              fileName: file.name,
-              fileType: file.type,
-              fileSize: file.size,
-              fileUrl: publicUrl,
-              jobId: jobId,
-              timestamp: new Date().toISOString(),
-            }),
-          });
-        } catch (webhookError) {
-          console.error("Error sending file to webhook:", webhookError);
-          toast({
-            title: "Webhook notification failed",
-            description: "The file was uploaded but we couldn't notify the external service",
-            variant: "destructive",
-          });
-        }
-      }
-      
       // Update file status to completed
       setUploadingFiles(prev =>
         prev.map(fs => fs.id === id ? { 
@@ -138,7 +107,6 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
       // Update job documents in database
       const newDocuments = [...(existingDocuments || []), publicUrl];
       
-      // Use the correct field name in the database update
       const { error: updateError } = await supabase
         .from('jobs')
         .update({ documents: newDocuments })
