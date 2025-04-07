@@ -135,9 +135,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
-						<Button variant="ghost" size="icon" className="rounded-lg">
-							<Bell size={20} className="text-slate-600 dark:text-slate-400" />
-						</Button>
 						<div className="flex items-center space-x-3">
 							<div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
 								<span className="text-primary font-medium text-sm">

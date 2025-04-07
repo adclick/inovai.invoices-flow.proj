@@ -369,7 +369,7 @@ const JobsList = () => {
 						<div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-hidden">
 							<div className="bg-slate-50 dark:bg-slate-800/50 p-3 border-b border-slate-200 dark:border-slate-700">
 								<div className="flex justify-between items-center">
-									<h3 className="font-medium text-slate-900 dark:text-slate-200">Jobs by Client and Campaign</h3>
+									<h3 className="font-medium text-slate-900 dark:text-slate-200">Clients</h3>
 									<div className="text-sm text-slate-600 dark:text-slate-400">
 										Total: {data.length} job{data.length !== 1 ? 's' : ''}
 									</div>
