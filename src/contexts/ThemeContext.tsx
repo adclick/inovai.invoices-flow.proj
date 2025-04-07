@@ -16,12 +16,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   // Initialize theme from localStorage or system preference on first render
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as Theme;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
     
     if (savedTheme) {
       setTheme(savedTheme);
-    } else if (prefersDark) {
-      setTheme("dark");
+    } else if (prefersLight) {
+      setTheme("light");
     }
   }, []);
 
