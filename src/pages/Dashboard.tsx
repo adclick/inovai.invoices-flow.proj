@@ -34,52 +34,52 @@ const Dashboard: React.FC = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
+          <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-full">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
                   <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
-                <span className="text-sm text-slate-600 dark:text-slate-400">All time</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">All time</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Total Invoices</h2>
-              <p className="text-3xl font-bold text-primary dark:text-primary">0</p>
+              <p className="text-3xl font-bold text-primary dark:text-primary/90">0</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
+          <div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <div className="p-2 bg-orange-100 dark:bg-orange-900/50 rounded-full">
+                <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
                   <AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                 </div>
-                <span className="text-sm text-slate-600 dark:text-slate-400">Awaiting action</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Review</h2>
               <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">0</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-white dark:from-slate-800 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
+          <div className="bg-gradient-to-br from-green-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-full">
+                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
                   <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
                 </div>
-                <span className="text-sm text-slate-600 dark:text-slate-400">Processed successfully</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">Processed successfully</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Approved</h2>
               <p className="text-3xl font-bold text-green-600 dark:text-green-400">0</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-50 to-white dark:from-slate-800 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
+          <div className="bg-gradient-to-br from-red-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <div className="p-2 bg-red-100 dark:bg-red-900/50 rounded-full">
+                <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-full">
                   <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                 </div>
-                <span className="text-sm text-slate-600 dark:text-slate-400">Requires correction</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">Requires correction</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Rejected</h2>
               <p className="text-3xl font-bold text-red-600 dark:text-red-400">0</p>

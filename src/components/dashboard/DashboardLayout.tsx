@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,6 +10,7 @@ import {
 	Bell,
 	Search, UserCog,
 	BriefcaseBusiness,
+	Sidebar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -48,23 +48,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	return (
 		<div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
 			<div
-				className={`bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ease-in-out
+				className={`gradient-bg dark:bg-slate-800 border-r border-slate-200/20 dark:border-slate-700 transition-all duration-300 ease-in-out backdrop-blur-sm
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10`}
 			>
-				<div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-slate-700">
+				<div className="flex items-center justify-between h-16 px-4 border-b border-slate-200/20 dark:border-slate-700">
 					<div className={`flex items-center ${sidebarOpen ? '' : 'hidden'}`}>
-						<div className="p-2 rounded-full bg-primary/10 mr-2">
-							<div className="text-primary font-bold text-lg">IF</div>
+						<div className="p-2 rounded-full bg-white/10 dark:bg-primary/20 mr-2">
+							<div className="text-white dark:text-primary/90 font-bold text-lg">IF</div>
 						</div>
-						<span className="text-lg font-semibold text-slate-900 dark:text-white">InvoicesFlow</span>
+						<span className="text-lg font-semibold text-white dark:text-white">InvoicesFlow</span>
 					</div>
 					<Button
 						variant="ghost"
 						size="icon"
 						onClick={toggleSidebar}
-						className="rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+						className="rounded-lg hover:bg-white/10 dark:hover:bg-slate-700 text-white dark:text-white"
 					>
-						{sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+						{sidebarOpen ? <Sidebar size={18} /> : <Sidebar size={18} />}
 					</Button>
 				</div>
 				<nav className="flex-1 p-4">
@@ -75,8 +75,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 									to={item.path}
 									className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200
                     ${isActiveRoute(item.path)
-											? 'bg-primary/10 text-primary font-medium'
-											: 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
+											? 'bg-white/10 text-white font-medium dark:bg-slate-700 dark:text-primary'
+											: 'text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white'
 										}`}
 								>
 									<item.icon size={20} />
@@ -89,9 +89,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					{/* Management Actions Section */}
 					{sidebarOpen && (
 						<>
-							<Separator className="my-4" />
+							<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
 							<div className="mb-2">
-								<h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-3 mb-2">
+								<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
 									MANAGEMENT
 								</h3>
 								<ul className="space-y-1">
@@ -100,7 +100,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 											<li key={item.path}>
 												<Link
 													to={item.path}
-													className="flex items-center px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors duration-200"
+													className="flex items-center px-3 py-2 rounded-lg text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white transition-colors duration-200"
 												>
 													<item.icon size={18} />
 													<span className="ml-3 text-sm">{item.label}</span>
@@ -113,10 +113,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</>
 					)}
 
-					<Separator className="my-4" />
+					<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
 					<button
 						onClick={signOut}
-						className="flex w-full items-center px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
+						className="flex w-full items-center px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 dark:hover:bg-slate-700 dark:text-red-400 transition-colors duration-200"
 					>
 						<LogOut size={20} />
 						{sidebarOpen && <span className="ml-3 text-sm font-medium">Sign Out</span>}
@@ -137,7 +137,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
-						<ThemeToggle />
+						{/* <ThemeToggle /> */}
 						<div className="flex items-center space-x-3">
 							<div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
 								<span className="text-primary font-medium text-sm">
