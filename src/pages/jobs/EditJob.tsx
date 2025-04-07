@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,6 +35,8 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import { DocumentUploader } from "@/components/jobs/DocumentUploader";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Schema for job form validation
 const jobSchema = z.object({
@@ -51,6 +53,7 @@ const jobSchema = z.object({
 	due_date: z.string().optional(),
 	public_notes: z.string().optional(),
 	private_notes: z.string().optional(),
+	make_webhook_url: z.string().optional(),
 });
 
 type JobFormValues = z.infer<typeof jobSchema>;
@@ -87,6 +90,8 @@ const EditJob = () => {
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const queryClient = useQueryClient();
+	const [currentTab, setCurrentTab] = useState("details");
+	const [documents, setDocuments] = useState<string[] | null>(null);
 
 	// Fetch job details
 	const { data: job, isLoading: isLoadingJob } = useQuery({
@@ -105,6 +110,13 @@ const EditJob = () => {
 		},
 		enabled: !!id,
 	});
+
+	// Set documents state when job data is loaded
+	useEffect(() => {
+		if (job) {
+			setDocuments(job.documents || []);
+		}
+	}, [job]);
 
 	// Fetch clients for the dropdown
 	const { data: clients } = useQuery({
@@ -179,6 +191,7 @@ const EditJob = () => {
 			due_date: "",
 			public_notes: "",
 			private_notes: "",
+			make_webhook_url: "",
 		},
 	});
 
@@ -206,6 +219,7 @@ const EditJob = () => {
 				due_date: formattedDueDate,
 				public_notes: job.public_notes || "",
 				private_notes: job.private_notes || "",
+				make_webhook_url: "", // Default empty
 			});
 		}
 	}, [job, form]);
@@ -263,6 +277,12 @@ const EditJob = () => {
 		updateJob.mutate(values);
 	};
 
+	// Handle document updates
+	const handleDocumentsUpdated = (newDocuments: string[]) => {
+		setDocuments(newDocuments);
+		queryClient.invalidateQueries({ queryKey: ["job", id] });
+	};
+
 	if (isLoadingJob) {
 		return (
 			<DashboardLayout>
@@ -309,417 +329,481 @@ const EditJob = () => {
 					</p>
 				</div>
 
-				<Card>
-					<CardHeader>
-						<CardTitle>Job Details</CardTitle>
-						<CardDescription>
-							Update the job information
-						</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<Form {...form}>
-							<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-									{/* Client Selection */}
-									<FormField
-										control={form.control}
-										name="client_id"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Client</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													value={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder="Select a client" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{clients && clients.length > 0 ? (
-															clients.map((client) => (
-																<SelectItem key={client.id} value={client.id}>
-																	{client.name}
-																</SelectItem>
-															))
-														) : (
-															<SelectItem value="no-clients" disabled>
-																No clients available
-															</SelectItem>
-														)}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+				<Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-4">
+					<TabsList className="grid w-full grid-cols-2">
+						<TabsTrigger value="details">Job Details</TabsTrigger>
+						<TabsTrigger value="documents">Documents</TabsTrigger>
+					</TabsList>
 
-									{/* Campaign Selection */}
-									<FormField
-										control={form.control}
-										name="campaign_id"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Campaign</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													value={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder="Select a campaign" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{campaigns && campaigns.length > 0 ? (
-															campaigns.map((campaign) => (
-																<SelectItem key={campaign.id} value={campaign.id}>
-																	{campaign.name}
-																</SelectItem>
-															))
-														) : (
-															<SelectItem value="no-campaigns" disabled>
-																No campaigns available
-															</SelectItem>
-														)}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+					<TabsContent value="details">
+						<Card>
+							<CardHeader>
+								<CardTitle>Job Details</CardTitle>
+								<CardDescription>
+									Update the job information
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<Form {...form}>
+									<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											{/* Client Selection */}
+											<FormField
+												control={form.control}
+												name="client_id"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Client</FormLabel>
+														<Select
+															onValueChange={field.onChange}
+															value={field.value}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select a client" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																{clients && clients.length > 0 ? (
+																	clients.map((client) => (
+																		<SelectItem key={client.id} value={client.id}>
+																			{client.name}
+																		</SelectItem>
+																	))
+																) : (
+																	<SelectItem value="no-clients" disabled>
+																		No clients available
+																	</SelectItem>
+																)}
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
 
-									{/* Provider Selection */}
-									<FormField
-										control={form.control}
-										name="provider_id"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Provider</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													value={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder="Select a provider" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{providers && providers.length > 0 ? (
-															providers.map((provider) => (
-																<SelectItem key={provider.id} value={provider.id}>
-																	{provider.name}
-																</SelectItem>
-															))
-														) : (
-															<SelectItem value="no-providers" disabled>
-																No providers available
-															</SelectItem>
-														)}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+											{/* Campaign Selection */}
+											<FormField
+												control={form.control}
+												name="campaign_id"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Campaign</FormLabel>
+														<Select
+															onValueChange={field.onChange}
+															value={field.value}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select a campaign" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																{campaigns && campaigns.length > 0 ? (
+																	campaigns.map((campaign) => (
+																		<SelectItem key={campaign.id} value={campaign.id}>
+																			{campaign.name}
+																		</SelectItem>
+																	))
+																) : (
+																	<SelectItem value="no-campaigns" disabled>
+																		No campaigns available
+																	</SelectItem>
+																)}
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
 
-									{/* Manager Selection */}
-									<FormField
-										control={form.control}
-										name="manager_id"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Manager</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													value={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder="Select a manager" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{managers && managers.length > 0 ? (
-															managers.map((manager) => (
-																<SelectItem key={manager.id} value={manager.id}>
-																	{manager.name}
-																</SelectItem>
-															))
-														) : (
-															<SelectItem value="no-managers" disabled>
-																No managers available
-															</SelectItem>
-														)}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+											{/* Provider Selection */}
+											<FormField
+												control={form.control}
+												name="provider_id"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Provider</FormLabel>
+														<Select
+															onValueChange={field.onChange}
+															value={field.value}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select a provider" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																{providers && providers.length > 0 ? (
+																	providers.map((provider) => (
+																		<SelectItem key={provider.id} value={provider.id}>
+																			{provider.name}
+																		</SelectItem>
+																	))
+																) : (
+																	<SelectItem value="no-providers" disabled>
+																		No providers available
+																	</SelectItem>
+																)}
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
 
-									{/* Value */}
-									<FormField
-										control={form.control}
-										name="value"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Value</FormLabel>
-												<FormControl>
-													<Input
-														type="number"
-														min="0"
-														step="0.01"
-														placeholder="Enter value"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+											{/* Manager Selection */}
+											<FormField
+												control={form.control}
+												name="manager_id"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Manager</FormLabel>
+														<Select
+															onValueChange={field.onChange}
+															value={field.value}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select a manager" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																{managers && managers.length > 0 ? (
+																	managers.map((manager) => (
+																		<SelectItem key={manager.id} value={manager.id}>
+																			{manager.name}
+																		</SelectItem>
+																	))
+																) : (
+																	<SelectItem value="no-managers" disabled>
+																		No managers available
+																	</SelectItem>
+																)}
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
 
-									{/* Currency */}
-									<FormField
-										control={form.control}
-										name="currency"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Currency</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													value={field.value}
-												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder="Select currency" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{currencyOptions.map((option) => (
-															<SelectItem key={option.value} value={option.value}>
-																{option.label}
-															</SelectItem>
+											{/* Value */}
+											<FormField
+												control={form.control}
+												name="value"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Value</FormLabel>
+														<FormControl>
+															<Input
+																type="number"
+																min="0"
+																step="0.01"
+																placeholder="Enter value"
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+
+											{/* Currency */}
+											<FormField
+												control={form.control}
+												name="currency"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Currency</FormLabel>
+														<Select
+															onValueChange={field.onChange}
+															value={field.value}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select currency" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																{currencyOptions.map((option) => (
+																	<SelectItem key={option.value} value={option.value}>
+																		{option.label}
+																	</SelectItem>
+																))}
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+
+											{/* Status */}
+											<FormField
+												control={form.control}
+												name="status"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Status</FormLabel>
+														<Select
+															onValueChange={field.onChange}
+															value={field.value}
+														>
+															<FormControl>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select status" />
+																</SelectTrigger>
+															</FormControl>
+															<SelectContent>
+																{statusOptions.map((option) => (
+																	<SelectItem key={option.value} value={option.value}>
+																		{option.label}
+																	</SelectItem>
+																))}
+															</SelectContent>
+														</Select>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+
+											{/* Due Date */}
+											<FormField
+												control={form.control}
+												name="due_date"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Due Date (optional)</FormLabel>
+														<FormControl>
+															<Input
+																type="date"
+																placeholder="Enter due date"
+																{...field}
+																value={field.value || ""}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</div>
+
+										{/* Months */}
+										<FormField
+											control={form.control}
+											name="months"
+											render={() => (
+												<FormItem>
+													<div className="mb-4">
+														<FormLabel>Months</FormLabel>
+														<p className="text-sm text-gray-500 dark:text-gray-400">
+															Select months this job applies to
+														</p>
+													</div>
+													<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+														{months.map((month) => (
+															<FormField
+																key={month.value}
+																control={form.control}
+																name="months"
+																render={({ field }) => {
+																	return (
+																		<FormItem
+																			key={month.value}
+																			className="flex flex-row items-start space-x-3 space-y-0"
+																		>
+																			<FormControl>
+																				<Checkbox
+																					checked={field.value?.includes(month.value)}
+																					onCheckedChange={(checked) => {
+																						return checked
+																							? field.onChange([...field.value, month.value])
+																							: field.onChange(
+																								field.value?.filter(
+																									(value) => value !== month.value
+																								)
+																							);
+																					}}
+																				/>
+																			</FormControl>
+																			<FormLabel className="font-normal cursor-pointer">
+																				{month.label}
+																			</FormLabel>
+																		</FormItem>
+																	);
+																}}
+															/>
 														))}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
+													</div>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
 
-									{/* Status */}
-									<FormField
-										control={form.control}
-										name="status"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Status</FormLabel>
-												<Select
-													onValueChange={field.onChange}
-													value={field.value}
+										{/* Notes */}
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+											<FormField
+												control={form.control}
+												name="public_notes"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Public Notes (optional)</FormLabel>
+														<FormControl>
+															<Textarea
+																placeholder="Notes visible to all parties"
+																className="resize-none"
+																{...field}
+																value={field.value || ""}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+
+											<FormField
+												control={form.control}
+												name="private_notes"
+												render={({ field }) => (
+													<FormItem>
+														<FormLabel>Private Notes (optional)</FormLabel>
+														<FormControl>
+															<Textarea
+																placeholder="Internal notes"
+																className="resize-none"
+																{...field}
+																value={field.value || ""}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>
+										</div>
+
+										{/* Checkboxes */}
+										<div className="space-y-4">
+											<FormField
+												control={form.control}
+												name="paid"
+												render={({ field }) => (
+													<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
+														<FormControl>
+															<Checkbox
+																checked={field.value}
+																onCheckedChange={field.onChange}
+															/>
+														</FormControl>
+														<div className="space-y-1 leading-none">
+															<FormLabel>Paid</FormLabel>
+															<p className="text-sm text-slate-500 dark:text-slate-400">
+																Mark this job as paid
+															</p>
+														</div>
+													</FormItem>
+												)}
+											/>
+
+											<FormField
+												control={form.control}
+												name="manager_ok"
+												render={({ field }) => (
+													<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
+														<FormControl>
+															<Checkbox
+																checked={field.value}
+																onCheckedChange={field.onChange}
+															/>
+														</FormControl>
+														<div className="space-y-1 leading-none">
+															<FormLabel>Manager Approval</FormLabel>
+															<p className="text-sm text-slate-500 dark:text-slate-400">
+																Mark this job as approved by manager
+															</p>
+														</div>
+													</FormItem>
+												)}
+											/>
+										</div>
+
+										<div className="flex justify-between pt-4">
+											<Button variant="outline" onClick={() => navigate("/jobs")}>
+												<ArrowLeft className="mr-2 h-4 w-4" />
+												Back to Jobs
+											</Button>
+											<div className="flex justify-end space-x-4">
+												<Button
+													type="button"
+													variant="outline"
+													onClick={() => navigate("/jobs")}
 												>
-													<FormControl>
-														<SelectTrigger>
-															<SelectValue placeholder="Select status" />
-														</SelectTrigger>
-													</FormControl>
-													<SelectContent>
-														{statusOptions.map((option) => (
-															<SelectItem key={option.value} value={option.value}>
-																{option.label}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
-									{/* Due Date */}
-									<FormField
-										control={form.control}
-										name="due_date"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Due Date (optional)</FormLabel>
-												<FormControl>
-													<Input
-														type="date"
-														placeholder="Enter due date"
-														{...field}
-														value={field.value || ""}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								{/* Months */}
-								<FormField
-									control={form.control}
-									name="months"
-									render={() => (
-										<FormItem>
-											<div className="mb-4">
-												<FormLabel>Months</FormLabel>
-												<p className="text-sm text-gray-500 dark:text-gray-400">
-													Select months this job applies to
-												</p>
+													Cancel
+												</Button>
+												<Button type="submit" disabled={updateJob.isPending}>
+													{updateJob.isPending ? "Updating..." : "Update Job"}
+												</Button>
 											</div>
-											<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-												{months.map((month) => (
-													<FormField
-														key={month.value}
-														control={form.control}
-														name="months"
-														render={({ field }) => {
-															return (
-																<FormItem
-																	key={month.value}
-																	className="flex flex-row items-start space-x-3 space-y-0"
-																>
-																	<FormControl>
-																		<Checkbox
-																			checked={field.value?.includes(month.value)}
-																			onCheckedChange={(checked) => {
-																				return checked
-																					? field.onChange([...field.value, month.value])
-																					: field.onChange(
-																						field.value?.filter(
-																							(value) => value !== month.value
-																						)
-																					);
-																			}}
-																		/>
-																	</FormControl>
-																	<FormLabel className="font-normal cursor-pointer">
-																		{month.label}
-																	</FormLabel>
-																</FormItem>
-															);
-														}}
-													/>
-												))}
-											</div>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+										</div>
+									</form>
+								</Form>
+							</CardContent>
+						</Card>
+					</TabsContent>
 
-								{/* Notes */}
-								<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-									<FormField
-										control={form.control}
-										name="public_notes"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Public Notes (optional)</FormLabel>
-												<FormControl>
-													<Textarea
-														placeholder="Notes visible to all parties"
-														className="resize-none"
-														{...field}
-														value={field.value || ""}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
+					<TabsContent value="documents">
+						<Card>
+							<CardHeader>
+								<CardTitle>Job Documents</CardTitle>
+								<CardDescription>
+									Upload and manage documents for this job
+								</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<div className="space-y-6">
+									{/* Make.com Webhook URL Input */}
+									<div className="space-y-4">
+										<h3 className="text-sm font-medium">Document Webhook</h3>
+										<p className="text-sm text-muted-foreground">
+											Enter your Make.com webhook URL to process uploaded documents
+										</p>
+										<Input 
+											type="url" 
+											placeholder="https://hook.eu1.make.com/..." 
+											className="max-w-xl"
+											{...form.register('make_webhook_url')}
+										/>
+										<p className="text-xs text-muted-foreground">
+											All uploaded documents will be sent to this webhook for processing
+										</p>
+									</div>
+									
+									<div className="border-t pt-6">
+										{id && (
+											<DocumentUploader
+												jobId={id}
+												existingDocuments={documents}
+												onDocumentsUpdated={handleDocumentsUpdated}
+												webhookUrl={form.watch('make_webhook_url')}
+											/>
 										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="private_notes"
-										render={({ field }) => (
-											<FormItem>
-												<FormLabel>Private Notes (optional)</FormLabel>
-												<FormControl>
-													<Textarea
-														placeholder="Internal notes"
-														className="resize-none"
-														{...field}
-														value={field.value || ""}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								{/* Checkboxes */}
-								<div className="space-y-4">
-									<FormField
-										control={form.control}
-										name="paid"
-										render={({ field }) => (
-											<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
-												<FormControl>
-													<Checkbox
-														checked={field.value}
-														onCheckedChange={field.onChange}
-													/>
-												</FormControl>
-												<div className="space-y-1 leading-none">
-													<FormLabel>Paid</FormLabel>
-													<p className="text-sm text-slate-500 dark:text-slate-400">
-														Mark this job as paid
-													</p>
-												</div>
-											</FormItem>
-										)}
-									/>
-
-									<FormField
-										control={form.control}
-										name="manager_ok"
-										render={({ field }) => (
-											<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
-												<FormControl>
-													<Checkbox
-														checked={field.value}
-														onCheckedChange={field.onChange}
-													/>
-												</FormControl>
-												<div className="space-y-1 leading-none">
-													<FormLabel>Manager Approval</FormLabel>
-													<p className="text-sm text-slate-500 dark:text-slate-400">
-														Mark this job as approved by manager
-													</p>
-												</div>
-											</FormItem>
-										)}
-									/>
-								</div>
-
-								<div className="flex justify-between pt-4">
-									<Button variant="outline" onClick={() => navigate("/jobs")}>
-										<ArrowLeft className="mr-2 h-4 w-4" />
-										Back to Jobs
-									</Button>
-									<div className="flex justify-end space-x-4">
-										<Button
-											type="button"
-											variant="outline"
+									</div>
+									
+									<div className="flex justify-between pt-4">
+										<Button variant="outline" onClick={() => setCurrentTab("details")}>
+											<ArrowLeft className="mr-2 h-4 w-4" />
+											Back to Details
+										</Button>
+										<Button 
+											variant="outline" 
 											onClick={() => navigate("/jobs")}
 										>
-											Cancel
-										</Button>
-										<Button type="submit" disabled={updateJob.isPending}>
-											{updateJob.isPending ? "Updating..." : "Update Job"}
+											Done
 										</Button>
 									</div>
 								</div>
-							</form>
-						</Form>
-					</CardContent>
-				</Card>
+							</CardContent>
+						</Card>
+					</TabsContent>
+				</Tabs>
 			</div>
 		</DashboardLayout>
 	);
