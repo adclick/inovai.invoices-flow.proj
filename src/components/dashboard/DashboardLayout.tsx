@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import ThemeToggle from "@/components/theme/ThemeToggle";
 
 interface DashboardLayoutProps {
 	children: React.ReactNode;
@@ -135,6 +137,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
+						<ThemeToggle />
 						<div className="flex items-center space-x-3">
 							<div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
 								<span className="text-primary font-medium text-sm">
