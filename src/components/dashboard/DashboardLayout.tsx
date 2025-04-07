@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 interface DashboardLayoutProps {
 	children: React.ReactNode;
@@ -44,7 +46,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	];
 
 	return (
-		<div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
+		<div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex transition-colors duration-200">
 			<div
 				className={`bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-all duration-300 ease-in-out
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10`}
@@ -87,7 +89,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					{/* Management Actions Section */}
 					{sidebarOpen && (
 						<>
-							<Separator className="my-4" />
+							<Separator className="my-4 dark:bg-slate-700" />
 							<div className="mb-2">
 								<h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 px-3 mb-2">
 									MANAGEMENT
@@ -111,7 +113,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</>
 					)}
 
-					<Separator className="my-4" />
+					<Separator className="my-4 dark:bg-slate-700" />
 					<button
 						onClick={signOut}
 						className="flex w-full items-center px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
@@ -135,6 +137,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
+						<ThemeToggle />
 						<div className="flex items-center space-x-3">
 							<div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
 								<span className="text-primary font-medium text-sm">

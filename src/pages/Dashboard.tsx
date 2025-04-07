@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -141,7 +142,7 @@ const Dashboard: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Search invoices..."
-                    className="pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-64"
+                    className="pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-64 text-slate-900 dark:text-white"
                   />
                 </div>
                 <Button variant="outline" size="icon" className="rounded-lg border-slate-200 dark:border-slate-700">
