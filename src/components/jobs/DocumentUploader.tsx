@@ -119,7 +119,20 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
       
       // Call the callback to update documents in parent component
       onDocumentsUpdated(newDocuments);
-      
+
+			const { 
+				error: webhookError 
+			} = await supabase.functions.invoke('job-document-uploader-webhook', {
+				body: { 
+					"job_id": jobId,
+					"file_url": publicUrl,
+					"file_name": fileName,
+					"timestamp": Date.now() 
+				},
+			});
+
+			if (webhookError) throw error;
+
       toast({
         title: "File uploaded successfully",
         description: `${file.name} has been uploaded and linked to this job.`,

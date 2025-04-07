@@ -57,7 +57,6 @@ async function handleDocumentUploadWebhook(req: Request) {
         job_id: payload.job_id,
         file_url: payload.file_url,
         file_name: payload.file_name,
-        uploaded_by: payload.uploaded_by || null,
         timestamp: payload.timestamp
       })
     });
