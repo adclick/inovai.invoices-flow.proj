@@ -12,6 +12,8 @@ import {
 	Search, UserCog,
 	BriefcaseBusiness,
 	Sidebar,
+	ListFilter,
+	LayoutGrid,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -36,7 +38,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 	const navItems = [
 		{ path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-		{ path: "/jobs", icon: BriefcaseBusiness, label: "Jobs" },
+	];
+
+	const jobItems = [
+		{ path: "/jobs/all", icon: ListFilter, label: "All Jobs" },
+		{ path: "/jobs/grouped", icon: LayoutGrid, label: "Jobs by Client" },
 	];
 
 	const managementItems = [
@@ -87,6 +93,37 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						))}
 					</ul>
 
+					{/* Jobs Section */}
+					{sidebarOpen && (
+						<>
+							<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
+							<div className="mb-2">
+								<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
+									JOBS
+								</h3>
+								<ul className="space-y-1">
+									{
+										jobItems.map((item) => (
+											<li key={item.path}>
+												<Link
+													to={item.path}
+													className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200
+														${location.pathname.startsWith(item.path)
+															? 'bg-white/10 text-white font-medium dark:bg-slate-700 dark:text-primary'
+															: 'text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white'
+														}`}
+												>
+													<item.icon size={18} />
+													<span className="ml-3 text-sm">{item.label}</span>
+												</Link>
+											</li>
+										))
+									}
+								</ul>
+							</div>
+						</>
+					)}
+
 					{/* Management Actions Section */}
 					{sidebarOpen && (
 						<>
@@ -101,7 +138,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 											<li key={item.path}>
 												<Link
 													to={item.path}
-													className="flex items-center px-3 py-2 rounded-lg text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white transition-colors duration-200"
+													className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200
+														${location.pathname.startsWith(item.path)
+															? 'bg-white/10 text-white font-medium dark:bg-slate-700 dark:text-primary'
+															: 'text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white'
+														}`}
 												>
 													<item.icon size={18} />
 													<span className="ml-3 text-sm">{item.label}</span>

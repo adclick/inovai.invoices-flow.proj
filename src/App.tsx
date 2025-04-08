@@ -21,7 +21,7 @@ import EditManager from "./pages/managers/EditManager";
 import ProvidersList from "./pages/providers/ProvidersList";
 import CreateProvider from "./pages/providers/CreateProvider";
 import EditProvider from "./pages/providers/EditProvider";
-import JobsList from "./pages/jobs/JobsList";
+import JobsRouter from "./pages/jobs/JobsRouter";
 import CreateJob from "./pages/jobs/CreateJob";
 import EditJob from "./pages/jobs/EditJob";
 import AcceptInvitation from "./pages/AcceptInvitation";
@@ -57,7 +57,7 @@ const App = () => (
 								<Route path="/providers" element={<ProvidersList />} />
 								<Route path="/providers/create" element={<CreateProvider />} />
 								<Route path="/providers/edit/:id" element={<EditProvider />} />
-								<Route path="/jobs" element={<JobsList />} />
+								<Route path="/jobs/*" element={<JobsRouter />} />
 								<Route path="/jobs/create" element={<CreateJob />} />
 								<Route path="/jobs/edit/:id" element={<EditJob />} />
 								{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -1,12 +1,61 @@
+
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Clock, CheckCircle, XCircle, AlertCircle, Users, FileText, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard: React.FC = () => {
   const { user, isLoading } = useAuth();
+
+  // Query to fetch job statistics
+  const { data: stats } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
+      // Get total jobs count
+      const { data: totalJobs, error: totalJobsError } = await supabase
+        .from("jobs")
+        .select("id", { count: "exact" });
+        
+      if (totalJobsError) throw totalJobsError;
+        
+      // Get pending jobs count (active jobs)
+      const { count: pendingCount, error: pendingError } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact" })
+        .eq("status", "active");
+        
+      if (pendingError) throw pendingError;
+      
+      // Get approved jobs count (paid)
+      const { count: approvedCount, error: approvedError } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact" })
+        .eq("paid", true);
+        
+      if (approvedError) throw approvedError;
+        
+      // Get rejected jobs count (closed)
+      const { count: rejectedCount, error: rejectedError } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact" })
+        .eq("status", "closed");
+        
+      if (rejectedError) throw rejectedError;
+        
+      return {
+        total: totalJobs?.length || 0,
+        pending: pendingCount || 0,
+        approved: approvedCount || 0,
+        rejected: rejectedCount || 0
+      };
+    },
+    // Don't refetch on window focus to reduce API calls
+    refetchOnWindowFocus: false,
+  });
 
   if (isLoading) {
     return (
@@ -43,7 +92,7 @@ const Dashboard: React.FC = () => {
                 <span className="text-sm text-slate-600 dark:text-slate-300">All time</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Total Jobs</h2>
-              <p className="text-3xl font-bold text-primary dark:text-primary/90">0</p>
+              <p className="text-3xl font-bold text-primary dark:text-primary/90">{stats?.total || 0}</p>
             </div>
           </div>
 
@@ -56,7 +105,7 @@ const Dashboard: React.FC = () => {
                 <span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Review</h2>
-              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">0</p>
+              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pending || 0}</p>
             </div>
           </div>
 
@@ -69,7 +118,7 @@ const Dashboard: React.FC = () => {
                 <span className="text-sm text-slate-600 dark:text-slate-300">Processed successfully</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Approved</h2>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400">0</p>
+              <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats?.approved || 0}</p>
             </div>
           </div>
 
@@ -82,7 +131,7 @@ const Dashboard: React.FC = () => {
                 <span className="text-sm text-slate-600 dark:text-slate-300">Requires correction</span>
               </div>
               <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Rejected</h2>
-              <p className="text-3xl font-bold text-red-600 dark:text-red-400">0</p>
+              <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats?.rejected || 0}</p>
             </div>
           </div>
         </div>
