@@ -15,4 +15,5 @@ export type Job = {
   public_notes?: string | null;
   private_notes?: string | null;
   documents?: string[] | null;
+  public_token?: string | null;
 };

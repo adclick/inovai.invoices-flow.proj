@@ -16,60 +16,31 @@ const PublicUpload = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
 
-  // Validate token and jobId
-  const { data: job, isLoading, error } = useQuery<Job | null>({
-    queryKey: ["public-job", jobId, token],
+  // Validate token and jobId using the edge function
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["public-job-validation", jobId, token],
     queryFn: async () => {
-      if (!jobId || !token) return null;
+      if (!jobId || !token) return { valid: false };
 
-      // We're checking both the token validity and that the job is active
-      const { data, error } = await supabase
-        .from("jobs")
-        .select(`
-          id, 
-          client_id, 
-          campaign_id, 
-          provider_id, 
-          manager_id, 
-          value, 
-          currency, 
-          status, 
-          paid, 
-          manager_ok, 
-          months, 
-          due_date, 
-          public_notes, 
-          private_notes, 
-          documents,
-          clients (name),
-          campaigns (name),
-          providers (name)
-        `)
-        .eq("id", jobId)
-        // This assumes we have a secure token we're validating against
-        // In a real implementation, you'd add a database column for this token
-        .eq("status", "active")
-        .single();
-
-      if (error) throw error;
-
-      // Simple token validation example
-      // In a real implementation, you'd verify against a token stored in the database
-      // This is just a placeholder for the concept
-      const isValidToken = token === "secure-token"; // Replace with proper validation
-      
-      if (!isValidToken || data.status !== "active") {
-        return null;
+      try {
+        const { data, error } = await supabase.functions.invoke('validate-job-token', {
+          body: { jobId, token },
+        });
+        
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error("Error validating token:", error);
+        return { valid: false };
       }
-
-      return data as unknown as Job;
     },
     retry: false,
   });
 
-  const clientName = (job as any)?.clients?.name || "Client";
-  const campaignName = (job as any)?.campaigns?.name || "Campaign";
-  const providerName = (job as any)?.providers?.name || "Provider";
+  const job = data?.valid ? data.job : null;
+  const clientName = job?.clients?.name || "Client";
+  const campaignName = job?.campaigns?.name || "Campaign";
+  const providerName = job?.providers?.name || "Provider";
   const formattedDueDate = job?.due_date 
     ? new Date(job.due_date).toLocaleDateString() 
     : "No deadline";
@@ -95,7 +66,7 @@ const PublicUpload = () => {
     );
   }
 
-  if (error || !job) {
+  if (error || !data?.valid || !job) {
     return (
       <div className="flex min-h-screen bg-gradient-to-br from-primary/10 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         <div className="container max-w-3xl mx-auto px-4 py-16">

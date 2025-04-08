@@ -154,6 +154,7 @@ export type Database = {
           provider_id: string
           provider_notification_schedule_id: string | null
           public_notes: string | null
+          public_token: string | null
           status: Database["public"]["Enums"]["job_status"]
           updated_at: string
           value: number
@@ -174,6 +175,7 @@ export type Database = {
           provider_id: string
           provider_notification_schedule_id?: string | null
           public_notes?: string | null
+          public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
           value: number
@@ -194,6 +196,7 @@ export type Database = {
           provider_id?: string
           provider_notification_schedule_id?: string | null
           public_notes?: string | null
+          public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
           value?: number
