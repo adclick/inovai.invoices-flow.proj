@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-300">All time</span>
               </div>
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Total Invoices</h2>
+              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Total Jobs</h2>
               <p className="text-3xl font-bold text-primary dark:text-primary/90">0</p>
             </div>
           </div>
@@ -114,8 +114,8 @@ const Dashboard: React.FC = () => {
                   <Users className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Active Freelancers</h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Freelancers with pending invoices</p>
+                  <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Active Providers</h2>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Providers with pending invoices</p>
                 </div>
               </div>
               <div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
@@ -133,7 +133,7 @@ const Dashboard: React.FC = () => {
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <FileText className="w-5 h-5 text-primary" />
                 </div>
-                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Invoice Management</h2>
+                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Jobs Management</h2>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="relative">
