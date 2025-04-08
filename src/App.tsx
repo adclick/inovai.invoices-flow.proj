@@ -26,6 +26,7 @@ import CreateJob from "./pages/jobs/CreateJob";
 import EditJob from "./pages/jobs/EditJob";
 import AcceptInvitation from "./pages/AcceptInvitation";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import PublicUpload from "./pages/PublicUpload";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => (
 						<Routes>
 							<Route path="/" element={<Index />} />
 							<Route path="/accept-invitation" element={<AcceptInvitation />} />
+                            <Route path="/upload/:jobId/:token" element={<PublicUpload />} />
 
 							<Route element={<ProtectedRoute />}>
 								<Route path="/dashboard" element={<Dashboard />} />

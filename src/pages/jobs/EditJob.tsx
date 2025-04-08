@@ -36,6 +36,7 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { DocumentUploader } from "@/components/jobs/DocumentUploader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Job } from "@/types/job";
 
 const jobSchema = z.object({
   client_id: z.string().min(1, "Please select a client"),
