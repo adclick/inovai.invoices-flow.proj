@@ -49,8 +49,8 @@ const JobsAllList: React.FC = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [paymentFilter, setPaymentFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [paymentFilter, setPaymentFilter] = useState<string>("all");
   const itemsPerPage = 10;
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -113,8 +113,8 @@ const JobsAllList: React.FC = () => {
         job.provider_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         job.manager_name?.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesStatus = statusFilter === "" || job.status === statusFilter;
-      const matchesPayment = paymentFilter === "" || 
+      const matchesStatus = statusFilter === "all" || job.status === statusFilter;
+      const matchesPayment = paymentFilter === "all" || 
         (paymentFilter === "paid" && job.paid) || 
         (paymentFilter === "pending" && !job.paid);
       
@@ -246,7 +246,7 @@ const JobsAllList: React.FC = () => {
                     <SelectValue placeholder="Status Filter" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                     <SelectItem value="closed">Closed</SelectItem>
@@ -258,7 +258,7 @@ const JobsAllList: React.FC = () => {
                     <SelectValue placeholder="Payment Filter" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Payments</SelectItem>
+                    <SelectItem value="all">All Payments</SelectItem>
                     <SelectItem value="paid">Paid</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                   </SelectContent>
