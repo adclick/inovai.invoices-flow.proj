@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 
 type ProviderDocumentUploaderProps = {
   jobId: string;
+  token: string;
   existingDocuments: string[] | null;
   onUploadComplete: (newDocuments: string[]) => void;
   isSubmitting: boolean;
@@ -27,6 +28,7 @@ type FileUploadState = {
 
 export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> = ({
   jobId,
+  token,
   existingDocuments = [],
   onUploadComplete,
   isSubmitting,
@@ -101,24 +103,8 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
         .filter(result => result.success && result.url)
         .map(result => result.url as string);
       
-      // Combine with existing documents
-      const allDocuments = [...(existingDocuments || []), ...newUrls];
-      
-      // Update job documents in database
-      const { error: updateError } = await supabase
-        .from('jobs')
-        .update({ documents: allDocuments })
-        .eq('id', jobId);
-
-      if (updateError) {
-        console.error("Error updating job documents:", updateError);
-        toast.error("Failed to update job with new documents");
-        setIsSubmitting(false);
-        return false;
-      }
-
-      // Call the callback to update documents in parent component
-      onUploadComplete(allDocuments);
+      // Use the final document list provided by the server
+      onUploadComplete(newUrls);
       
       toast.success("Files uploaded successfully");
       setIsSubmitting(false);
@@ -140,62 +126,41 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
     );
 
     try {
-      // Generate a unique file path
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${jobId}/${uuidv4()}.${fileExt}`;
-      const filePath = fileName;
-
       // Start with 0 progress
       setUploadingFiles(prev =>
         prev.map(fs => fs.id === id ? { ...fs, progress: 0 } : fs)
       );
 
-      // Upload to Supabase Storage
-      const { error } = await supabase.storage
-        .from('job-documents')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+      // Create a FormData object to send the file
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('jobId', jobId);
+      formData.append('token', token);
 
-      if (error) throw error;
+      // Upload file through edge function
+      const { data, error } = await supabase.functions.invoke('upload-provider-document', {
+        body: formData,
+      });
+
+      if (error || !data.success) {
+        throw error || new Error(data.error || 'Upload failed');
+      }
 
       // Set progress to 100% after successful upload
       setUploadingFiles(prev =>
         prev.map(fs => fs.id === id ? { ...fs, progress: 100 } : fs)
       );
 
-      // Get the public URL for the file
-      const { data: { publicUrl } } = supabase.storage
-        .from('job-documents')
-        .getPublicUrl(filePath);
-
-      const {
-        data: webhookResponseData,
-        error: webhookError
-      } = await supabase.functions.invoke('job-document-uploader-webhook', {
-        body: {
-          "job_id": jobId,
-          "file_url": publicUrl,
-          "file_name": fileName,
-          "timestamp": Date.now()
-        },
-      });
-
-      if (webhookError) throw webhookError;
-
-      const webhookFileUrl = webhookResponseData?.data;
-
-      // Update file status to completed
+      // Update file status to completed with the URL returned from the server
       setUploadingFiles(prev =>
         prev.map(fs => fs.id === id ? {
           ...fs,
           status: "completed" as const,
-          url: webhookFileUrl,
+          url: data.fileUrl,
         } : fs)
       );
 
-      return { success: true, url: webhookFileUrl };
+      return { success: true, url: data.fileUrl };
 
     } catch (error: any) {
       console.error("Upload error:", error);

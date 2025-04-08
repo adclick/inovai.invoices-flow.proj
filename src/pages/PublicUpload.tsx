@@ -191,6 +191,7 @@ const PublicUpload = () => {
               <h3 className="text-lg font-medium mb-4">Upload Files</h3>
               <ProviderDocumentUploader
                 jobId={job.id}
+                token={token || ''}
                 existingDocuments={job.documents}
                 onUploadComplete={handleUploadComplete}
                 isSubmitting={isSubmitting}

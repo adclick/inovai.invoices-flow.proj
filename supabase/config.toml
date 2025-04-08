@@ -90,3 +90,6 @@ password = ""
 [functions]
 [functions.validate-job-token]
 verify_jwt = false
+[functions.upload-provider-document]
+verify_jwt = false
+
