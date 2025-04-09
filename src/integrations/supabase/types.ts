@@ -77,66 +77,6 @@ export type Database = {
         }
         Relationships: []
       }
-      custom_fields: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          type: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          type?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      invitations: {
-        Row: {
-          created_at: string
-          created_by: string
-          email: string
-          expires_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          token: string
-          used: boolean
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          email: string
-          expires_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          token: string
-          used?: boolean
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          email?: string
-          expires_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          token?: string
-          used?: boolean
-        }
-        Relationships: []
-      }
       jobs: {
         Row: {
           campaign_id: string
@@ -152,7 +92,6 @@ export type Database = {
           paid: boolean
           private_notes: string | null
           provider_id: string
-          provider_notification_schedule_id: string | null
           public_notes: string | null
           public_token: string | null
           status: Database["public"]["Enums"]["job_status"]
@@ -173,7 +112,6 @@ export type Database = {
           paid?: boolean
           private_notes?: string | null
           provider_id: string
-          provider_notification_schedule_id?: string | null
           public_notes?: string | null
           public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
@@ -194,7 +132,6 @@ export type Database = {
           paid?: boolean
           private_notes?: string | null
           provider_id?: string
-          provider_notification_schedule_id?: string | null
           public_notes?: string | null
           public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
@@ -228,55 +165,6 @@ export type Database = {
             columns: ["provider_id"]
             isOneToOne: false
             referencedRelation: "providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "jobs_provider_notification_schedule_id_fkey"
-            columns: ["provider_notification_schedule_id"]
-            isOneToOne: false
-            referencedRelation: "providers_notifications_schedules"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      jobs_custom_fields: {
-        Row: {
-          created_at: string
-          custom_field_id: string
-          id: string
-          job_id: string
-          updated_at: string
-          value: string | null
-        }
-        Insert: {
-          created_at?: string
-          custom_field_id: string
-          id?: string
-          job_id: string
-          updated_at?: string
-          value?: string | null
-        }
-        Update: {
-          created_at?: string
-          custom_field_id?: string
-          id?: string
-          job_id?: string
-          updated_at?: string
-          value?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "jobs_custom_fields_custom_field_id_fkey"
-            columns: ["custom_field_id"]
-            isOneToOne: false
-            referencedRelation: "custom_fields"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "jobs_custom_fields_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -359,33 +247,6 @@ export type Database = {
           created_at?: string
           email?: string
           iban?: string | null
-          id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      providers_notifications_schedules: {
-        Row: {
-          created_at: string
-          days: number[]
-          hour: number
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          days: number[]
-          hour: number
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          days?: number[]
-          hour?: number
           id?: string
           name?: string
           updated_at?: string
