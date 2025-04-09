@@ -4,7 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { useJobsData, Job, formatCurrency } from "@/hooks/useJobsData";
+import { useJobsData, formatCurrency } from "@/hooks/useJobsData";
+import { Job } from "@/types/job";
 import {
   Table,
   TableBody,

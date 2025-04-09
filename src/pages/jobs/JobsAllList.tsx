@@ -34,7 +34,8 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
-import { useJobsData, formatCurrency, Job } from "@/hooks/useJobsData";
+import { useJobsData, formatCurrency } from "@/hooks/useJobsData";
+import { Job } from "@/types/job";
 import { Input } from "@/components/ui/input";
 import {
   Select,
