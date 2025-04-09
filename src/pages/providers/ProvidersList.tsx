@@ -210,6 +210,7 @@ const ProvidersList = () => {
                     <TableHead>Email</TableHead>
                     <TableHead>Country</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>IBAN</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -228,6 +229,7 @@ const ProvidersList = () => {
                           {provider.active ? "Active" : "Inactive"}
                         </span>
                       </TableCell>
+											<TableCell>{provider.iban}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Link

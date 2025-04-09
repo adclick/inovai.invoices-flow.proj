@@ -3,17 +3,11 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-	LayoutDashboard,
-	Users,
-	BarChart2, LogOut,
-	Menu,
-	X,
-	Bell,
-	Search, UserCog,
-	BriefcaseBusiness,
-	Sidebar,
-	ListFilter,
-	LayoutGrid,
+	LayoutDashboard, LogOut, UserCog, Sidebar, List,
+	Group,
+	Handshake,
+	Megaphone,
+	Wrench
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -22,6 +16,8 @@ import ThemeToggle from "@/components/theme/ThemeToggle";
 interface DashboardLayoutProps {
 	children: React.ReactNode;
 }
+
+const THEME_TOGGLE_ACTIVE = false;
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	const { user, signOut, checkHasRole } = useAuth();
@@ -41,15 +37,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	];
 
 	const jobItems = [
-		{ path: "/jobs/all", icon: ListFilter, label: "All Jobs" },
-		{ path: "/jobs/grouped", icon: LayoutGrid, label: "Jobs by Client" },
+		{ path: "/jobs/all", icon: List, label: "All Jobs" },
+		{ path: "/jobs/grouped", icon: Group, label: "By Campaign" },
 	];
 
 	const managementItems = [
-		{ path: "/providers", icon: UserCog, label: "Providers" },
+		{ path: "/providers", icon: Wrench, label: "Providers" },
 		{ path: "/managers", icon: UserCog, label: "Managers" },
-		{ path: "/clients", icon: Users, label: "Clients" },
-		{ path: "/campaigns", icon: BarChart2, label: "Campaigns" },
+		{ path: "/clients", icon: Handshake, label: "Clients" },
+		{ path: "/campaigns", icon: Megaphone, label: "Campaigns" },
 	];
 
 	return (
@@ -59,20 +55,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10`}
 			>
 				<div className="flex items-center justify-between h-16 px-4 border-b border-slate-200/20 dark:border-slate-700">
-					<div className={`flex items-center ${sidebarOpen ? '' : 'hidden'}`}>
+					<div className={`flex items-center`}>
 						<div className="p-2 rounded-full bg-white/10 dark:bg-primary/20 mr-2">
 							<div className="text-white dark:text-primary/90 font-bold text-lg">IF</div>
 						</div>
-						<span className="text-lg font-semibold text-white dark:text-white">InvoicesFlow</span>
+						<span className={`text-lg font-semibold text-white dark:text-white ${sidebarOpen ? '' : 'hidden'}`}>InvoicesFlow</span>
 					</div>
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={toggleSidebar}
-						className="rounded-lg hover:bg-white/10 dark:hover:bg-slate-700 text-white dark:text-white"
-					>
-						{sidebarOpen ? <Sidebar size={18} /> : <Sidebar size={18} />}
-					</Button>
 				</div>
 				<nav className="flex-1 p-4">
 					<ul className="space-y-1">
@@ -170,16 +158,18 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 				<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center px-6 sticky top-0">
 					<div className="flex-1 flex items-center">
 						<div className="relative w-full max-w-md hidden md:block">
-							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
-							<input
-								type="text"
-								placeholder="Search..."
-								className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20"
-							/>
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={toggleSidebar}
+								className="rounded-lg bg-white/10 hover:bg-white/10 dark:hover:bg-slate-700  dark:text-white"
+							>
+								{sidebarOpen ? <Sidebar size={18} /> : <Sidebar size={18} />}
+							</Button>
 						</div>
 					</div>
 					<div className="flex items-center space-x-4">
-						<ThemeToggle />
+						{THEME_TOGGLE_ACTIVE && <ThemeToggle /> }
 						<div className="flex items-center space-x-3">
 							<div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
 								<span className="text-primary font-medium text-sm">

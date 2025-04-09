@@ -41,7 +41,7 @@ const App = () => (
 						<Routes>
 							<Route path="/" element={<Index />} />
 							<Route path="/accept-invitation" element={<AcceptInvitation />} />
-                            <Route path="/upload/:jobId/:token" element={<PublicUpload />} />
+							<Route path="/upload/:jobId/:token" element={<PublicUpload />} />
 
 							<Route element={<ProtectedRoute />}>
 								<Route path="/dashboard" element={<Dashboard />} />

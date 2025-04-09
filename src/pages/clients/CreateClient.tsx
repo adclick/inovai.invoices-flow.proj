@@ -77,13 +77,7 @@ const CreateClient = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6">
-        <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate("/clients")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Clients
-          </Button>
-        </div>
+      <div className="p-6 max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Create New Client</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
@@ -91,7 +85,7 @@ const CreateClient = () => {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto bg-white dark:bg-slate-800 rounded-lg border p-6">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
