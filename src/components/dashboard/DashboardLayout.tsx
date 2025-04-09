@@ -6,7 +6,8 @@ import {
     Group,
     Handshake,
     Megaphone,
-    Wrench
+    Wrench,
+    LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -32,7 +33,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         return location.pathname === path;
     };
 
-    const NavItemWithTooltip = ({ path, icon: Icon, label }: { path: string, icon: React.ComponentType<{ size?: number }>, label: string }) => {
+    const NavItemWithTooltip = ({ path, icon: Icon, label }: { path: string, icon: LucideIcon, label: string }) => {
         const iconSize = 20; // Fixed icon size
         const isActive = isActiveRoute(path);
 
@@ -66,16 +67,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         );
     };
 
-    const navItems = [
+    const navItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
         { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     ];
 
-    const jobItems = [
+    const jobItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
         { path: "/jobs/all", icon: List, label: "All Jobs" },
         { path: "/jobs/grouped", icon: Group, label: "By Campaign" },
     ];
 
-    const managementItems = [
+    const managementItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
         { path: "/providers", icon: Wrench, label: "Providers" },
         { path: "/managers", icon: UserCog, label: "Managers" },
         { path: "/clients", icon: Handshake, label: "Clients" },
