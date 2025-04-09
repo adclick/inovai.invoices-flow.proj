@@ -78,9 +78,11 @@ const currencyOptions = [
 ];
 
 const statusOptions = [
-  { value: "inactive", label: "Inactive" },
-  { value: "active", label: "Active" },
-  { value: "closed", label: "Closed" },
+  { value: "New", label: "New" },
+  { value: "Manager OK", label: "Manager OK" },
+  { value: "Pending Invoice", label: "Pending Invoice" },
+  { value: "Pending Payment", label: "Pending Payment" },
+  { value: "Paid", label: "Paid" },
 ];
 
 const EditJob = () => {
@@ -91,6 +93,25 @@ const EditJob = () => {
   const [currentTab, setCurrentTab] = useState("details");
   const [documents, setDocuments] = useState<string[] | null>(null);
   const [previousStatus, setPreviousStatus] = useState<string | null>(null);
+
+  const form = useForm<JobFormValues>({
+    resolver: zodResolver(jobSchema),
+    defaultValues: {
+      client_id: "",
+      campaign_id: "",
+      provider_id: "",
+      manager_id: "",
+      value: 0,
+      currency: "euro",
+      status: "New",
+      paid: false,
+      manager_ok: false,
+      months: [],
+      due_date: "",
+      public_notes: "",
+      private_notes: "",
+    },
+  });
 
   const { data: job, isLoading: isLoadingJob } = useQuery<Job>({
     queryKey: ["job", id],
@@ -188,51 +209,6 @@ const EditJob = () => {
       return data;
     },
   });
-
-  const form = useForm<JobFormValues>({
-    resolver: zodResolver(jobSchema),
-    defaultValues: {
-      client_id: "",
-      campaign_id: "",
-      provider_id: "",
-      manager_id: "",
-      value: 0,
-      currency: "euro",
-      status: "inactive",
-      paid: false,
-      manager_ok: false,
-      months: [],
-      due_date: "",
-      public_notes: "",
-      private_notes: "",
-    },
-  });
-
-  useEffect(() => {
-    if (job) {
-      let formattedDueDate = "";
-      if (job.due_date) {
-        const date = new Date(job.due_date);
-        formattedDueDate = date.toISOString().split('T')[0];
-      }
-
-      form.reset({
-        client_id: job.client_id,
-        campaign_id: job.campaign_id,
-        provider_id: job.provider_id,
-        manager_id: job.manager_id,
-        value: job.value,
-        currency: job.currency,
-        status: job.status,
-        paid: job.paid,
-        manager_ok: job.manager_ok,
-        months: job.months,
-        due_date: formattedDueDate,
-        public_notes: job.public_notes || "",
-        private_notes: job.private_notes || "",
-      });
-    }
-  }, [job, form]);
 
   const updateJob = useMutation({
     mutationFn: async (values: JobFormValues) => {
@@ -387,7 +363,6 @@ const EditJob = () => {
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Client Selection */}
                       <FormField
                         control={form.control}
                         name="client_id"
@@ -422,7 +397,6 @@ const EditJob = () => {
                         )}
                       />
 
-                      {/* Campaign Selection */}
                       <FormField
                         control={form.control}
                         name="campaign_id"
@@ -457,7 +431,6 @@ const EditJob = () => {
                         )}
                       />
 
-                      {/* Provider Selection */}
                       <FormField
                         control={form.control}
                         name="provider_id"
@@ -492,7 +465,6 @@ const EditJob = () => {
                         )}
                       />
 
-                      {/* Manager Selection */}
                       <FormField
                         control={form.control}
                         name="manager_id"
@@ -527,7 +499,6 @@ const EditJob = () => {
                         )}
                       />
 
-                      {/* Value */}
                       <FormField
                         control={form.control}
                         name="value"
@@ -548,7 +519,6 @@ const EditJob = () => {
                         )}
                       />
 
-                      {/* Currency */}
                       <FormField
                         control={form.control}
                         name="currency"
@@ -577,7 +547,6 @@ const EditJob = () => {
                         )}
                       />
 
-                      {/* Status */}
                       <FormField
                         control={form.control}
                         name="status"
@@ -606,7 +575,6 @@ const EditJob = () => {
                         )}
                       />
 
-                      {/* Due Date */}
                       <FormField
                         control={form.control}
                         name="due_date"
@@ -627,7 +595,6 @@ const EditJob = () => {
                       />
                     </div>
 
-                    {/* Months */}
                     <FormField
                       control={form.control}
                       name="months"
@@ -679,7 +646,6 @@ const EditJob = () => {
                       )}
                     />
 
-                    {/* Notes */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
@@ -720,7 +686,6 @@ const EditJob = () => {
                       />
                     </div>
 
-                    {/* Checkboxes */}
                     <div className="space-y-4">
                       <FormField
                         control={form.control}

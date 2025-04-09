@@ -10,7 +10,7 @@ export type Job = {
   manager_id: string;
   value: number;
   currency: string;
-  status: string;
+  status: "New" | "Manager OK" | "Pending Invoice" | "Pending Payment" | "Paid";
   paid: boolean;
   manager_ok: boolean;
   months: string[];
