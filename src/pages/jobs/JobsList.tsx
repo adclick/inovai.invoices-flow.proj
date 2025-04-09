@@ -100,15 +100,15 @@ const JobsList = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'New':
+      case 'new':
         return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">New</Badge>;
-      case 'Manager OK':
+      case 'manager_okd':
         return <Badge className="bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-400">Manager OK</Badge>;
-      case 'Pending Invoice':
+      case 'pending_invoice':
         return <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400">Pending Invoice</Badge>;
-      case 'Pending Payment':
+      case 'pending_payment':
         return <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400">Pending Payment</Badge>;
-      case 'Paid':
+      case 'paid':
         return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Paid</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;

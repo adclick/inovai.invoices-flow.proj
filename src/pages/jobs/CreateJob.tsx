@@ -76,9 +76,11 @@ const currencyOptions = [
 ];
 
 const statusOptions = [
-  { value: "inactive", label: "Inactive" },
-  { value: "active", label: "Active" },
-  { value: "closed", label: "Closed" },
+  { value: "new", label: "New" },
+  { value: "manager_ok", label: "Manager OK" },
+  { value: "pending_invoice", label: "Pending Invoice" },
+  { value: "pending_payment", label: "Pending Payment" },
+  { value: "paid", label: "Paid" },
 ];
 
 const CreateJob = () => {
@@ -156,7 +158,7 @@ const CreateJob = () => {
       manager_id: "",
       value: 0,
       currency: "euro",
-      status: "inactive",
+      status: "new",
       paid: false,
       manager_ok: false,
       months: [],

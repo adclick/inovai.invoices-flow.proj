@@ -447,11 +447,11 @@ export type Database = {
       app_role: "super_admin" | "admin" | "finance"
       currency_type: "euro" | "usd" | "gbp"
       job_status:
-        | "New"
-        | "Manager OK"
-        | "Pending Invoice"
-        | "Pending Payment"
-        | "Paid"
+        | "new"
+        | "manager_ok"
+        | "pending_invoice"
+        | "pending_payment"
+        | "paid"
       month_type:
         | "january"
         | "february"
@@ -583,11 +583,11 @@ export const Constants = {
       app_role: ["super_admin", "admin", "finance"],
       currency_type: ["euro", "usd", "gbp"],
       job_status: [
-        "New",
-        "Manager OK",
-        "Pending Invoice",
-        "Pending Payment",
-        "Paid",
+        "new",
+        "manager_ok",
+        "pending_invoice",
+        "pending_payment",
+        "paid",
       ],
       month_type: [
         "january",

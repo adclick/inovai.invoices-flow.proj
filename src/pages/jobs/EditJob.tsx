@@ -78,11 +78,11 @@ const currencyOptions = [
 ];
 
 const statusOptions = [
-  { value: "New", label: "New" },
-  { value: "Manager OK", label: "Manager OK" },
-  { value: "Pending Invoice", label: "Pending Invoice" },
-  { value: "Pending Payment", label: "Pending Payment" },
-  { value: "Paid", label: "Paid" },
+  { value: "new", label: "New" },
+  { value: "manager_ok", label: "Manager OK" },
+  { value: "pending_invoice", label: "Pending Invoice" },
+  { value: "pending_payment", label: "Pending Payment" },
+  { value: "paid", label: "Paid" },
 ];
 
 const EditJob = () => {
