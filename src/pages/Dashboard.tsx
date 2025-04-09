@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +6,7 @@ import { Clock, CheckCircle, XCircle, AlertCircle, Users, FileText, Search, Filt
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { formatJobStatus } from "@/types/job";
 
 const Dashboard: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
       const { count: pendingCount, error: pendingError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("status", "New");
+        .eq("status", "new");
         
       if (pendingError) throw pendingError;
       
@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
       const { count: approvedCount, error: approvedError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("status", "Paid");
+        .eq("status", "paid");
         
       if (approvedError) throw approvedError;
         
@@ -42,7 +42,7 @@ const Dashboard: React.FC = () => {
       const { count: rejectedCount, error: rejectedError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("status", "Pending Payment");
+        .eq("status", "pending_payment");
         
       if (rejectedError) throw rejectedError;
         

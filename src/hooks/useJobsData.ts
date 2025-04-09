@@ -1,30 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-export type Job = {
-  id: string;
-  client_id: string;
-  campaign_id: string;
-  provider_id: string;
-  manager_id: string;
-  value: number;
-  currency: "euro" | "usd" | "gbp";
-  status: "New" | "Manager OK" | "Pending Invoice" | "Pending Payment" | "Paid";
-  paid: boolean;
-  manager_ok: boolean;
-  months: string[];
-  created_at: string;
-  documents?: string[];
-  client_name?: string;
-  campaign_name?: string;
-  provider_name?: string;
-  manager_name?: string;
-  due_date?: string | null;
-  public_notes?: string | null;
-  private_notes?: string | null;
-  public_token?: string | null;
-};
+import { Job, formatJobStatus } from "@/types/job";
 
 export const formatCurrency = (value: number, currency: string) => {
   const symbols: Record<string, string> = {
@@ -88,13 +65,13 @@ export const useJobsData = () => {
       }, {}) || {};
 
       // Add entity names to jobs
-      return jobs.map((job: Job) => ({
+      return jobs.map((job: any) => ({
         ...job,
         client_name: clientMap[job.client_id] || "Unknown Client",
         campaign_name: campaignMap[job.campaign_id] || "Unknown Campaign",
         provider_name: providerMap[job.provider_id] || "Unknown Provider",
         manager_name: managerMap[job.manager_id] || "Unknown Manager"
-      }));
+      })) as Job[];
     },
   });
 };
