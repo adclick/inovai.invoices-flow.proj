@@ -446,7 +446,12 @@ export type Database = {
     Enums: {
       app_role: "super_admin" | "admin" | "finance"
       currency_type: "euro" | "usd" | "gbp"
-      job_status: "inactive" | "active" | "closed"
+      job_status:
+        | "New"
+        | "Manager OK"
+        | "Pending Invoice"
+        | "Pending Payment"
+        | "Paid"
       month_type:
         | "january"
         | "february"
@@ -577,7 +582,13 @@ export const Constants = {
     Enums: {
       app_role: ["super_admin", "admin", "finance"],
       currency_type: ["euro", "usd", "gbp"],
-      job_status: ["inactive", "active", "closed"],
+      job_status: [
+        "New",
+        "Manager OK",
+        "Pending Invoice",
+        "Pending Payment",
+        "Paid",
+      ],
       month_type: [
         "january",
         "february",

@@ -90,6 +90,7 @@ const EditJob = () => {
   const queryClient = useQueryClient();
   const [currentTab, setCurrentTab] = useState("details");
   const [documents, setDocuments] = useState<string[] | null>(null);
+  const [previousStatus, setPreviousStatus] = useState<string | null>(null);
 
   const { data: job, isLoading: isLoadingJob } = useQuery<Job>({
     queryKey: ["job", id],
@@ -110,9 +111,31 @@ const EditJob = () => {
 
   useEffect(() => {
     if (job) {
-      setDocuments(job.documents || []);
+      let formattedDueDate = "";
+      if (job.due_date) {
+        const date = new Date(job.due_date);
+        formattedDueDate = date.toISOString().split('T')[0];
+      }
+
+      setPreviousStatus(job.status);
+      
+      form.reset({
+        client_id: job.client_id,
+        campaign_id: job.campaign_id,
+        provider_id: job.provider_id,
+        manager_id: job.manager_id,
+        value: job.value,
+        currency: job.currency,
+        status: job.status,
+        paid: job.paid,
+        manager_ok: job.manager_ok,
+        months: job.months,
+        due_date: formattedDueDate,
+        public_notes: job.public_notes || "",
+        private_notes: job.private_notes || "",
+      });
     }
-  }, [job]);
+  }, [job, form]);
 
   const { data: clients } = useQuery({
     queryKey: ["clients"],
@@ -239,13 +262,46 @@ const EditJob = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async (data, values) => {
+      if (previousStatus && values.status !== previousStatus) {
+        try {
+          const response = await supabase.functions.invoke('send-job-status-update', {
+            body: { 
+              job_id: id,
+              new_status: values.status 
+            }
+          });
+          
+          if (response.error) {
+            console.error("Error sending notification:", response.error);
+            toast({
+              title: "Warning",
+              description: "Job updated but notification emails could not be sent.",
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Success",
+              description: "Job updated and notifications sent.",
+            });
+          }
+        } catch (error) {
+          console.error("Error invoking edge function:", error);
+          toast({
+            title: "Warning",
+            description: "Job updated but notification emails could not be sent.",
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Job updated",
+          description: "The job has been successfully updated.",
+        });
+      }
+      
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       queryClient.invalidateQueries({ queryKey: ["job", id] });
-      toast({
-        title: "Job updated",
-        description: "The job has been successfully updated.",
-      });
       navigate("/jobs");
     },
     onError: (error) => {
