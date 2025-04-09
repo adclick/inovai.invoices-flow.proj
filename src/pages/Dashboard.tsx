@@ -22,27 +22,27 @@ const Dashboard: React.FC = () => {
         
       if (totalJobsError) throw totalJobsError;
         
-      // Get pending jobs count (active jobs)
+      // Get pending jobs count (New jobs)
       const { count: pendingCount, error: pendingError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("status", "active");
+        .eq("status", "New");
         
       if (pendingError) throw pendingError;
       
-      // Get approved jobs count (paid)
+      // Get approved jobs count (Paid)
       const { count: approvedCount, error: approvedError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("paid", true);
+        .eq("status", "Paid");
         
       if (approvedError) throw approvedError;
         
-      // Get rejected jobs count (closed)
+      // Get rejected jobs count (Pending Payment)
       const { count: rejectedCount, error: rejectedError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("status", "closed");
+        .eq("status", "Pending Payment");
         
       if (rejectedError) throw rejectedError;
         
@@ -71,19 +71,19 @@ const Dashboard: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-8">
-        {/* Header Section */}
+      <div className="p-4 md:p-6 space-y-6 md:space-y-8">
+        {/* Header Section - Made responsive */}
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent rounded-lg" />
-          <div className="relative p-6">
-            <h1 className="text-[32px] font-semibold text-slate-800 dark:text-slate-100">Admin Dashboard</h1>
-            <p className="text-base text-slate-600 dark:text-slate-400 mt-1">Review and manage freelancer invoices</p>
+          <div className="relative p-4 md:p-6">
+            <h1 className="text-2xl md:text-[32px] font-semibold text-slate-800 dark:text-slate-100">Admin Dashboard</h1>
+            <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mt-1">Review and manage freelancer invoices</p>
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
+        {/* Stats Grid - Made responsive */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
@@ -91,12 +91,12 @@ const Dashboard: React.FC = () => {
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-300">All time</span>
               </div>
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Total Jobs</h2>
-              <p className="text-3xl font-bold text-primary dark:text-primary/90">{stats?.total || 0}</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Total Jobs</h2>
+              <p className="text-2xl md:text-3xl font-bold text-primary dark:text-primary/90">{stats?.total || 0}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
@@ -104,12 +104,12 @@ const Dashboard: React.FC = () => {
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
               </div>
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Review</h2>
-              <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pending || 0}</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Review</h2>
+              <p className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pending || 0}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-green-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
@@ -117,12 +117,12 @@ const Dashboard: React.FC = () => {
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-300">Processed successfully</span>
               </div>
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Approved</h2>
-              <p className="text-3xl font-bold text-green-600 dark:text-green-400">{stats?.approved || 0}</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Approved</h2>
+              <p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">{stats?.approved || 0}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-red-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-full">
@@ -130,23 +130,23 @@ const Dashboard: React.FC = () => {
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-300">Requires correction</span>
               </div>
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-slate-100">Rejected</h2>
-              <p className="text-3xl font-bold text-red-600 dark:text-red-400">{stats?.rejected || 0}</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Rejected</h2>
+              <p className="text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400">{stats?.rejected || 0}</p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Activity Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+          {/* Recent Activity Section - Made responsive */}
           <div className="lg:col-span-2 bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <Clock className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Recent Activity</h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Latest invoice submissions</p>
+                  <h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Recent Activity</h2>
+                  <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">Latest invoice submissions</p>
                 </div>
               </div>
               <div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
@@ -155,16 +155,16 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Active Freelancers Section */}
+          {/* Active Freelancers Section - Made responsive */}
           <div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
-            <div className="p-6">
+            <div className="p-4 md:p-6">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <Users className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Active Providers</h2>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Providers with pending invoices</p>
+                  <h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Active Providers</h2>
+                  <p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">Providers with pending invoices</p>
                 </div>
               </div>
               <div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
@@ -174,23 +174,23 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Invoice Management Section */}
+        {/* Invoice Management Section - Made responsive */}
         <div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
+          <div className="p-4 md:p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-primary/10 rounded-lg">
                   <FileText className="w-5 h-5 text-primary" />
                 </div>
-                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Jobs Management</h2>
+                <h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Jobs Management</h2>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
                   <input
                     type="text"
                     placeholder="Search invoices..."
-                    className="pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-64"
+                    className="pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full sm:w-64"
                   />
                 </div>
                 <Button variant="outline" size="icon" className="rounded-lg border-slate-200 dark:border-slate-700">
@@ -204,15 +204,17 @@ const Dashboard: React.FC = () => {
               <button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">Approved</button>
               <button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">Rejected</button>
             </div>
-            <div className="text-sm text-slate-600 dark:text-slate-400">
-              <div className="grid grid-cols-4 gap-4 px-4 py-2 font-medium border-b border-slate-200 dark:border-slate-700">
-                <div>Invoice</div>
-                <div>Freelancer</div>
-                <div>Amount</div>
-                <div>Status</div>
-              </div>
-              <div className="text-center py-8">
-                <p>No invoices to display</p>
+            <div className="text-sm text-slate-600 dark:text-slate-400 overflow-x-auto">
+              <div className="min-w-[600px]">
+                <div className="grid grid-cols-4 gap-4 px-4 py-2 font-medium border-b border-slate-200 dark:border-slate-700">
+                  <div>Invoice</div>
+                  <div>Freelancer</div>
+                  <div>Amount</div>
+                  <div>Status</div>
+                </div>
+                <div className="text-center py-8">
+                  <p>No invoices to display</p>
+                </div>
               </div>
             </div>
           </div>

@@ -50,7 +50,7 @@ const Index: React.FC = () => {
 					<h1 className="text-2xl font-bold dark:text-white">InvoicesFlow</h1>
 				</div>
 
-				<div className="w-full max-w-md">
+				<div className="w-full max-w-md px-4 sm:px-0">
 					<AuthForm />
 				</div>
 			</div>

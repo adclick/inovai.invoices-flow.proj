@@ -9,8 +9,8 @@ export type Job = {
   provider_id: string;
   manager_id: string;
   value: number;
-  currency: string;
-  status: "new" | "manager_ok" | "pending_invoice" | "pending_payment" | "paid";
+  currency: "euro" | "usd" | "gbp";
+  status: "New" | "Manager OK" | "Pending Invoice" | "Pending Payment" | "Paid";
   paid: boolean;
   manager_ok: boolean;
   months: string[];
@@ -20,6 +20,10 @@ export type Job = {
   campaign_name?: string;
   provider_name?: string;
   manager_name?: string;
+  due_date?: string | null;
+  public_notes?: string | null;
+  private_notes?: string | null;
+  public_token?: string | null;
 };
 
 export const formatCurrency = (value: number, currency: string) => {
@@ -92,5 +96,58 @@ export const useJobsData = () => {
         manager_name: managerMap[job.manager_id] || "Unknown Manager"
       }));
     },
+  });
+};
+
+export const useJobById = (jobId: string) => {
+  return useQuery({
+    queryKey: ["job", jobId],
+    queryFn: async () => {
+      if (!jobId) {
+        throw new Error("Job ID is required");
+      }
+
+      const { data: job, error: jobError } = await supabase
+        .from("jobs")
+        .select("*")
+        .eq("id", jobId)
+        .single();
+
+      if (jobError) throw jobError;
+
+      // Get associated entity names
+      const { data: client } = await supabase
+        .from("clients")
+        .select("name")
+        .eq("id", job.client_id)
+        .single();
+
+      const { data: campaign } = await supabase
+        .from("campaigns")
+        .select("name")
+        .eq("id", job.campaign_id)
+        .single();
+
+      const { data: provider } = await supabase
+        .from("providers")
+        .select("name")
+        .eq("id", job.provider_id)
+        .single();
+
+      const { data: manager } = await supabase
+        .from("managers")
+        .select("name")
+        .eq("id", job.manager_id)
+        .single();
+
+      return {
+        ...job,
+        client_name: client?.name || "Unknown Client",
+        campaign_name: campaign?.name || "Unknown Campaign",
+        provider_name: provider?.name || "Unknown Provider",
+        manager_name: manager?.name || "Unknown Manager"
+      } as Job;
+    },
+    enabled: !!jobId,
   });
 };
