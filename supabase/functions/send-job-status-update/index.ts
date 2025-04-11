@@ -110,7 +110,7 @@ serve(async (req) => {
               .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
               .details { background-color: #f0f9ff; padding: 15px; margin: 15px 0; border-radius: 5px; }
               h1 { color: #3b82f6; }
-              .button { display: inline-block; background-color: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+              .button { display: inline-block; background-color: #3b82f6; color: white !important; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
             </style>
           </head>
           <body>
@@ -121,7 +121,6 @@ serve(async (req) => {
               <div class="content">
                 <p>Hello ${job.managers.name},</p>
                 <p>The status of a job has been updated to <strong>${new_status}</strong>.</p>
-                
                 <div class="details">
                   <h3>Job Details:</h3>
                   <p><strong>Client:</strong> ${job.clients.name}</p>
@@ -130,11 +129,9 @@ serve(async (req) => {
                   <p><strong>Value:</strong> ${jobValue}</p>
                   <p><strong>Due Date:</strong> ${dueDate}</p>
                 </div>
-                
                 <p>
-                  <a href="${APP_URL}/jobs/edit/${job_id}" class="button">View Job Details</a>
+                  <a href="${APP_URL}jobs/edit/${job_id}" class="button">View Job Details</a>
                 </p>
-                
                 <p>Thank you,<br>The InvoicesFlow Team</p>
               </div>
               <div class="footer">
@@ -186,7 +183,7 @@ serve(async (req) => {
               .details { background-color: #f0f9ff; padding: 15px; margin: 15px 0; border-radius: 5px; }
               .important { background-color: #fff0f0; padding: 15px; margin: 15px 0; border-radius: 5px; border-left: 4px solid #f43f5e; }
               h1 { color: #3b82f6; }
-              .button { display: inline-block; background-color: #3b82f6; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+              .button { display: inline-block; background-color: #3b82f6; color: white !important; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
             </style>
           </head>
           <body>
@@ -197,7 +194,6 @@ serve(async (req) => {
               <div class="content">
                 <p>Hello ${job.providers.name},</p>
                 <p>We are requesting an invoice for your work on the following project:</p>
-                
                 <div class="details">
                   <h3>Job Details:</h3>
                   <p><strong>Client:</strong> ${job.clients.name}</p>
@@ -205,7 +201,6 @@ serve(async (req) => {
                   <p><strong>Value:</strong> ${jobValue}</p>
                   <p><strong>Due Date:</strong> ${dueDate}</p>
                 </div>
-                
                 <div class="important">
                   <h3>Action Required:</h3>
                   <p>Please upload your invoice and any supporting documents using the secure link below:</p>
@@ -214,9 +209,7 @@ serve(async (req) => {
                   </p>
                   <p>Note: This link is specific to your job and will expire once the job status changes.</p>
                 </div>
-                
                 ${job.public_notes ? `<p><strong>Additional Notes:</strong> ${job.public_notes}</p>` : ''}
-                
                 <p>Thank you for your prompt attention to this matter.</p>
                 <p>Best regards,<br>The InvoicesFlow Team</p>
               </div>
