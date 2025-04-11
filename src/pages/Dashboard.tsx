@@ -15,42 +15,43 @@ const Dashboard: React.FC = () => {
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      // Get total jobs count
-      const { data: totalJobs, error: totalJobsError } = await supabase
+      // Get new jobs count
+      const { data: newJobs, error: newJobsError } = await supabase
         .from("jobs")
-        .select("id", { count: "exact" });
+        .select("id", { count: "exact" })
+				.eq("status", "new")
         
-      if (totalJobsError) throw totalJobsError;
+      if (newJobsError) throw newJobsError;
         
-      // Get pending jobs count (New jobs)
-      const { count: pendingCount, error: pendingError } = await supabase
+      // Get pending invoice jobs count
+      const { count: pendingInvoiceCount, error: pendingInvoiceError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("status", "new");
+        .eq("status", "pending_invoice");
         
-      if (pendingError) throw pendingError;
+      if (pendingInvoiceError) throw pendingInvoiceError;
       
       // Get approved jobs count (Paid)
-      const { count: approvedCount, error: approvedError } = await supabase
-        .from("jobs")
-        .select("*", { count: "exact" })
-        .eq("status", "paid");
-        
-      if (approvedError) throw approvedError;
-        
-      // Get rejected jobs count (Pending Payment)
-      const { count: rejectedCount, error: rejectedError } = await supabase
+      const { count: pendingPaymentCount, error: pendingPaymentError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
         .eq("status", "pending_payment");
         
-      if (rejectedError) throw rejectedError;
+      if (pendingPaymentError) throw pendingPaymentError;
+        
+      // Get rejected jobs count (Pending Payment)
+      const { count: paidCount, error: paidError } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact" })
+        .eq("status", "paid");
+        
+      if (paidError) throw paidError;
         
       return {
-        total: totalJobs?.length || 0,
-        pending: pendingCount || 0,
-        approved: approvedCount || 0,
-        rejected: rejectedCount || 0
+        new: newJobs?.length || 0,
+        pendingInvoice: pendingInvoiceCount || 0,
+        pendingPayment: pendingPaymentCount || 0,
+        paid: paidCount || 0
       };
     },
     // Don't refetch on window focus to reduce API calls
@@ -89,10 +90,10 @@ const Dashboard: React.FC = () => {
                 <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
                   <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
-                <span className="text-sm text-slate-600 dark:text-slate-300">All time</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300">New</span>
               </div>
-              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Total Jobs</h2>
-              <p className="text-2xl md:text-3xl font-bold text-primary dark:text-primary/90">{stats?.total || 0}</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">New Jobs</h2>
+              <p className="text-2xl md:text-3xl font-bold text-primary dark:text-primary/90">{stats?.new || 0}</p>
             </div>
           </div>
 
@@ -104,8 +105,21 @@ const Dashboard: React.FC = () => {
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
               </div>
-              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Review</h2>
-              <p className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pending || 0}</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Invoice</h2>
+              <p className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingInvoice || 0}</p>
+            </div>
+          </div>
+
+					<div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+                  <AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                </div>
+                <span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
+              </div>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Payment</h2>
+              <p className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingPayment || 0}</p>
             </div>
           </div>
 
@@ -117,23 +131,11 @@ const Dashboard: React.FC = () => {
                 </div>
                 <span className="text-sm text-slate-600 dark:text-slate-300">Processed successfully</span>
               </div>
-              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Approved</h2>
-              <p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">{stats?.approved || 0}</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Paid</h2>
+              <p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">{stats?.paid || 0}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-red-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-full">
-                  <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
-                </div>
-                <span className="text-sm text-slate-600 dark:text-slate-300">Requires correction</span>
-              </div>
-              <h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Rejected</h2>
-              <p className="text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400">{stats?.rejected || 0}</p>
-            </div>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
@@ -168,7 +170,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
               <div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
-                <p>No active freelancers at the moment.</p>
+                <p>Not yet implemented</p>
               </div>
             </div>
           </div>
@@ -213,7 +215,7 @@ const Dashboard: React.FC = () => {
                   <div>Status</div>
                 </div>
                 <div className="text-center py-8">
-                  <p>No invoices to display</p>
+                  <p>Not yet implemented</p>
                 </div>
               </div>
             </div>

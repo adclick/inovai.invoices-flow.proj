@@ -692,50 +692,6 @@ const EditJob = () => {
                       />
                     </div>
 
-                    <div className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="paid"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel>Paid</FormLabel>
-                              <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Mark this job as paid
-                              </p>
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="manager_ok"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel>Manager Approval</FormLabel>
-                              <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Mark this job as approved by manager
-                              </p>
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
                     <div className="flex justify-between pt-4">
                       <Button variant="outline" onClick={() => navigate("/jobs")}>
                         <ArrowLeft className="mr-2 h-4 w-4" />
