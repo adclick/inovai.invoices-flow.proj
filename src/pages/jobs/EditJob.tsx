@@ -118,20 +118,16 @@ const EditJob = () => {
     queryFn: async () => {
       if (!id) throw new Error("Job ID is required");
 
-      const { data, error } = await supabase
+      const { data: job, error } = await supabase
         .from("jobs")
         .select("*")
         .eq("id", id)
         .single();
 
       if (error) throw error;
-      return data as Job;
-    },
-    enabled: !!id,
-  });
+      // return data as Job;
 
-  useEffect(() => {
-    if (job) {
+			console.log(job);
       let formattedDueDate = "";
       if (job.due_date) {
         const date = new Date(job.due_date);
@@ -155,6 +151,15 @@ const EditJob = () => {
         public_notes: job.public_notes || "",
         private_notes: job.private_notes || "",
       });
+
+			return job as Job;
+    },
+    enabled: !!id,
+  });
+
+  useEffect(() => {
+    if (job) {
+			
     }
   }, [job, form]);
 
@@ -169,6 +174,7 @@ const EditJob = () => {
       if (error) throw error;
       return data;
     },
+		
   });
 
   const { data: campaigns } = useQuery({

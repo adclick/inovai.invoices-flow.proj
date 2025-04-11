@@ -251,21 +251,12 @@ const JobsAllList: React.FC = () => {
 										<SelectValue placeholder="Status Filter" />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="all">All Statuses</SelectItem>
-										<SelectItem value="active">Active</SelectItem>
-										<SelectItem value="inactive">Inactive</SelectItem>
-										<SelectItem value="closed">Closed</SelectItem>
-									</SelectContent>
-								</Select>
-
-								<Select value={paymentFilter} onValueChange={setPaymentFilter}>
-									<SelectTrigger className="w-[150px]">
-										<SelectValue placeholder="Payment Filter" />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="all">All Payments</SelectItem>
+										<SelectItem value="all">All Status</SelectItem>
+										<SelectItem value="new">New</SelectItem>
+										<SelectItem value="manager_ok">Manager OK</SelectItem>
+										<SelectItem value="pending_invoice">Pending Invoice</SelectItem>
+										<SelectItem value="pending_payment">Pending Payment</SelectItem>
 										<SelectItem value="paid">Paid</SelectItem>
-										<SelectItem value="pending">Pending</SelectItem>
 									</SelectContent>
 								</Select>
 							</div>

@@ -63,7 +63,7 @@ serve(async (req) => {
       `)
       .eq('id', jobId)
       .eq('public_token', token)
-      .eq('status', 'active')
+      .eq('status', 'pending_invoice')
       .single();
 
     if (error || !job) {

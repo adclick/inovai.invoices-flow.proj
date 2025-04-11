@@ -11,8 +11,8 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "
 const SMTP_HOST = Deno.env.get("SMTP_HOST") || "";
 const SMTP_PORT = Number(Deno.env.get("SMTP_PORT") || "587");
 const SMTP_USER = Deno.env.get("SMTP_USER") || "";
-const SMTP_PASS = Deno.env.get("SMTP_PASS") || "";
-const EMAIL_FROM = Deno.env.get("EMAIL_FROM") || "notifications@invoicesflow.app";
+const SMTP_PASS = Deno.env.get("SMTP_PASSWORD") || "";
+const EMAIL_FROM = Deno.env.get("SMTP_FROM") || "notifications@invoicesflow.app";
 const APP_URL = Deno.env.get("APP_URL") || "http://localhost:5173";
 
 // Create a Supabase client with the service role key
@@ -172,7 +172,7 @@ serve(async (req) => {
         );
       }
 
-      const uploadUrl = `${APP_URL}/upload/${job_id}/${updatedJob.public_token}`;
+      const uploadUrl = `${APP_URL}upload/${job_id}/${updatedJob.public_token}`;
       
       const providerEmailHtml = `
         <html>

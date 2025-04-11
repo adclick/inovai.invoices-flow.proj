@@ -1,9 +1,8 @@
 
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Job } from "@/types/job";
 import { ProviderDocumentUploader } from "@/components/jobs/ProviderDocumentUploader";
 import { toast } from "sonner";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +11,6 @@ import { AlertTriangle, Calendar, CheckCircle } from "lucide-react";
 
 const PublicUpload = () => {
   const { jobId, token } = useParams<{ jobId: string; token: string }>();
-  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
 
