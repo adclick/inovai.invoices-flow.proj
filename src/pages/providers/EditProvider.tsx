@@ -20,6 +20,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { ArrowLeft } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 // Schema for provider form validation
 const providerSchema = z.object({
@@ -245,19 +246,19 @@ const EditProvider = () => {
 								control={form.control}
 								name="active"
 								render={({ field }) => (
-									<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
+									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+										<div className="space-y-0.5">
+											<FormLabel className="text-sm">Active Provider</FormLabel>
+											<div className="text-sm text-muted-foreground">
+												Mark this provider as active
+											</div>
+										</div>
 										<FormControl>
-											<Checkbox
+											<Switch
 												checked={field.value}
 												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
-										<div className="space-y-1 leading-none">
-											<FormLabel>Active Provider</FormLabel>
-											<p className="text-sm text-slate-500 dark:text-slate-400">
-												Mark this provider as active
-											</p>
-										</div>
 									</FormItem>
 								)}
 							/>

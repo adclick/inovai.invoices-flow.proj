@@ -76,8 +76,8 @@ const currencyOptions = [
 ];
 
 const statusOptions = [
-  { value: "new", label: "New" },
-  { value: "manager_ok", label: "Manager OK" },
+  { value: "draft", label: "Draft" },
+  { value: "active", label: "Active" },
   { value: "pending_invoice", label: "Pending Invoice" },
   { value: "pending_payment", label: "Pending Payment" },
   { value: "paid", label: "Paid" },
@@ -158,7 +158,7 @@ const CreateJob = () => {
       manager_id: "",
       value: 0,
       currency: "euro",
-      status: "new",
+      status: "draft",
       paid: false,
       manager_ok: false,
       months: [],
@@ -565,51 +565,6 @@ const CreateJob = () => {
                           />
                         </FormControl>
                         <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Checkboxes */}
-                <div className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="paid"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Paid</FormLabel>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Mark this job as paid
-                          </p>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="manager_ok"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 border-slate-200 dark:border-slate-700">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Manager Approval</FormLabel>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Mark this job as approved by manager
-                          </p>
-                        </div>
                       </FormItem>
                     )}
                   />

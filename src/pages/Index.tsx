@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 
-const THEME_TOGGLE_ACTIVE = false;
+const THEME_TOGGLE_ACTIVE = true;
 
 const Index: React.FC = () => {
 	const { user, isLoading } = useAuth();
@@ -29,7 +29,7 @@ const Index: React.FC = () => {
 	return (
 		<div className="min-h-screen flex flex-col md:flex-row dark:bg-slate-900">
 			{/* Left Side - Brand/Logo Section */}
-			<div className="hidden md:flex md:w-1/2 gradient-bg p-4 sm:p-6 lg:p-10 items-center justify-center">
+			<div className="hidden md:flex md:w-1/2 gradient-bg dark:bg-none border-r border-r-gray p-4 sm:p-6 lg:p-10 items-center justify-center">
 				<LogoBox />
 			</div>
 

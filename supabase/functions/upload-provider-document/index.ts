@@ -47,14 +47,14 @@ serve(async (req) => {
       .select('id, status, public_token')
       .eq('id', jobId)
       .eq('public_token', token)
-      .eq('status', 'active')
+      .eq('status', 'pending_invoice')
       .single();
 
     if (jobError || !job) {
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Invalid job token or job not active'
+          error: 'Invalid job token or job not pending documents'
         }),
         {
           status: 401,
@@ -125,12 +125,27 @@ serve(async (req) => {
 
     const { error: updateError } = await supabase
       .from('jobs')
-      .update({ documents: allDocuments })
+      .update({ documents: allDocuments, status: "pending_payment" })
       .eq('id', jobId);
 
     if (updateError) {
       throw updateError;
     }
+
+		try {
+			const response = await supabase.functions.invoke('send-job-status-update', {
+				body: { 
+					job_id: jobId,
+					new_status: "pending_payment" 
+				}
+			});
+			
+			if (response.error) {
+				console.error("Error sending notification:", response.error);
+			}
+		} catch (error) {
+			console.error("Error invoking edge function:", error);
+		}
 
     return new Response(
       JSON.stringify({

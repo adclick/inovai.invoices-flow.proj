@@ -78,8 +78,8 @@ const currencyOptions = [
 ];
 
 const statusOptions = [
-  { value: "new", label: "New" },
-  { value: "manager_ok", label: "Manager OK" },
+  { value: "draft", label: "Draft" },
+  { value: "active", label: "Active" },
   { value: "pending_invoice", label: "Pending Invoice" },
   { value: "pending_payment", label: "Pending Payment" },
   { value: "paid", label: "Paid" },

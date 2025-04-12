@@ -16,7 +16,7 @@ interface DashboardLayoutProps {
     children: React.ReactNode;
 }
 
-const THEME_TOGGLE_ACTIVE = false;
+const THEME_TOGGLE_ACTIVE = true;
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     const { user, signOut, checkHasRole } = useAuth();
@@ -114,7 +114,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     <span className={`text-lg font-semibold text-white dark:text-white ${isMobile || sidebarOpen ? '' : 'hidden'}`}>InvoicesFlow</span>
                 </div>
             </div>
-            <nav className="flex-1 p-4">
+            <nav className={`flex-1 ${sidebarOpen ? 'p-4' : 'p-2'}`}>
                 <ul className="space-y-1">
                     {navItems.map((item) => (
                         <li key={item.path}>
@@ -177,7 +177,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
             {/* Desktop Sidebar */}
             <div
-                className={`gradient-bg dark:bg-slate-800 border-r border-slate-200/20 dark:border-slate-700 transition-all duration-300 ease-in-out backdrop-blur-sm
+                className={`gradient-bg dark:bg-none dark:bg-slate-800 border-r border-slate-200/20 dark:border-slate-700 transition-all duration-300 ease-in-out backdrop-blur-sm
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10 hidden lg:block`}
             >
                 <SidebarContent />

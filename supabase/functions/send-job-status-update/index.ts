@@ -39,7 +39,7 @@ const corsHeaders = {
 
 interface StatusUpdatePayload {
   job_id: string;
-  new_status: "new" | "manager_ok" | "pending_invoice" | "pending_payment" | "paid";
+  new_status: "draft" | "active" | "pending_invoice" | "pending_payment" | "paid";
 }
 
 serve(async (req) => {

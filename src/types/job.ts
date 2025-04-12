@@ -7,7 +7,7 @@ export type Job = {
   manager_id: string;
   value: number;
   currency: "euro" | "usd" | "gbp";
-  status: "new" | "manager_ok" | "pending_invoice" | "pending_payment" | "paid";
+  status: "draft" | "active" | "pending_invoice" | "pending_payment" | "paid";
   paid: boolean;
   manager_ok: boolean;
   months: string[];
@@ -26,8 +26,8 @@ export type Job = {
 // Helper function to format status labels for display
 export const formatJobStatus = (status: string): string => {
   const statusMap: Record<string, string> = {
-    'new': 'New',
-    'manager_ok': 'Manager OK',
+    'draft': 'Active',
+    'active': 'Active',
     'pending_invoice': 'Pending Invoice',
     'pending_payment': 'Pending Payment',
     'paid': 'Paid'

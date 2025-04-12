@@ -83,7 +83,7 @@ const PublicUpload = () => {
                 The link you've accessed is not valid. This could be because:
               </p>
               <ul className="list-disc pl-5 mt-2 text-slate-600 dark:text-slate-400">
-                <li>The job is no longer active</li>
+                <li>The job is no longer acepting documents</li>
                 <li>The URL is incorrect</li>
                 <li>The link has expired</li>
               </ul>

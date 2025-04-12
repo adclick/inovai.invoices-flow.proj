@@ -169,10 +169,10 @@ const JobsAllList: React.FC = () => {
 
 	const getStatusBadge = (status: string) => {
 		switch (status) {
-			case 'new':
-				return <Badge variant="outline" className="text-slate-500">New</Badge>;
-			case 'manager_ok':
-				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Manager OK</Badge>;
+			case 'draft':
+				return <Badge variant="outline" className="text-slate-500">Draft</Badge>;
+			case 'active':
+				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Active</Badge>;
 			case 'pending_invoice':
 				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Pending Invoice</Badge>;
 			case 'pending_payment':
@@ -273,7 +273,7 @@ const JobsAllList: React.FC = () => {
 										<TableHead>Value</TableHead>
 										<TableHead>Status</TableHead>
 										<TableHead>Invoice</TableHead>
-										<TableHead className="text-right">Delete</TableHead>
+										<TableHead className="text-right">Actions</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
@@ -292,7 +292,7 @@ const JobsAllList: React.FC = () => {
 											<TableCell className="w-2">
 												{job.documents && job.documents.length > 0 ? (
 													<Link to={job.documents[0]} onClick={e => e.stopPropagation()} target="_blank">
-														<Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30">
+														<Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30 truncate max-w-[350px]">
 															{job.documents[0]}
 														</Badge>
 													</Link>

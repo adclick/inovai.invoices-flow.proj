@@ -414,7 +414,7 @@ const JobsGroupedList = () => {
 																			<TableHead>Value</TableHead>
 																			<TableHead>Status</TableHead>
 																			<TableHead>Invoice</TableHead>
-																			<TableHead className="text-right">Delete</TableHead>
+																			<TableHead className="text-right">Actions</TableHead>
 																		</TableRow>
 																	</TableHeader>
 																	<TableBody>
