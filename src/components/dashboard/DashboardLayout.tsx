@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
     LayoutDashboard, LogOut, UserCog, Sidebar as SidebarIcon, List,
-    Group, Handshake, Megaphone, Wrench, LucideIcon, Menu, X
+    Group, Handshake, Megaphone, Wrench, LucideIcon, Menu, X,
+    Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -25,7 +25,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const location = useLocation();
 
-    // Check if mobile screen
     useEffect(() => {
         const checkIfMobile = () => {
             setIsMobile(window.innerWidth < 1024);
@@ -53,7 +52,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     };
 
     const NavItemWithTooltip = ({ path, icon: Icon, label }: { path: string, icon: LucideIcon, label: string }) => {
-        const iconSize = 20; // Fixed icon size
+        const iconSize = 20;
         const isActive = isActiveRoute(path);
 
         return (
@@ -101,9 +100,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         { path: "/managers", icon: UserCog, label: "Managers" },
         { path: "/clients", icon: Handshake, label: "Clients" },
         { path: "/campaigns", icon: Megaphone, label: "Campaigns" },
+        { path: "/settings", icon: Settings, label: "Settings" },
     ];
 
-    // Sidebar content shared between desktop and mobile
     const SidebarContent = () => (
         <>
             <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200/20 dark:border-slate-700">
@@ -123,7 +122,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     ))}
                 </ul>
 
-                {/* Jobs Section */}
                 {(isMobile || sidebarOpen) && (
                     <>
                         <Separator className="my-4 bg-white/20 dark:bg-slate-700" />
@@ -142,7 +140,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     </>
                 )}
 
-                {/* Management Actions Section */}
                 {(isMobile || sidebarOpen) && (
                     <>
                         <Separator className="my-4 bg-white/20 dark:bg-slate-700" />
@@ -175,7 +172,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
-            {/* Desktop Sidebar */}
             <div
                 className={`gradient-bg dark:bg-none dark:bg-slate-800 border-r border-slate-200/20 dark:border-slate-700 transition-all duration-300 ease-in-out backdrop-blur-sm
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10 hidden lg:block`}
@@ -183,7 +179,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <SidebarContent />
             </div>
 
-            {/* Mobile Sidebar using Sheet component */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetContent side="left" className="p-0 w-[240px] gradient-bg dark:bg-slate-800">
                     <SidebarContent />
@@ -194,7 +189,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center px-4 sticky top-0 z-10">
                     <div className="flex-1 flex items-center">
                         <div className="flex items-center">
-                            {/* Mobile menu button */}
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -204,7 +198,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                                 <Menu size={22} />
                             </Button>
 
-                            {/* Desktop sidebar toggle */}
                             <Button
                                 variant="ghost"
                                 size="icon"

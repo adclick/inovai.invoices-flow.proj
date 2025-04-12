@@ -24,6 +24,7 @@ import EditProvider from "./pages/providers/EditProvider";
 import JobsRouter from "./pages/jobs/JobsRouter";
 import CreateJob from "./pages/jobs/CreateJob";
 import EditJob from "./pages/jobs/EditJob";
+import Settings from "./pages/settings/Settings";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicUpload from "./pages/PublicUpload";
 
@@ -58,6 +59,7 @@ const App = () => (
 								<Route path="/jobs/*" element={<JobsRouter />} />
 								<Route path="/jobs/create" element={<CreateJob />} />
 								<Route path="/jobs/edit/:id" element={<EditJob />} />
+								<Route path="/settings" element={<Settings />} />
 								{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
 								<Route path="*" element={<NotFound />} />
 							</Route>
