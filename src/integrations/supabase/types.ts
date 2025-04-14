@@ -90,6 +90,7 @@ export type Database = {
           manager_ok: boolean
           months: Database["public"]["Enums"]["month_type"][]
           paid: boolean
+          payment_token: string | null
           private_notes: string | null
           provider_id: string
           public_notes: string | null
@@ -110,6 +111,7 @@ export type Database = {
           manager_ok?: boolean
           months: Database["public"]["Enums"]["month_type"][]
           paid?: boolean
+          payment_token?: string | null
           private_notes?: string | null
           provider_id: string
           public_notes?: string | null
@@ -130,6 +132,7 @@ export type Database = {
           manager_ok?: boolean
           months?: Database["public"]["Enums"]["month_type"][]
           paid?: boolean
+          payment_token?: string | null
           private_notes?: string | null
           provider_id?: string
           public_notes?: string | null

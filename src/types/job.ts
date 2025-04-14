@@ -16,6 +16,7 @@ export type Job = {
   private_notes?: string | null;
   documents?: string[] | null;
   public_token?: string | null;
+  payment_token?: string | null;
   created_at: string;
   client_name?: string;
   campaign_name?: string;
