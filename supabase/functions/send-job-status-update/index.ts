@@ -229,7 +229,72 @@ serve(async (req) => {
       });
 
       emailsSent.push({ recipient: job.providers.email, role: "provider" });
-    }
+    } else if (new_status === "pending_payment") {
+			const { data: setting, error: settingError } = await supabase
+				.from("settings")
+				.eq("name", "finance_email_address")
+				.single();
+
+				if (settingError || !setting) {
+					console.error("Error fetching Finance Email Address:", settingError);
+					return new Response(
+						JSON.stringify({ error: "Finance Email Address not found", details: settingError }),
+						{ status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+					);
+				}
+
+				const financeEmailHtml = `
+        <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background-color: #f8f9fa; padding: 20px; text-align: center; border-bottom: 3px solid #3b82f6; }
+              .content { padding: 20px; }
+              .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+              .details { background-color: #f0f9ff; padding: 15px; margin: 15px 0; border-radius: 5px; }
+              h1 { color: #3b82f6; }
+              .button { display: inline-block; background-color: #3b82f6; color: white !important; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>Job Status Update</h1>
+              </div>
+              <div class="content">
+                <p>Hello ${job.managers.name},</p>
+                <p>The status of a job has been updated to <strong>${new_status}</strong>.</p>
+                <div class="details">
+                  <h3>Job Details:</h3>
+                  <p><strong>Client:</strong> ${job.clients.name}</p>
+                  <p><strong>Campaign:</strong> ${job.campaigns.name}</p>
+                  <p><strong>Provider:</strong> ${job.providers.name}</p>
+                  <p><strong>Value:</strong> ${jobValue}</p>
+                  <p><strong>Due Date:</strong> ${dueDate}</p>
+                </div>
+                <p>
+                  <a href="${APP_URL}jobs/edit/${job_id}" class="button">Confirm Payment</a>
+                </p>
+                <p>Thank you,<br>The InvoicesFlow Team</p>
+              </div>
+              <div class="footer">
+                <p>This is an automated message from InvoicesFlow.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `;
+
+      await smtp.send({
+        from: EMAIL_FROM,
+        to: setting.value,
+        subject: `Job Status Updated: ${new_status} - ${job.clients.name}/${job.campaigns.name}`,
+        html: financeEmailHtml,
+      });
+
+      emailsSent.push({ recipient: setting.value, role: "finance" });
+		}
 
     return new Response(
       JSON.stringify({ 

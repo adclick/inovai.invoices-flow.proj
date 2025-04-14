@@ -153,17 +153,12 @@ const Settings: React.FC = () => {
 
         <Separator className="my-4" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
             <h2 className="text-lg font-medium mb-4 text-slate-800 dark:text-white">
               General Settings
             </h2>
             <div className="space-y-4">
               {settings
-                ?.filter((setting) => 
-                  !setting.name.startsWith("enable_") && 
-                  !setting.name.includes("email") && 
-                  !setting.name.includes("currency"))
                 .map((setting) => (
                   <div key={setting.id}>
                     {getInputComponent(setting.name, setting.value, setting.description)}
@@ -171,25 +166,6 @@ const Settings: React.FC = () => {
                 ))}
             </div>
           </div>
-
-          <div className="bg-white dark:bg-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
-            <h2 className="text-lg font-medium mb-4 text-slate-800 dark:text-white">
-              System Configuration
-            </h2>
-            <div className="space-y-4">
-              {settings
-                ?.filter((setting) => 
-                  setting.name.startsWith("enable_") || 
-                  setting.name.includes("email") || 
-                  setting.name.includes("currency"))
-                .map((setting) => (
-                  <div key={setting.id}>
-                    {getInputComponent(setting.name, setting.value, setting.description)}
-                  </div>
-                ))}
-            </div>
-          </div>
-        </div>
       </div>
     </DashboardLayout>
   );
