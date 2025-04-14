@@ -81,6 +81,7 @@ const statusOptions = [
   { value: "draft", label: "Draft" },
   { value: "active", label: "Active" },
   { value: "pending_invoice", label: "Pending Invoice" },
+  { value: "pending_validation", label: "Pending Validation" },
   { value: "pending_payment", label: "Pending Payment" },
   { value: "paid", label: "Paid" },
 ];

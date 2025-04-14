@@ -7,7 +7,7 @@ export type Job = {
   manager_id: string;
   value: number;
   currency: "euro" | "usd" | "gbp";
-  status: "draft" | "active" | "pending_invoice" | "pending_payment" | "paid";
+  status: "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid";
   paid: boolean;
   manager_ok: boolean;
   months: string[];
@@ -29,6 +29,7 @@ export const formatJobStatus = (status: string): string => {
     'draft': 'Active',
     'active': 'Active',
     'pending_invoice': 'Pending Invoice',
+    'pending_validation': 'Pending Validation',
     'pending_payment': 'Pending Payment',
     'paid': 'Paid'
   };

@@ -338,6 +338,7 @@ export type Database = {
         | "draft"
         | "active"
         | "pending_invoice"
+        | "pending_validation"
         | "pending_payment"
         | "paid"
       month_type:
@@ -474,6 +475,7 @@ export const Constants = {
         "draft",
         "active",
         "pending_invoice",
+        "pending_validation",
         "pending_payment",
         "paid",
       ],

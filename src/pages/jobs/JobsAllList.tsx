@@ -175,6 +175,8 @@ const JobsAllList: React.FC = () => {
 				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Active</Badge>;
 			case 'pending_invoice':
 				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Pending Invoice</Badge>;
+			case 'pending_validation':
+				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Pending Invoice</Badge>;
 			case 'pending_payment':
 				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Pending Payment</Badge>;
 			case 'paid':
@@ -255,6 +257,7 @@ const JobsAllList: React.FC = () => {
 										<SelectItem value="new">New</SelectItem>
 										<SelectItem value="manager_ok">Manager OK</SelectItem>
 										<SelectItem value="pending_invoice">Pending Invoice</SelectItem>
+										<SelectItem value="pending_validation">Pending Validation</SelectItem>
 										<SelectItem value="pending_payment">Pending Payment</SelectItem>
 										<SelectItem value="paid">Paid</SelectItem>
 									</SelectContent>

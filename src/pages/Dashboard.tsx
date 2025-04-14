@@ -39,6 +39,14 @@ const Dashboard: React.FC = () => {
 
 			if (pendingInvoiceError) throw pendingInvoiceError;
 
+			// Get pending invoice jobs count
+			const { count: pendingValidationCount, error: pendingValidationError } = await supabase
+				.from("jobs")
+				.select("*", { count: "exact" })
+				.eq("status", "pending_validation");
+
+			if (pendingValidationError) throw pendingValidationError;
+
 			// Get approved jobs count (Paid)
 			const { count: pendingPaymentCount, error: pendingPaymentError } = await supabase
 				.from("jobs")
@@ -59,6 +67,7 @@ const Dashboard: React.FC = () => {
 				new: draftJobs?.length || 0,
 				active: activeJobs?.length || 0,
 				pendingInvoice: pendingInvoiceCount || 0,
+				pendingValidation: pendingValidationCount || 0,
 				pendingPayment: pendingPaymentCount || 0,
 				paid: paidCount || 0
 			};
@@ -81,9 +90,9 @@ const Dashboard: React.FC = () => {
 
 	return (
 		<DashboardLayout>
-			<div className="p-4 md:p-6 space-y-6 md:space-y-8">
+			<div className="p-4 sm:p-6 space-y-6 md:space-y-8">
 				{/* Stats Grid - Made responsive */}
-				<div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4 md:gap-6">
+				<div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-6 gap-4 md:gap-6">
 					<div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
 						<div className="space-y-2">
 							<div className="flex items-center space-x-2">
@@ -92,8 +101,8 @@ const Dashboard: React.FC = () => {
 								</div>
 								<span className="text-sm text-slate-600 dark:text-slate-300">In Progress</span>
 							</div>
-							<h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Drafts Jobs</h2>
-							<p className="text-2xl md:text-3xl font-bold text-primary dark:text-primary/90">{stats?.new || 0}</p>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Drafts Jobs</h2>
+							<p className="text-2xl font-bold text-primary dark:text-primary/90">{stats?.new || 0}</p>
 						</div>
 					</div>
 					<div className="bg-gradient-to-br from-blue-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
@@ -104,8 +113,8 @@ const Dashboard: React.FC = () => {
 								</div>
 								<span className="text-sm text-slate-600 dark:text-slate-300">In Progress</span>
 							</div>
-							<h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Active Jobs</h2>
-							<p className="text-2xl md:text-3xl font-bold text-primary dark:text-primary/90">{stats?.active || 0}</p>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Active Jobs</h2>
+							<p className="text-2xl font-bold text-primary dark:text-primary/90">{stats?.active || 0}</p>
 						</div>
 					</div>
 					<div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
@@ -116,11 +125,10 @@ const Dashboard: React.FC = () => {
 								</div>
 								<span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
 							</div>
-							<h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Invoice</h2>
-							<p className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingInvoice || 0}</p>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Pending Invoice</h2>
+							<p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingInvoice || 0}</p>
 						</div>
 					</div>
-
 					<div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
 						<div className="space-y-2">
 							<div className="flex items-center space-x-2">
@@ -129,11 +137,22 @@ const Dashboard: React.FC = () => {
 								</div>
 								<span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
 							</div>
-							<h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Pending Payment</h2>
-							<p className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingPayment || 0}</p>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Pending Validation</h2>
+							<p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingValidation || 0}</p>
 						</div>
 					</div>
-
+					<div className="bg-gradient-to-br from-orange-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
+						<div className="space-y-2">
+							<div className="flex items-center space-x-2">
+								<div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+									<AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+								</div>
+								<span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
+							</div>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Pending Payment</h2>
+							<p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingPayment || 0}</p>
+						</div>
+					</div>
 					<div className="bg-gradient-to-br from-green-50 to-white dark:from-slate-800/95 dark:to-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all backdrop-blur-sm">
 						<div className="space-y-2">
 							<div className="flex items-center space-x-2">
@@ -142,8 +161,8 @@ const Dashboard: React.FC = () => {
 								</div>
 								<span className="text-sm text-slate-600 dark:text-slate-300">Processed successfully</span>
 							</div>
-							<h2 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-slate-100">Paid</h2>
-							<p className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">{stats?.paid || 0}</p>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Paid</h2>
+							<p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats?.paid || 0}</p>
 						</div>
 					</div>
 

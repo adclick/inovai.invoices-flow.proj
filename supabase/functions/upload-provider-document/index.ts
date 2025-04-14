@@ -47,7 +47,7 @@ serve(async (req) => {
       .select('id, status, public_token')
       .eq('id', jobId)
       .eq('public_token', token)
-      .eq('status', 'pending_invoice')
+      .eq('status', 'pending_validation')
       .single();
 
     if (jobError || !job) {
