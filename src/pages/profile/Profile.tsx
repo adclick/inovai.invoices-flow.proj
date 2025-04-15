@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Save, Loader2, User } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const Profile: React.FC = () => {
@@ -58,7 +58,7 @@ const Profile: React.FC = () => {
       await changeLanguage(selectedLanguage);
       toast({
         title: t("profile.updateSuccess"),
-        variant: "success",
+        // Removed the "success" variant to fix the type error
       });
     } catch (error) {
       console.error("Error updating language preference:", error);
