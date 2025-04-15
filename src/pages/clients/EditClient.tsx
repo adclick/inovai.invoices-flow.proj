@@ -20,20 +20,22 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-
-// Define form validation schema
-const clientFormSchema = z.object({
-	name: z.string().min(1, "Client name is required").max(100, "Client name must be less than 100 characters"),
-	active: z.boolean().default(true),
-});
-
-type ClientFormValues = z.infer<typeof clientFormSchema>;
+import { useTranslation } from "react-i18next";
 
 const EditClient = () => {
+	const { t } = useTranslation();
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const queryClient = useQueryClient();
+
+	// Define form validation schema
+	const clientFormSchema = z.object({
+		name: z.string().min(1, t("clients.clientName") + " " + t("common.error")).max(100, t("clients.clientName") + " " + t("common.error")),
+		active: z.boolean().default(true),
+	});
+
+	type ClientFormValues = z.infer<typeof clientFormSchema>;
 
 	// Initialize form
 	const form = useForm<ClientFormValues>({
@@ -98,15 +100,14 @@ const EditClient = () => {
 			queryClient.invalidateQueries({ queryKey: ["clients"] });
 			queryClient.invalidateQueries({ queryKey: ["client", id] });
 			toast({
-				title: "Client updated",
-				description: "The client has been successfully updated.",
+				title: t("clients.clientUpdated"),
 			});
 			navigate("/clients");
 		},
 		onError: (error) => {
 			toast({
-				title: "Error",
-				description: `Failed to update client: ${error.message}`,
+				title: t("common.error"),
+				description: `${t("clients.clientUpdated")}: ${error.message}`,
 				variant: "destructive",
 			});
 		},
@@ -124,11 +125,11 @@ const EditClient = () => {
 					<div className="mb-6">
 						<Button variant="ghost" onClick={() => navigate("/clients")}>
 							<ArrowLeft className="mr-2 h-4 w-4" />
-							Back to Clients
+							{t("clients.backToClients")}
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p>Loading client data...</p>
+						<p>{t("common.loading")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -142,11 +143,11 @@ const EditClient = () => {
 					<div className="mb-6">
 						<Button variant="ghost" onClick={() => navigate("/clients")}>
 							<ArrowLeft className="mr-2 h-4 w-4" />
-							Back to Clients
+							{t("clients.backToClients")}
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-red-500">Error loading client data. Please try again later.</p>
+						<p className="text-red-500">{t("common.error")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -157,9 +158,9 @@ const EditClient = () => {
 		<DashboardLayout>
 			<div className="p-6 max-w-4xl mx-auto">
 				<div className="mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Client</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("clients.editClient")}</h1>
 					<p className="text-slate-500 dark:text-slate-400 mt-1">
-						Update client information
+						{t("clients.clientDetails")}
 					</p>
 				</div>
 
@@ -171,9 +172,9 @@ const EditClient = () => {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Client Name</FormLabel>
+										<FormLabel>{t("clients.clientName")}</FormLabel>
 										<FormControl>
-											<Input placeholder="Enter client name" {...field} />
+											<Input placeholder={t("clients.clientName")} {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -186,9 +187,9 @@ const EditClient = () => {
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 										<div className="space-y-0.5">
-											<FormLabel className="text-sm">Active Client</FormLabel>
+											<FormLabel className="text-sm">{t("clients.active")}</FormLabel>
 											<div className="text-sm text-muted-foreground">
-												Mark this client as active
+												{t("clients.activeDescription")}
 											</div>
 										</div>
 										<FormControl>
@@ -204,7 +205,7 @@ const EditClient = () => {
 							<div className="flex justify-between pt-4">
 								<Button variant="outline" onClick={() => navigate("/clients")}>
 									<ArrowLeft className="mr-2 h-4 w-4" />
-									Back to Clients
+									{t("clients.backToClients")}
 								</Button>
 								<div className="flex justify-end space-x-4">
 									<Button
@@ -212,13 +213,13 @@ const EditClient = () => {
 										variant="outline"
 										onClick={() => navigate("/clients")}
 									>
-										Cancel
+										{t("common.cancel")}
 									</Button>
 									<Button
 										type="submit"
 										disabled={updateClientMutation.isPending}
 									>
-										{updateClientMutation.isPending ? "Saving..." : "Save Changes"}
+										{updateClientMutation.isPending ? t("common.updating") : t("common.save")}
 									</Button>
 								</div>
 							</div>

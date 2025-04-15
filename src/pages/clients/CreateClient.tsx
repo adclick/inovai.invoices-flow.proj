@@ -19,18 +19,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
-
-// Define form validation schema
-const clientFormSchema = z.object({
-  name: z.string().min(1, "Client name is required").max(100, "Client name must be less than 100 characters"),
-});
-
-type ClientFormValues = z.infer<typeof clientFormSchema>;
+import { useTranslation } from "react-i18next";
 
 const CreateClient = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Define form validation schema
+  const clientFormSchema = z.object({
+    name: z.string().min(1, t("clients.clientName") + " " + t("common.error")).max(100, t("clients.clientName") + " " + t("common.error")),
+  });
+
+  type ClientFormValues = z.infer<typeof clientFormSchema>;
 
   // Initialize form
   const form = useForm<ClientFormValues>({
@@ -56,15 +58,14 @@ const CreateClient = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast({
-        title: "Client created",
-        description: "The client has been successfully created.",
+        title: t("clients.clientCreated"),
       });
       navigate("/clients");
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: `Failed to create client: ${error.message}`,
+        title: t("common.error"),
+        description: `${t("clients.clientCreated")}: ${error.message}`,
         variant: "destructive",
       });
     },
@@ -79,9 +80,9 @@ const CreateClient = () => {
     <DashboardLayout>
       <div className="p-6 max-w-4xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold">Create New Client</h1>
+          <h1 className="text-2xl font-bold">{t("clients.createNew")}</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Add a new client to your system
+            {t("clients.clientDetails")}
           </p>
         </div>
 
@@ -93,9 +94,9 @@ const CreateClient = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Client Name</FormLabel>
+                    <FormLabel>{t("clients.clientName")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter client name" {...field} />
+                      <Input placeholder={t("clients.clientName")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -108,13 +109,13 @@ const CreateClient = () => {
                   variant="outline" 
                   onClick={() => navigate("/clients")}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={createClientMutation.isPending}
                 >
-                  {createClientMutation.isPending ? "Creating..." : "Create Client"}
+                  {createClientMutation.isPending ? t("common.creating") : t("clients.createNew")}
                 </Button>
               </div>
             </form>

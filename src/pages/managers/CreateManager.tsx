@@ -19,19 +19,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
-
-// Define form validation schema
-const managerFormSchema = z.object({
-  name: z.string().min(1, "Manager name is required").max(100, "Manager name must be less than 100 characters"),
-  email: z.string().email("Invalid email address").min(1, "Email is required"),
-});
-
-type ManagerFormValues = z.infer<typeof managerFormSchema>;
+import { useTranslation } from "react-i18next";
 
 const CreateManager = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Define form validation schema
+  const managerFormSchema = z.object({
+    name: z.string().min(1, t("managers.managerName") + " " + t("common.error")).max(100, t("managers.managerName") + " " + t("common.error")),
+    email: z.string().email(t("common.error")).min(1, t("common.email") + " " + t("common.error")),
+  });
+
+  type ManagerFormValues = z.infer<typeof managerFormSchema>;
 
   // Initialize form
   const form = useForm<ManagerFormValues>({
@@ -61,15 +63,14 @@ const CreateManager = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["managers"] });
       toast({
-        title: "Manager created",
-        description: "The manager has been successfully created.",
+        title: t("managers.managerCreated"),
       });
       navigate("/managers");
     },
     onError: (error) => {
       toast({
-        title: "Error",
-        description: `Failed to create manager: ${error.message}`,
+        title: t("common.error"),
+        description: `${t("managers.managerCreated")}: ${error.message}`,
         variant: "destructive",
       });
     },
@@ -84,9 +85,9 @@ const CreateManager = () => {
     <DashboardLayout>
       <div className="p-6 max-w-4xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold">Create New Manager</h1>
+          <h1 className="text-2xl font-bold">{t("managers.createNew")}</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Add a new manager to your system
+            {t("managers.managerDetails")}
           </p>
         </div>
 
@@ -98,9 +99,9 @@ const CreateManager = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Manager Name</FormLabel>
+                    <FormLabel>{t("managers.managerName")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter manager name" {...field} />
+                      <Input placeholder={t("managers.managerName")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,11 +113,11 @@ const CreateManager = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel>{t("managers.email")}</FormLabel>
                     <FormControl>
                       <Input 
                         type="email" 
-                        placeholder="Enter manager email" 
+                        placeholder={t("managers.email")}
                         {...field} 
                       />
                     </FormControl>
@@ -131,13 +132,13 @@ const CreateManager = () => {
                   variant="outline" 
                   onClick={() => navigate("/managers")}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={createManagerMutation.isPending}
                 >
-                  {createManagerMutation.isPending ? "Creating..." : "Create Manager"}
+                  {createManagerMutation.isPending ? t("common.creating") : t("managers.createNew")}
                 </Button>
               </div>
             </form>
