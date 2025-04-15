@@ -15,14 +15,25 @@
   },
   "auth": {
     "signIn": "Entrar",
-    "signUp": "Cadastrar",
+    "signUp": "Registar",
     "signOut": "Sair",
     "email": "Email",
-    "password": "Senha",
-    "forgotPassword": "Esqueceu a senha?",
-    "resetPassword": "Redefinir Senha",
+    "password": "Palavra-passe",
+    "forgotPassword": "Esqueceu a palavra-passe?",
+    "resetPassword": "Redefinir Palavra-passe",
     "noAccount": "Não tem uma conta?",
-    "hasAccount": "Já tem uma conta?"
+    "hasAccount": "Já tem uma conta?",
+    "signInToAccount": "Entre na sua conta",
+    "createAccount": "Criar uma conta",
+    "enterCredentials": "Introduza as suas credenciais para aceder à sua conta",
+    "fillForm": "Preencha o formulário para criar a sua conta",
+    "fullName": "Nome Completo",
+    "welcomeBack": "Bem-vindo de volta!",
+    "loginSuccess": "Iniciou sessão com sucesso.",
+    "accountCreated": "Conta criada!",
+    "emailConfirmation": "A sua conta foi criada com sucesso. Verifique o seu email para confirmação.",
+    "signingIn": "A iniciar sessão...",
+    "creatingAccount": "A criar conta..."
   },
   "dashboard": {
     "title": "Painel",
@@ -42,11 +53,11 @@
     "profile": "Perfil"
   },
   "profile": {
-    "title": "Perfil do Usuário",
+    "title": "Perfil do Utilizador",
     "language": "Idioma",
     "english": "Inglês",
     "portuguese": "Português",
-    "saveChanges": "Salvar Alterações",
+    "saveChanges": "Guardar Alterações",
     "preferences": "Preferências",
     "languagePreference": "Preferência de Idioma",
     "accountInfo": "Informações da Conta",
@@ -58,7 +69,7 @@
   "settings": {
     "title": "Configurações do Sistema",
     "general": "Configurações Gerais",
-    "saveChanges": "Salvar Alterações",
-    "saving": "Salvando..."
+    "saveChanges": "Guardar Alterações",
+    "saving": "A guardar..."
   }
 }

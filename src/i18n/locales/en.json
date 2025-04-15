@@ -22,7 +22,18 @@
     "forgotPassword": "Forgot Password?",
     "resetPassword": "Reset Password",
     "noAccount": "Don't have an account?",
-    "hasAccount": "Already have an account?"
+    "hasAccount": "Already have an account?",
+    "signInToAccount": "Sign in to your account",
+    "createAccount": "Create an account",
+    "enterCredentials": "Enter your credentials to access your account",
+    "fillForm": "Fill out the form to create your account",
+    "fullName": "Full Name",
+    "welcomeBack": "Welcome back!",
+    "loginSuccess": "You have successfully logged in.",
+    "accountCreated": "Account created!",
+    "emailConfirmation": "Your account has been created successfully. Please check your email for confirmation.",
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating account..."
   },
   "dashboard": {
     "title": "Dashboard",

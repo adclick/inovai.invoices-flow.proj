@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import AuthCard from "./AuthCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 type FormMode = "login" | "register";
 
@@ -16,6 +17,7 @@ const REGISTRATION_ENABLED = false;
 const FORGOT_PASSWORD_ENABLED = false;
 
 const AuthForm: React.FC = () => {
+	const { t } = useTranslation();
 	const [mode, setMode] = useState<FormMode>("login");
 	const [showPassword, setShowPassword] = useState(false);
 	const [email, setEmail] = useState("");
@@ -60,8 +62,8 @@ const AuthForm: React.FC = () => {
 				if (error) throw error;
 
 				toast({
-					title: "Welcome back!",
-					description: "You have successfully logged in.",
+					title: t("auth.welcomeBack"),
+					description: t("auth.loginSuccess"),
 				});
 
 				// Redirect to dashboard
@@ -81,8 +83,8 @@ const AuthForm: React.FC = () => {
 				if (error) throw error;
 
 				toast({
-					title: "Account created!",
-					description: "Your account has been created successfully. Please check your email for confirmation.",
+					title: t("auth.accountCreated"),
+					description: t("auth.emailConfirmation"),
 				});
 
 				// Switch to login mode after successful registration
@@ -90,8 +92,8 @@ const AuthForm: React.FC = () => {
 			}
 		} catch (error: any) {
 			toast({
-				title: "Error",
-				description: error.message || "Something went wrong. Please try again.",
+				title: t("common.error"),
+				description: error.message || t("common.error"),
 				variant: "destructive",
 			});
 		} finally {
@@ -103,19 +105,19 @@ const AuthForm: React.FC = () => {
 		<AuthCard>
 			<div className="mb-4 sm:mb-6 text-center">
 				<h2 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-					{mode === "login" ? "Sign in to your account" : "Create an account"}
+					{mode === "login" ? t("auth.signInToAccount") : t("auth.createAccount")}
 				</h2>
 				<p className="mt-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
 					{mode === "login"
-						? "Enter your credentials to access your account"
-						: "Fill out the form to create your account"}
+						? t("auth.enterCredentials")
+						: t("auth.fillForm")}
 				</p>
 			</div>
 
 			<form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 animate-slide-up">
 				{mode === "register" && (
 					<div className="form-group">
-						<Label htmlFor="name" className="auth-label">Full Name</Label>
+						<Label htmlFor="name" className="auth-label">{t("auth.fullName")}</Label>
 						<div className="relative">
 							<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
 								<User size={16} />
@@ -134,7 +136,7 @@ const AuthForm: React.FC = () => {
 				)}
 
 				<div className="form-group">
-					<Label htmlFor="email" className="auth-label">Email</Label>
+					<Label htmlFor="email" className="auth-label">{t("auth.email")}</Label>
 					<div className="relative">
 						<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
 							<Mail size={16} />
@@ -152,7 +154,7 @@ const AuthForm: React.FC = () => {
 				</div>
 
 				<div className="form-group">
-					<Label htmlFor="password" className="auth-label">Password</Label>
+					<Label htmlFor="password" className="auth-label">{t("auth.password")}</Label>
 					<div className="relative">
 						<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
 							<Lock size={16} />
@@ -182,7 +184,7 @@ const AuthForm: React.FC = () => {
 							href="#"
 							className="text-xs sm:text-sm font-medium text-primary hover:underline dark:text-primary"
 						>
-							Forgot password?
+							{t("auth.forgotPassword")}
 						</a>
 					</div>
 				)}
@@ -199,24 +201,24 @@ const AuthForm: React.FC = () => {
 								<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 							</svg>
 							<span className="text-sm">
-								{mode === "login" ? "Signing in..." : "Creating account..."}
+								{mode === "login" ? t("auth.signingIn") : t("auth.creatingAccount")}
 							</span>
 						</div>
 					) : (
-						<span className="text-sm">{mode === "login" ? "Sign in" : "Create account"}</span>
+						<span className="text-sm">{mode === "login" ? t("auth.signIn") : t("auth.signUp")}</span>
 					)}
 				</Button>
 
 				{
 					REGISTRATION_ENABLED &&
 					<div className="text-center text-xs sm:text-sm mt-4">
-						{mode === "login" ? "Don't have an account?" : "Already have an account?"}
+						{mode === "login" ? t("auth.noAccount") : t("auth.hasAccount")}
 						<button
 							type="button"
 							onClick={toggleMode}
 							className="ml-1 text-primary hover:underline font-medium"
 						>
-							{mode === "login" ? "Sign up" : "Sign in"}
+							{mode === "login" ? t("auth.signUp") : t("auth.signIn")}
 						</button>
 					</div>
 				}

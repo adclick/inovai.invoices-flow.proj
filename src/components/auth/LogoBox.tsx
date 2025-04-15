@@ -1,8 +1,11 @@
 
 import React from "react";
 import { FileText } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const LogoBox: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="text-center animate-fade-in w-full max-w-lg">
       <div className="inline-block p-3 rounded-full bg-white/10 mb-4 sm:mb-6">
