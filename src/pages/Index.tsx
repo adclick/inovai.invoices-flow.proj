@@ -5,12 +5,15 @@ import LogoBox from "@/components/auth/LogoBox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import LanguageSelector from "@/components/language/LanguageSelector";
+import { useTranslation } from "react-i18next";
 
 const THEME_TOGGLE_ACTIVE = true;
 
 const Index: React.FC = () => {
 	const { user, isLoading } = useAuth();
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 
 	useEffect(() => {
 		if (user && !isLoading) {
@@ -35,12 +38,11 @@ const Index: React.FC = () => {
 
 			{/* Right Side - Auth Form */}
 			<div className="w-full md:w-1/2 flex flex-col items-center justify-center p-4 sm:p-6 h-lvh relative">
-				{/* Theme toggle in top-right corner */}
-				{THEME_TOGGLE_ACTIVE &&
-					<div className="absolute top-4 right-4">
-						<ThemeToggle />
-					</div>
-				}
+				{/* Theme toggle and Language selector in top-right corner */}
+				<div className="absolute top-4 right-4 flex items-center space-x-2">
+					<LanguageSelector />
+					{THEME_TOGGLE_ACTIVE && <ThemeToggle />}
+				</div>
 
 				{/* Mobile logo (only visible on small screens) */}
 				<div className="md:hidden w-full text-center mb-6">

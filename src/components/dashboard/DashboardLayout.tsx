@@ -1,14 +1,17 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 import {
     LayoutDashboard, LogOut, UserCog, Sidebar as SidebarIcon, List,
     Group, Handshake, Megaphone, Wrench, LucideIcon, Menu, X,
-    Settings
+    Settings, User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ThemeToggle from "@/components/theme/ThemeToggle";
+import LanguageSelector from "@/components/language/LanguageSelector";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -24,6 +27,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const location = useLocation();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const checkIfMobile = () => {
@@ -87,20 +91,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     };
 
     const navItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
-        { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+        { path: "/dashboard", icon: LayoutDashboard, label: t("navigation.dashboard") },
     ];
 
     const jobItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
-        { path: "/jobs/all", icon: List, label: "All Jobs" },
-        { path: "/jobs/grouped", icon: Group, label: "By Campaign" },
+        { path: "/jobs/all", icon: List, label: t("navigation.allJobs") },
+        { path: "/jobs/grouped", icon: Group, label: t("navigation.byGroup") },
     ];
 
     const managementItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
-        { path: "/providers", icon: Wrench, label: "Providers" },
-        { path: "/managers", icon: UserCog, label: "Managers" },
-        { path: "/clients", icon: Handshake, label: "Clients" },
-        { path: "/campaigns", icon: Megaphone, label: "Campaigns" },
-        { path: "/settings", icon: Settings, label: "Settings" },
+        { path: "/providers", icon: Wrench, label: t("navigation.providers") },
+        { path: "/managers", icon: UserCog, label: t("navigation.managers") },
+        { path: "/clients", icon: Handshake, label: t("navigation.clients") },
+        { path: "/campaigns", icon: Megaphone, label: t("navigation.campaigns") },
+        { path: "/profile", icon: User, label: t("navigation.profile") },
+        { path: "/settings", icon: Settings, label: t("navigation.settings") },
     ];
 
     const SidebarContent = () => (
@@ -127,7 +132,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         <Separator className="my-4 bg-white/20 dark:bg-slate-700" />
                         <div className="mb-2">
                             <h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
-                                JOBS
+                                {t("navigation.jobs").toUpperCase()}
                             </h3>
                             <ul className="space-y-1">
                                 {jobItems.map((item) => (
@@ -145,7 +150,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         <Separator className="my-4 bg-white/20 dark:bg-slate-700" />
                         <div className="mb-2">
                             <h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
-                                MANAGEMENT
+                                {t("navigation.management").toUpperCase()}
                             </h3>
                             <ul className="space-y-1">
                                 {managementItems.map((item) => (
@@ -164,7 +169,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     className="flex w-full items-center px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 dark:hover:bg-slate-700 dark:text-red-400 transition-colors duration-200"
                 >
                     <LogOut size={20} />
-                    {(isMobile || sidebarOpen) && <span className="ml-3 text-sm font-medium">Sign Out</span>}
+                    {(isMobile || sidebarOpen) && <span className="ml-3 text-sm font-medium">{t("auth.signOut")}</span>}
                 </button>
             </nav>
         </>
@@ -209,6 +214,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
+                        <LanguageSelector />
                         {THEME_TOGGLE_ACTIVE && <ThemeToggle />}
                         <div className="flex items-center space-x-3">
                             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">

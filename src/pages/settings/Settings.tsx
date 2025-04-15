@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Settings as SettingsIcon, Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { useSettings } from "@/hooks/useSettings";
 import { type SettingUpdate } from "@/types/settings";
 
 const Settings: React.FC = () => {
+  const { t } = useTranslation();
   const { user, isLoading: authLoading } = useAuth();
   const { settings, isLoading, isUpdating, updateSettings } = useSettings();
   const [formValues, setFormValues] = useState<Record<string, string>>({});
@@ -129,7 +131,7 @@ const Settings: React.FC = () => {
               <SettingsIcon className="w-5 h-5 text-primary" />
             </div>
             <h1 className="text-xl md:text-2xl font-semibold text-slate-800 dark:text-white">
-              System Settings
+              {t("settings.title")}
             </h1>
           </div>
           <Button
@@ -140,12 +142,12 @@ const Settings: React.FC = () => {
             {isUpdating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
+                {t("settings.saving")}
               </>
             ) : (
               <>
                 <Save className="mr-2 h-4 w-4" />
-                Save Changes
+                {t("settings.saveChanges")}
               </>
             )}
           </Button>
@@ -155,7 +157,7 @@ const Settings: React.FC = () => {
 
           <div className="bg-white dark:bg-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
             <h2 className="text-lg font-medium mb-4 text-slate-800 dark:text-white">
-              General Settings
+              {t("settings.general")}
             </h2>
             <div className="space-y-4">
               {settings

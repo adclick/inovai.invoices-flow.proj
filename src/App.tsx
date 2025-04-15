@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -25,6 +26,7 @@ import JobsRouter from "./pages/jobs/JobsRouter";
 import CreateJob from "./pages/jobs/CreateJob";
 import EditJob from "./pages/jobs/EditJob";
 import Settings from "./pages/settings/Settings";
+import Profile from "./pages/profile/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicUpload from "./pages/PublicUpload";
 import PaymentConfirm from "./pages/PaymentConfirm";
@@ -35,39 +37,42 @@ const App = () => (
 	<QueryClientProvider client={queryClient}>
 		<ThemeProvider>
 			<AuthProvider>
-				<TooltipProvider>
-					<Toaster />
-					<Sonner />
-					<BrowserRouter>
-						<Routes>
-							<Route path="/" element={<Index />} />
-							<Route path="/upload/:jobId/:token" element={<PublicUpload />} />
-							<Route path="/payments/confirm/:jobId/:token" element={<PaymentConfirm />} />
+				<LanguageProvider>
+					<TooltipProvider>
+						<Toaster />
+						<Sonner />
+						<BrowserRouter>
+							<Routes>
+								<Route path="/" element={<Index />} />
+								<Route path="/upload/:jobId/:token" element={<PublicUpload />} />
+								<Route path="/payments/confirm/:jobId/:token" element={<PaymentConfirm />} />
 
-							<Route element={<ProtectedRoute />}>
-								<Route path="/dashboard" element={<Dashboard />} />
-								<Route path="/clients" element={<ClientsList />} />
-								<Route path="/clients/create" element={<CreateClient />} />
-								<Route path="/clients/edit/:id" element={<EditClient />} />
-								<Route path="/campaigns" element={<CampaignsList />} />
-								<Route path="/campaigns/create" element={<CreateCampaign />} />
-								<Route path="/campaigns/edit/:id" element={<EditCampaign />} />
-								<Route path="/managers" element={<ManagersList />} />
-								<Route path="/managers/create" element={<CreateManager />} />
-								<Route path="/managers/edit/:id" element={<EditManager />} />
-								<Route path="/providers" element={<ProvidersList />} />
-								<Route path="/providers/create" element={<CreateProvider />} />
-								<Route path="/providers/edit/:id" element={<EditProvider />} />
-								<Route path="/jobs/*" element={<JobsRouter />} />
-								<Route path="/jobs/create" element={<CreateJob />} />
-								<Route path="/jobs/edit/:id" element={<EditJob />} />
-								<Route path="/settings" element={<Settings />} />
-								{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-								<Route path="*" element={<NotFound />} />
-							</Route>
-						</Routes>
-					</BrowserRouter>
-				</TooltipProvider>
+								<Route element={<ProtectedRoute />}>
+									<Route path="/dashboard" element={<Dashboard />} />
+									<Route path="/clients" element={<ClientsList />} />
+									<Route path="/clients/create" element={<CreateClient />} />
+									<Route path="/clients/edit/:id" element={<EditClient />} />
+									<Route path="/campaigns" element={<CampaignsList />} />
+									<Route path="/campaigns/create" element={<CreateCampaign />} />
+									<Route path="/campaigns/edit/:id" element={<EditCampaign />} />
+									<Route path="/managers" element={<ManagersList />} />
+									<Route path="/managers/create" element={<CreateManager />} />
+									<Route path="/managers/edit/:id" element={<EditManager />} />
+									<Route path="/providers" element={<ProvidersList />} />
+									<Route path="/providers/create" element={<CreateProvider />} />
+									<Route path="/providers/edit/:id" element={<EditProvider />} />
+									<Route path="/jobs/*" element={<JobsRouter />} />
+									<Route path="/jobs/create" element={<CreateJob />} />
+									<Route path="/jobs/edit/:id" element={<EditJob />} />
+									<Route path="/settings" element={<Settings />} />
+									<Route path="/profile" element={<Profile />} />
+									{/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+									<Route path="*" element={<NotFound />} />
+								</Route>
+							</Routes>
+						</BrowserRouter>
+					</TooltipProvider>
+				</LanguageProvider>
 			</AuthProvider>
 		</ThemeProvider>
 	</QueryClientProvider>

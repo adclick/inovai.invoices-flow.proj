@@ -1,0 +1,64 @@
+
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "create": "Create",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "search": "Search"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to InvoicesFlow"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "jobs": "Jobs",
+    "allJobs": "All Jobs",
+    "byGroup": "By Campaign",
+    "management": "Management",
+    "providers": "Providers",
+    "managers": "Managers",
+    "clients": "Clients",
+    "campaigns": "Campaigns",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "profile": {
+    "title": "User Profile",
+    "language": "Language",
+    "english": "English",
+    "portuguese": "Portuguese",
+    "saveChanges": "Save Changes",
+    "preferences": "Preferences",
+    "languagePreference": "Language Preference",
+    "accountInfo": "Account Information",
+    "email": "Email",
+    "fullName": "Full Name",
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "Failed to update profile"
+  },
+  "settings": {
+    "title": "System Settings",
+    "general": "General Settings",
+    "saveChanges": "Save Changes",
+    "saving": "Saving..."
+  }
+}

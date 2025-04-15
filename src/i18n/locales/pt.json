@@ -1,0 +1,64 @@
+
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "create": "Criar",
+    "submit": "Enviar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "search": "Pesquisar"
+  },
+  "auth": {
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "signOut": "Sair",
+    "email": "Email",
+    "password": "Senha",
+    "forgotPassword": "Esqueceu a senha?",
+    "resetPassword": "Redefinir Senha",
+    "noAccount": "Não tem uma conta?",
+    "hasAccount": "Já tem uma conta?"
+  },
+  "dashboard": {
+    "title": "Painel",
+    "welcome": "Bem-vindo ao InvoicesFlow"
+  },
+  "navigation": {
+    "dashboard": "Painel",
+    "jobs": "Trabalhos",
+    "allJobs": "Todos os Trabalhos",
+    "byGroup": "Por Campanha",
+    "management": "Gestão",
+    "providers": "Fornecedores",
+    "managers": "Gerentes",
+    "clients": "Clientes",
+    "campaigns": "Campanhas",
+    "settings": "Configurações",
+    "profile": "Perfil"
+  },
+  "profile": {
+    "title": "Perfil do Usuário",
+    "language": "Idioma",
+    "english": "Inglês",
+    "portuguese": "Português",
+    "saveChanges": "Salvar Alterações",
+    "preferences": "Preferências",
+    "languagePreference": "Preferência de Idioma",
+    "accountInfo": "Informações da Conta",
+    "email": "Email",
+    "fullName": "Nome Completo",
+    "updateSuccess": "Perfil atualizado com sucesso",
+    "updateError": "Falha ao atualizar o perfil"
+  },
+  "settings": {
+    "title": "Configurações do Sistema",
+    "general": "Configurações Gerais",
+    "saveChanges": "Salvar Alterações",
+    "saving": "Salvando..."
+  }
+}
