@@ -88,6 +88,16 @@ serve(async (req) => {
     // Call the webhook if URL is provided
     let webhookFileUrl = publicUrl;
     if (webhookUrl) {
+			const { data: setting, error: settingError } = await supabase
+				.from('settings')
+				.select('*')
+				.eq('name', 'invoices_drive_directory_id')
+				.single();
+
+				if (settingError){
+					throw settingError;
+				}
+
       try {
         const webhookResponse = await fetch(webhookUrl, {
           method: 'POST',
@@ -98,7 +108,8 @@ serve(async (req) => {
             "job_id": jobId,
             "file_url": publicUrl,
             "file_name": fileName,
-            "timestamp": Date.now()
+            "timestamp": Date.now(),
+						"google_drive_directory_id": setting.value
           }),
         });
 
@@ -127,7 +138,7 @@ serve(async (req) => {
       .from('jobs')
       .update({ 
         documents: allDocuments, 
-        status: "pending_payment",
+        status: "pending_validation",
         public_token: null // Clear the public token for security
       })
       .eq('id', jobId);
@@ -140,7 +151,7 @@ serve(async (req) => {
       const response = await supabase.functions.invoke('send-job-status-update', {
         body: { 
           job_id: jobId,
-          new_status: "pending_payment" 
+          new_status: "pending_validation" 
         }
       });
       

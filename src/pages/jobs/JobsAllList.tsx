@@ -174,11 +174,11 @@ const JobsAllList: React.FC = () => {
 			case 'active':
 				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Active</Badge>;
 			case 'pending_invoice':
-				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Pending Invoice</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">Pending Invoice</Badge>;
 			case 'pending_validation':
-				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Pending Invoice</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">Pending Validation</Badge>;
 			case 'pending_payment':
-				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Pending Payment</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">Pending Payment</Badge>;
 			case 'paid':
 				return <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">Paid</Badge>;
 			default:

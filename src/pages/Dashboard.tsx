@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { Clock, CheckCircle, XCircle, AlertCircle, Users, FileText, Search, Filter } from "lucide-react";
+import { Clock, CheckCircle, XCircle, AlertCircle, Users, FileText, Search, Filter, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -192,11 +192,11 @@ const Dashboard: React.FC = () => {
 						<div className="p-4 md:p-6">
 							<div className="flex items-center space-x-3 mb-4">
 								<div className="p-2 bg-primary/10 rounded-lg">
-									<Users className="w-5 h-5 text-primary" />
+									<Megaphone className="w-5 h-5 text-primary" />
 								</div>
 								<div>
-									<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Active Providers</h2>
-									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">Providers with pending invoices</p>
+									<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Active Campaigns</h2>
+									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">Campaigns on going</p>
 								</div>
 							</div>
 							<div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">

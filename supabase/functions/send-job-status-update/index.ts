@@ -232,6 +232,7 @@ serve(async (req) => {
     } else if (new_status === "pending_payment") {
 			const { data: setting, error: settingError } = await supabase
 				.from("settings")
+				.select("*")
 				.eq("name", "finance_email_address")
 				.single();
 
