@@ -42,7 +42,7 @@ const Index: React.FC = () => {
 				{/* Theme toggle and Language selector in top-right corner */}
 				<div className="absolute top-4 right-4 flex items-center space-x-2">
 					<LanguageSelector />
-					{THEME_TOGGLE_ACTIVE && <ThemeToggle />}
+					<ThemeToggle />
 				</div>
 
 				{/* Mobile logo (only visible on small screens) */}

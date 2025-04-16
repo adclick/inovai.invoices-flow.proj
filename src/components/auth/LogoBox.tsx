@@ -8,9 +8,12 @@ const LogoBox: React.FC = () => {
   
   return (
     <div className="text-center animate-fade-in w-full max-w-lg">
-      <div className="inline-block p-3 rounded-full bg-white/10 mb-4 sm:mb-6">
+      {/* <div className="inline-block p-3 rounded-full bg-white/10 mb-4 sm:mb-6">
         <FileText size={32} className="text-white sm:h-10 sm:w-10" />
-      </div>
+      </div> */}
+			<div className="inline-block p-3 rounded-full gradient-bg mb-2">
+							<div className="text-white font-bold text-2xl">IF</div>
+						</div>
       <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">InvoicesFlow</h1>
       <p className="text-white/80 text-sm sm:text-base max-w-md mx-auto">
         {t("logoBox.subtitle")}

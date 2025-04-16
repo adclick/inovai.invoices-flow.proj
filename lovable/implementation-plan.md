@@ -12,30 +12,22 @@ The primary goal of InvoiceFlow is to simplify and centralize the invoice submis
 
 ### **User Roles & Responsibilities**
 
-**Super Admin**
+**Admin & Super Admin**
 
-*   Manage users and roles
-
-**Admin**
-
-*   Manage providers, managers, jobs, provider's notifications schedules, custom fields
-
-**Finance**
-
-*   Updates jobs status after successful payment to the provider
+*   Manage clients, campaigns, providers, managers, jobs and app settings
 
 ### **Core Features**
 
-*   **User Management**: Role-based access with predefined permissions
+*   **Clients, Campaigns, Managers and Providers Management**:
+    *   Create, Read, Update and Delete
 *   **Job Management**:
     *   Create, Read, Update and Delete
     *   Filtering and Sorting
-    *   Scheduling notifications
     *   Categorization: by Client, Campaign, Manager and Provider
-    *   Activity logs
-*   **Reporting**:
-    *   Campaign's Revenue and Costs
-*   **Email Notifications**: Automated email alerts for status updates (configurable)
+	  *   Documents upload
+	  *   Status update
+*   **Email Notifications**: Automated email alerts for status updates
+*   **Invoice Uploads**: Public expirable pages for providers to upload invoices
 *   **Access Control**: Login-only access without a public registration option
 *   **Predefined Admin Structure**: Super Admin manages initial user onboarding
 
