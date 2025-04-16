@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -44,8 +43,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 const JobsAllList: React.FC = () => {
+	const { t } = useTranslation();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
@@ -74,8 +75,8 @@ const JobsAllList: React.FC = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["jobs"] });
 			toast({
-				title: "Job deleted",
-				description: "The job has been successfully deleted.",
+				title: t("jobs.deleteSuccess"),
+				description: t("jobs.jobDeletedDescription"),
 			});
 			setIsDeleteDialogOpen(false);
 			setJobToDelete(null);
@@ -83,8 +84,8 @@ const JobsAllList: React.FC = () => {
 		onError: (error) => {
 			console.error("Error deleting job:", error);
 			toast({
-				title: "Error",
-				description: "Failed to delete the job. Please try again.",
+				title: t("common.error"),
+				description: t("jobs.deleteError"),
 				variant: "destructive",
 			});
 		},
@@ -170,17 +171,17 @@ const JobsAllList: React.FC = () => {
 	const getStatusBadge = (status: string) => {
 		switch (status) {
 			case 'draft':
-				return <Badge variant="outline" className="text-slate-500">Draft</Badge>;
+				return <Badge variant="outline" className="text-slate-500">{t("jobs.draft")}</Badge>;
 			case 'active':
-				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Active</Badge>;
+				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">{t("jobs.active")}</Badge>;
 			case 'pending_invoice':
-				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">Pending Invoice</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">{t("jobs.pendingInvoice")}</Badge>;
 			case 'pending_validation':
-				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">Pending Validation</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">{t("jobs.pendingValidation")}</Badge>;
 			case 'pending_payment':
-				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">Pending Payment</Badge>;
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">{t("jobs.pendingPayment")}</Badge>;
 			case 'paid':
-				return <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">Paid</Badge>;
+				return <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">{t("jobs.paid")}</Badge>;
 			default:
 				return <Badge variant="outline">{status}</Badge>;
 		}
@@ -191,10 +192,10 @@ const JobsAllList: React.FC = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">All Jobs</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-slate-500 dark:text-slate-400">Loading jobs...</p>
+						<p className="text-slate-500 dark:text-slate-400">{t("jobs.loadingJobs")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -206,10 +207,10 @@ const JobsAllList: React.FC = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">All Jobs</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
 					</div>
 					<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-						<p className="text-red-600 dark:text-red-400">Error loading jobs: {(error as Error).message}</p>
+						<p className="text-red-600 dark:text-red-400">{t("jobs.errorLoadingJobs")}: {(error as Error).message}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -220,20 +221,20 @@ const JobsAllList: React.FC = () => {
 		<DashboardLayout>
 			<div className="p-6">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">All Jobs</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
 					<Button onClick={() => navigate("/jobs/create")} className="shrink-0">
 						<PlusCircle className="mr-2 h-4 w-4" />
-						New Job
+						{t("jobs.createNew")}
 					</Button>
 				</div>
 
 				{data.length === 0 ? (
 					<div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
-						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No jobs found</h3>
-						<p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first job.</p>
+						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">{t("jobs.noJobsFound")}</h3>
+						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("jobs.getStarted")}</p>
 						<Button onClick={() => navigate("/jobs/create")}>
 							<PlusCircle className="mr-2 h-4 w-4" />
-							Create Job
+							{t("jobs.createJob")}
 						</Button>
 					</div>
 				) : (
@@ -241,7 +242,7 @@ const JobsAllList: React.FC = () => {
 						<div className="flex flex-col md:flex-row gap-4 mb-6">
 							<div className="flex-1">
 								<Input
-									placeholder="Search jobs..."
+									placeholder={t("jobs.searchJobs")}
 									value={searchTerm}
 									onChange={(e) => setSearchTerm(e.target.value)}
 									className="max-w-md"
@@ -249,17 +250,17 @@ const JobsAllList: React.FC = () => {
 							</div>
 							<div className="flex flex-row gap-2">
 								<Select value={statusFilter} onValueChange={setStatusFilter}>
-									<SelectTrigger className="w-[150px]">
-										<SelectValue placeholder="Status Filter" />
+									<SelectTrigger className="w-[180px]">
+										<SelectValue placeholder={t("jobs.filterByStatus")} />
 									</SelectTrigger>
 									<SelectContent>
-										<SelectItem value="all">All Status</SelectItem>
-										<SelectItem value="new">New</SelectItem>
-										<SelectItem value="manager_ok">Manager OK</SelectItem>
-										<SelectItem value="pending_invoice">Pending Invoice</SelectItem>
-										<SelectItem value="pending_validation">Pending Validation</SelectItem>
-										<SelectItem value="pending_payment">Pending Payment</SelectItem>
-										<SelectItem value="paid">Paid</SelectItem>
+										<SelectItem value="all">{t("jobs.allStatuses")}</SelectItem>
+										<SelectItem value="draft">{t("jobs.draft")}</SelectItem>
+										<SelectItem value="active">{t("jobs.active")}</SelectItem>
+										<SelectItem value="pending_invoice">{t("jobs.pendingInvoice")}</SelectItem>
+										<SelectItem value="pending_validation">{t("jobs.pendingValidation")}</SelectItem>
+										<SelectItem value="pending_payment">{t("jobs.pendingPayment")}</SelectItem>
+										<SelectItem value="paid">{t("jobs.paid")}</SelectItem>
 									</SelectContent>
 								</Select>
 							</div>
@@ -269,60 +270,38 @@ const JobsAllList: React.FC = () => {
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>Client</TableHead>
-										<TableHead>Campaign</TableHead>
-										<TableHead>Manager</TableHead>
-										<TableHead>Provider</TableHead>
-										<TableHead>Value</TableHead>
-										<TableHead>Status</TableHead>
-										<TableHead>Invoice</TableHead>
-										<TableHead className="text-right">Actions</TableHead>
+										<TableHead>{t("jobs.client")}</TableHead>
+										<TableHead>{t("jobs.campaign")}</TableHead>
+										<TableHead>{t("jobs.manager")}</TableHead>
+										<TableHead>{t("jobs.provider")}</TableHead>
+										<TableHead>{t("jobs.value")}</TableHead>
+										<TableHead>{t("jobs.status")}</TableHead>
+										<TableHead className="text-right">{t("jobs.actions")}</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
 									{paginatedJobs.map((job) => (
-										<TableRow
-											key={job.id}
-											onClick={() => navigate(`/jobs/edit/${job.id}`)}
-											className="cursor-pointer"
-										>
-											<TableCell>{job.client_name}</TableCell>
-											<TableCell>{job.campaign_name}</TableCell>
-											<TableCell>{job.manager_name}</TableCell>
-											<TableCell>{job.provider_name}</TableCell>
+										<TableRow key={job.id} onClick={() => navigate(`/jobs/edit/${job.id}`)} className="cursor-pointer">
+											<TableCell className="font-medium">{job.client_name || t("jobs.unknownClient")}</TableCell>
+											<TableCell>{job.campaign_name || t("jobs.unknownCampaign")}</TableCell>
+											<TableCell>{job.manager_name || t("jobs.unknownManager")}</TableCell>
+											<TableCell>{job.provider_name || t("jobs.unknownProvider")}</TableCell>
 											<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 											<TableCell>{getStatusBadge(job.status)}</TableCell>
-											<TableCell className="w-2">
-												{job.documents && job.documents.length > 0 ? (
-													<Link to={job.documents[0]} onClick={e => e.stopPropagation()} target="_blank">
-														<Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30 truncate max-w-[350px]">
-															{job.documents[0]}
-														</Badge>
-													</Link>
-												) : (
-													<span className="text-slate-400 text-sm">-</span>
-												)}
-											</TableCell>
 											<TableCell className="text-right">
-												<div className="flex justify-end gap-2">
-													<button
+												<div className="flex justify-end space-x-2">
+													<Link
 														onClick={(e) => handleDeleteClick(e, job)}
+														to={null}
 														className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
 													>
 														<Trash2 className="h-4 w-4" />
-														<span className="sr-only">Delete</span>
-													</button>
+														<span className="sr-only">{t("common.delete")}</span>
+													</Link>
 												</div>
 											</TableCell>
 										</TableRow>
 									))}
-									{paginatedJobs.length === 0 && (
-										<TableRow>
-											<TableCell colSpan={9} className="h-24 text-center">
-												No jobs found matching the current filters
-											</TableCell>
-										</TableRow>
-									)}
 								</TableBody>
 							</Table>
 						</div>
@@ -330,25 +309,25 @@ const JobsAllList: React.FC = () => {
 						{renderPagination()}
 					</>
 				)}
-			</div>
 
-			{/* Delete Confirmation Dialog */}
-			<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-				<AlertDialogContent>
-					<AlertDialogHeader>
-						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
-						<AlertDialogDescription>
-							You are about to delete this job. This action cannot be undone.
-						</AlertDialogDescription>
-					</AlertDialogHeader>
-					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
-						<AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-							Delete
-						</AlertDialogAction>
-					</AlertDialogFooter>
-				</AlertDialogContent>
-			</AlertDialog>
+				{/* Delete Confirmation Dialog */}
+				<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+					<AlertDialogContent>
+						<AlertDialogHeader>
+							<AlertDialogTitle>{t("jobs.deleteJob")}</AlertDialogTitle>
+							<AlertDialogDescription>
+								{t("jobs.deleteConfirmation")}
+							</AlertDialogDescription>
+						</AlertDialogHeader>
+						<AlertDialogFooter>
+							<AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+							<AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+								{t("common.delete")}
+							</AlertDialogAction>
+						</AlertDialogFooter>
+					</AlertDialogContent>
+				</AlertDialog>
+			</div>
 		</DashboardLayout>
 	);
 };

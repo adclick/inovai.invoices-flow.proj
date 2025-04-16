@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
+import { useTranslation } from "react-i18next";
 
 type DocumentUploaderProps = {
 	jobId: string;
@@ -27,6 +28,7 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 	existingDocuments = [],
 	onDocumentsUpdated,
 }) => {
+	const { t } = useTranslation();
 	const [uploadingFiles, setUploadingFiles] = useState<FileUploadState[]>([]);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const { toast } = useToast();
@@ -137,8 +139,8 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 			onDocumentsUpdated(newDocuments);
 
 			toast({
-				title: "File uploaded successfully",
-				description: `${file.name} has been uploaded and linked to this job.`,
+				title: t("common.success"),
+				description: t("jobs.documentUploaded", { fileName: file.name }),
 			});
 
 		} catch (error: any) {
@@ -149,13 +151,13 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 				prev.map(fs => fs.id === id ? {
 					...fs,
 					status: "error" as const,
-					errorMessage: error.message || "Upload failed",
+					errorMessage: error.message || t("jobs.uploadFailed"),
 				} : fs)
 			);
 
 			toast({
-				title: "Upload failed",
-				description: error.message || "Failed to upload file. Please try again.",
+				title: t("common.error"),
+				description: error.message || t("jobs.uploadFailedTryAgain"),
 				variant: "destructive",
 			});
 		}
@@ -174,14 +176,14 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
-				<h3 className="text-lg font-medium">Job Documents</h3>
+				<h3 className="text-lg font-medium">{t("jobs.documents")}</h3>
 				<Button
 					onClick={openFileDialog}
 					variant="outline"
 					size="sm"
 				>
 					<Upload className="h-4 w-4 mr-2" />
-					Upload Files
+					{t("common.upload")}
 				</Button>
 				<input
 					type="file"
@@ -219,12 +221,12 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 								)}
 								{fileState.status === 'completed' && (
 									<span className="text-xs text-green-600 font-medium">
-										Uploaded
+										{t("common.uploaded")}
 									</span>
 								)}
 								{fileState.status === 'error' && (
 									<span className="text-xs text-red-600 font-medium">
-										Failed
+										{t("common.failed")}
 									</span>
 								)}
 								<Button
@@ -246,7 +248,7 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 				<Alert variant="destructive" className="mt-4">
 					<AlertCircle className="h-4 w-4" />
 					<AlertDescription>
-						Some files failed to upload. Please try again.
+						{t("jobs.someFilesFailed")}
 					</AlertDescription>
 				</Alert>
 			)}
@@ -254,7 +256,7 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 			{/* Display existing documents */}
 			{existingDocuments && existingDocuments.length > 0 && (
 				<div className="mt-4">
-					<h4 className="text-sm font-medium mb-2">Uploaded Documents</h4>
+					<h4 className="text-sm font-medium mb-2">{t("jobs.uploadedDocuments")}</h4>
 					<div className="space-y-2">
 						{existingDocuments.map((docUrl, index) => {
 							// Extract filename from the URL
@@ -276,7 +278,7 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 										rel="noopener noreferrer"
 										className="text-xs text-primary hover:underline flex items-center gap-1"
 									>
-										View <ExternalLink className="h-3 w-3" />
+										{t("common.view")} <ExternalLink className="h-3 w-3" />
 									</a>
 								</div>
 							);

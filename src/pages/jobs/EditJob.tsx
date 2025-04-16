@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,55 +39,8 @@ import { DocumentUploader } from "@/components/jobs/DocumentUploader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Job } from "@/types/job";
 
-const jobSchema = z.object({
-  client_id: z.string().min(1, "Please select a client"),
-  campaign_id: z.string().min(1, "Please select a campaign"),
-  provider_id: z.string().min(1, "Please select a provider"),
-  manager_id: z.string().min(1, "Please select a manager"),
-  value: z.coerce.number().min(0, "Value must be at least 0"),
-  currency: z.string().min(1, "Please select a currency"),
-  status: z.string().min(1, "Please select a status"),
-  paid: z.boolean().default(false),
-  manager_ok: z.boolean().default(false),
-  months: z.array(z.string()).min(1, "Please select at least one month"),
-  due_date: z.string().optional(),
-  public_notes: z.string().optional(),
-  private_notes: z.string().optional(),
-});
-
-type JobFormValues = z.infer<typeof jobSchema>;
-
-const months = [
-  { value: "january", label: "January" },
-  { value: "february", label: "February" },
-  { value: "march", label: "March" },
-  { value: "april", label: "April" },
-  { value: "may", label: "May" },
-  { value: "june", label: "June" },
-  { value: "july", label: "July" },
-  { value: "august", label: "August" },
-  { value: "september", label: "September" },
-  { value: "october", label: "October" },
-  { value: "november", label: "November" },
-  { value: "december", label: "December" },
-];
-
-const currencyOptions = [
-  { value: "euro", label: "Euro (€)" },
-  { value: "usd", label: "US Dollar ($)" },
-  { value: "gbp", label: "British Pound (£)" },
-];
-
-const statusOptions = [
-  { value: "draft", label: "Draft" },
-  { value: "active", label: "Active" },
-  { value: "pending_invoice", label: "Pending Invoice" },
-  { value: "pending_validation", label: "Pending Validation" },
-  { value: "pending_payment", label: "Pending Payment" },
-  { value: "paid", label: "Paid" },
-];
-
 const EditJob = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -94,6 +48,53 @@ const EditJob = () => {
   const [currentTab, setCurrentTab] = useState("details");
   const [documents, setDocuments] = useState<string[] | null>(null);
   const [previousStatus, setPreviousStatus] = useState<string | null>(null);
+
+  const jobSchema = z.object({
+    client_id: z.string().min(1, t("jobs.selectClient")),
+    campaign_id: z.string().min(1, t("jobs.selectCampaign")),
+    provider_id: z.string().min(1, t("jobs.selectProvider")),
+    manager_id: z.string().min(1, t("jobs.selectManager")),
+    value: z.coerce.number().min(0, t("jobs.valueRequired")),
+    currency: z.string().min(1, t("jobs.selectCurrency")),
+    status: z.string().min(1, t("jobs.selectStatus")),
+    paid: z.boolean().default(false),
+    manager_ok: z.boolean().default(false),
+    months: z.array(z.string()).min(1, t("jobs.selectMonths")),
+    due_date: z.string().optional(),
+    public_notes: z.string().optional(),
+    private_notes: z.string().optional(),
+  });
+
+  type JobFormValues = z.infer<typeof jobSchema>;
+
+  const months = [
+    { value: "january", label: t("common.january") },
+    { value: "february", label: t("common.february") },
+    { value: "march", label: t("common.march") },
+    { value: "april", label: t("common.april") },
+    { value: "may", label: t("common.may") },
+    { value: "june", label: t("common.june") },
+    { value: "july", label: t("common.july") },
+    { value: "august", label: t("common.august") },
+    { value: "september", label: t("common.september") },
+    { value: "october", label: t("common.october") },
+    { value: "november", label: t("common.november") },
+    { value: "december", label: t("common.december") },
+  ];
+
+  const currencyOptions = [
+    { value: "euro", label: t("common.euro") },
+    { value: "usd", label: t("common.usd") },
+  ];
+
+  const statusOptions = [
+    { value: "draft", label: t("jobs.draft") },
+    { value: "active", label: t("jobs.active") },
+    { value: "pending_invoice", label: t("jobs.pendingInvoice") },
+    { value: "pending_validation", label: t("jobs.pendingValidation") },
+    { value: "pending_payment", label: t("jobs.pendingPayment") },
+    { value: "paid", label: t("jobs.paid") },
+  ];
 
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
@@ -258,28 +259,28 @@ const EditJob = () => {
           if (response.error) {
             console.error("Error sending notification:", response.error);
             toast({
-              title: "Warning",
-              description: "Job updated but notification emails could not be sent.",
+              title: t("common.warning"),
+              description: t("jobs.notificationWarning"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Success",
-              description: "Job updated and notifications sent.",
+              title: t("common.success"),
+              description: t("jobs.notificationSuccess"),
             });
           }
         } catch (error) {
           console.error("Error invoking edge function:", error);
           toast({
-            title: "Warning",
-            description: "Job updated but notification emails could not be sent.",
+            title: t("common.warning"),
+            description: t("jobs.notificationWarning"),
             variant: "destructive",
           });
         }
       } else {
         toast({
-          title: "Job updated",
-          description: "The job has been successfully updated.",
+          title: t("jobs.jobUpdated"),
+          description: t("jobs.jobUpdatedDescription"),
         });
       }
       
@@ -290,8 +291,8 @@ const EditJob = () => {
     onError: (error) => {
       console.error("Error updating job:", error);
       toast({
-        title: "Error",
-        description: "Failed to update the job. Please try again.",
+        title: t("common.error"),
+        description: t("jobs.jobUpdateError"),
         variant: "destructive",
       });
     },
@@ -311,10 +312,10 @@ const EditJob = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Job</h1>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.editJob")}</h1>
           </div>
           <div className="flex justify-center items-center h-64">
-            <p className="text-slate-500 dark:text-slate-400">Loading job details...</p>
+            <p className="text-slate-500 dark:text-slate-400">{t("common.loading")}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -326,15 +327,15 @@ const EditJob = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Job</h1>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.editJob")}</h1>
           </div>
           <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-            <p className="text-red-600 dark:text-red-400">Job not found</p>
+            <p className="text-red-600 dark:text-red-400">{t("common.error")}</p>
             <Button
               className="mt-4"
               onClick={() => navigate("/jobs")}
             >
-              Back to Jobs
+              {t("common.back")}
             </Button>
           </div>
         </div>
@@ -346,24 +347,24 @@ const EditJob = () => {
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Job</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.editJob")}</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Update job details
+            {t("jobs.updateJobDetails")}
           </p>
         </div>
 
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="details">Job Details</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
+            <TabsTrigger value="details">{t("jobs.jobDetails")}</TabsTrigger>
+            <TabsTrigger value="documents">{t("jobs.documents")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="details">
             <Card>
               <CardHeader>
-                <CardTitle>Job Details</CardTitle>
+                <CardTitle>{t("jobs.jobDetails")}</CardTitle>
                 <CardDescription>
-                  Update the job information
+                  {t("jobs.updateJobDetails")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -375,14 +376,14 @@ const EditJob = () => {
                         name="client_id"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Client</FormLabel>
+                            <FormLabel>{t("jobs.client")}</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a client" />
+                                  <SelectValue placeholder={t("jobs.selectClient")} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -394,7 +395,7 @@ const EditJob = () => {
                                   ))
                                 ) : (
                                   <SelectItem value="no-clients" disabled>
-                                    No clients available
+                                    {t("clients.noClientsAvailable")}
                                   </SelectItem>
                                 )}
                               </SelectContent>
@@ -409,14 +410,14 @@ const EditJob = () => {
                         name="campaign_id"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Campaign</FormLabel>
+                            <FormLabel>{t("jobs.campaign")}</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a campaign" />
+                                  <SelectValue placeholder={t("jobs.selectCampaign")} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -428,7 +429,7 @@ const EditJob = () => {
                                   ))
                                 ) : (
                                   <SelectItem value="no-campaigns" disabled>
-                                    No campaigns available
+                                    {t("campaigns.noCampaignsAvailable")}
                                   </SelectItem>
                                 )}
                               </SelectContent>
@@ -443,14 +444,14 @@ const EditJob = () => {
                         name="provider_id"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Provider</FormLabel>
+                            <FormLabel>{t("jobs.provider")}</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a provider" />
+                                  <SelectValue placeholder={t("jobs.selectProvider")} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -462,7 +463,7 @@ const EditJob = () => {
                                   ))
                                 ) : (
                                   <SelectItem value="no-providers" disabled>
-                                    No providers available
+                                    {t("providers.noProvidersAvailable")}
                                   </SelectItem>
                                 )}
                               </SelectContent>
@@ -477,14 +478,14 @@ const EditJob = () => {
                         name="manager_id"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Manager</FormLabel>
+                            <FormLabel>{t("jobs.manager")}</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select a manager" />
+                                  <SelectValue placeholder={t("jobs.selectManager")} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -496,7 +497,7 @@ const EditJob = () => {
                                   ))
                                 ) : (
                                   <SelectItem value="no-managers" disabled>
-                                    No managers available
+                                    {t("managers.noManagersAvailable")}
                                   </SelectItem>
                                 )}
                               </SelectContent>
@@ -511,13 +512,13 @@ const EditJob = () => {
                         name="value"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Value</FormLabel>
+                            <FormLabel>{t("jobs.value")}</FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
                                 min="0"
                                 step="0.01"
-                                placeholder="Enter value"
+                                placeholder={t("jobs.value")}
                                 {...field}
                               />
                             </FormControl>
@@ -531,14 +532,14 @@ const EditJob = () => {
                         name="currency"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Currency</FormLabel>
+                            <FormLabel>{t("jobs.currency")}</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select currency" />
+                                  <SelectValue placeholder={t("jobs.selectCurrency")} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -559,14 +560,14 @@ const EditJob = () => {
                         name="status"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Status</FormLabel>
+                            <FormLabel>{t("jobs.status")}</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
                             >
                               <FormControl>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select status" />
+                                  <SelectValue placeholder={t("jobs.selectStatus")} />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -587,11 +588,11 @@ const EditJob = () => {
                         name="due_date"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Due Date (optional)</FormLabel>
+                            <FormLabel>{t("jobs.dueDate")}</FormLabel>
                             <FormControl>
                               <Input
                                 type="date"
-                                placeholder="Enter due date"
+                                placeholder={t("jobs.dueDate")}
                                 {...field}
                                 value={field.value || ""}
                               />
@@ -608,9 +609,9 @@ const EditJob = () => {
                       render={() => (
                         <FormItem>
                           <div className="mb-4">
-                            <FormLabel>Months</FormLabel>
+                            <FormLabel>{t("jobs.months")}</FormLabel>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Select months this job applies to
+                              {t("jobs.selectMonthsDescription")}
                             </p>
                           </div>
                           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -659,10 +660,10 @@ const EditJob = () => {
                         name="public_notes"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Public Notes (optional)</FormLabel>
+                            <FormLabel>{t("jobs.publicNotes")}</FormLabel>
                             <FormControl>
                               <Textarea
-                                placeholder="Notes visible to all parties"
+                                placeholder={t("jobs.publicNotesPlaceholder")}
                                 className="resize-none"
                                 {...field}
                                 value={field.value || ""}
@@ -678,10 +679,10 @@ const EditJob = () => {
                         name="private_notes"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Private Notes (optional)</FormLabel>
+                            <FormLabel>{t("jobs.privateNotes")}</FormLabel>
                             <FormControl>
                               <Textarea
-                                placeholder="Internal notes"
+                                placeholder={t("jobs.privateNotesPlaceholder")}
                                 className="resize-none"
                                 {...field}
                                 value={field.value || ""}
@@ -696,7 +697,7 @@ const EditJob = () => {
                     <div className="flex justify-between pt-4">
                       <Button variant="outline" onClick={() => navigate("/jobs")}>
                         <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Jobs
+                        {t("common.back")}
                       </Button>
                       <div className="flex justify-end space-x-4">
                         <Button
@@ -704,10 +705,10 @@ const EditJob = () => {
                           variant="outline"
                           onClick={() => navigate("/jobs")}
                         >
-                          Cancel
+                          {t("common.cancel")}
                         </Button>
                         <Button type="submit" disabled={updateJob.isPending}>
-                          {updateJob.isPending ? "Updating..." : "Update Job"}
+                          {updateJob.isPending ? t("common.updating") : t("jobs.updateJob")}
                         </Button>
                       </div>
                     </div>
@@ -720,9 +721,9 @@ const EditJob = () => {
           <TabsContent value="documents">
             <Card>
               <CardHeader>
-                <CardTitle>Job Documents</CardTitle>
+                <CardTitle>{t("jobs.documents")}</CardTitle>
                 <CardDescription>
-                  Upload and manage documents for this job
+                  {t("jobs.documents")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -738,13 +739,13 @@ const EditJob = () => {
                 <div className="flex justify-between pt-4">
                   <Button variant="outline" onClick={() => setCurrentTab("details")}>
                     <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Details
+                    {t("common.back")}
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => navigate("/jobs")}
                   >
-                    Done
+                    {t("common.done")}
                   </Button>
                 </div>
               </CardContent>
