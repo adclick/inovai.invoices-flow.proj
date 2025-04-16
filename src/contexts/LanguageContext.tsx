@@ -11,7 +11,7 @@ type LanguageContextType = {
 };
 
 const LanguageContext = createContext<LanguageContextType>({
-  currentLanguage: "en",
+  currentLanguage: "pt",
   changeLanguage: async () => {},
   isLoading: true,
 });
