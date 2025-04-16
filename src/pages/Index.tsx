@@ -3,10 +3,11 @@ import React, { useEffect } from "react";
 import AuthForm from "@/components/auth/AuthForm";
 import LogoBox from "@/components/auth/LogoBox";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import LanguageSelector from "@/components/language/LanguageSelector";
 import { useTranslation } from "react-i18next";
+import { HelpCircle } from "lucide-react";
 
 const THEME_TOGGLE_ACTIVE = true;
 
@@ -54,6 +55,14 @@ const Index: React.FC = () => {
 
 				<div className="w-full max-w-md px-4 sm:px-0">
 					<AuthForm />
+					
+					{/* About link */}
+					<div className="text-center mt-6">
+						<Link to="/about" className="inline-flex items-center text-sm text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors">
+							<HelpCircle className="h-4 w-4 mr-1" />
+							{t("about.howItWorks")}
+						</Link>
+					</div>
 				</div>
 			</div>
 		</div>

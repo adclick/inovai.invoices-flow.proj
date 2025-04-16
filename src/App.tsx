@@ -30,6 +30,7 @@ import Profile from "./pages/profile/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PublicUpload from "./pages/PublicUpload";
 import PaymentConfirm from "./pages/PaymentConfirm";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
 						<BrowserRouter>
 							<Routes>
 								<Route path="/" element={<Index />} />
+								<Route path="/about" element={<About />} />
 								<Route path="/upload/:jobId/:token" element={<PublicUpload />} />
 								<Route path="/payments/confirm/:jobId/:token" element={<PaymentConfirm />} />
 

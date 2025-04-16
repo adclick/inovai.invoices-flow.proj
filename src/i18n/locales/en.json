@@ -1,3 +1,4 @@
+
 {
   "common": {
     "loading": "Loading...",
@@ -324,5 +325,38 @@
     "workflowTitle": "Workflow",
     "workflowDesc": "Structured approval process",
     "copyright": "© 2025 InvoicesFlow. All rights reserved."
+  },
+  "about": {
+    "title": "About InvoicesFlow",
+    "howItWorks": "How does the platform work?",
+    "backToLogin": "Back to Login",
+    "description": "InvoicesFlow is a comprehensive platform designed to streamline the management of service providers, jobs, and invoice payments. Our system connects administrators, managers, providers, and finance teams in one efficient workflow.",
+    "tagline": "Simplify your invoice management process",
+    "featuresTitle": "Features",
+    "feature1": "Manage Clients, Campaigns, Managers and Providers",
+    "feature2": "Create and update jobs with detailed tracking",
+    "feature3": "Providers upload invoice documents securely",
+    "feature4": "Finance confirms payment with full audit trail",
+    "feature5": "Seamless communication between all parties through email notifications",
+    "workflowTitle": "Workflow",
+    "step1": "Admin configures a job with all necessary details",
+    "step2": "Manager receives status updates notifications to stay informed",
+    "step3": "Provider receives email notification to upload their invoice via a secure public link",
+    "step4": "Admin validates job's information & documents and updates job status",
+    "step5": "Finance confirms payment. The job status is updated and all parties receive notifications",
+    "qaTitle": "Questions & Answers",
+    "q1": "What is a provider?",
+    "a1": "A provider is any person or company that provides services to your organization and needs to submit invoices for payment. This could include freelancers, consultants, agencies, or other service providers.",
+    "q2": "How do I know when my payment is confirmed?",
+    "a2": "Once the finance team confirms payment for your invoice, you'll receive an automatic email notification with the payment details. You can also log in to check the status if you have an account.",
+    "q3": "When does the public upload invoice link expire?",
+    "a3": "Public upload links for invoices expire after 7 days for security reasons. If your link has expired, please contact your manager or the administrator to generate a new upload link.",
+    "q4": "What file formats are accepted for invoice uploads?",
+    "a4": "The platform accepts PDF, JPG, and PNG files for invoice uploads. The maximum file size is 10MB. For best results, we recommend using PDF format for clarity and searchability.",
+    "forWhom": "Who is it for?",
+    "forAdmins": "Administrators who manage the overall workflow",
+    "forManagers": "Project Managers who oversee jobs",
+    "forProviders": "Service Providers who submit invoices",
+    "forFinance": "Finance teams who process payments"
   }
 }
