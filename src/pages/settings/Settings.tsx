@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -75,7 +74,7 @@ const Settings: React.FC = () => {
             }}
           />
           <Label htmlFor={name} className="cursor-pointer">
-            {description || name.replace(/_/g, " ")}
+            {description || t(`settings.${name}`)}
           </Label>
         </div>
       );
@@ -84,12 +83,13 @@ const Settings: React.FC = () => {
     if (value.length > 100 || value.includes("\n")) {
       return (
         <div className="space-y-2">
-          <Label htmlFor={name}>{description || name.replace(/_/g, " ")}</Label>
+          <Label htmlFor={name}>{description || t(`settings.${name}`)}</Label>
           <Textarea
             id={name}
             value={formValues[name] || ""}
             onChange={(e) => handleInputChange(name, e.target.value)}
             className="min-h-[100px]"
+            placeholder={t(`settings.${name}Placeholder`)}
           />
         </div>
       );
@@ -97,11 +97,12 @@ const Settings: React.FC = () => {
 
     return (
       <div className="space-y-2">
-        <Label htmlFor={name}>{description || name.replace(/_/g, " ")}</Label>
+        <Label htmlFor={name}>{description || t(`settings.${name}`)}</Label>
         <Input
           id={name}
           value={formValues[name] || ""}
           onChange={(e) => handleInputChange(name, e.target.value)}
+          placeholder={t(`settings.${name}Placeholder`)}
         />
       </div>
     );
@@ -111,7 +112,10 @@ const Settings: React.FC = () => {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            <p className="text-slate-500 dark:text-slate-400">{t("settings.loading")}</p>
+          </div>
         </div>
       </DashboardLayout>
     );
@@ -155,19 +159,18 @@ const Settings: React.FC = () => {
 
         <Separator className="my-4" />
 
-          <div className="bg-white dark:bg-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
-            <h2 className="text-lg font-medium mb-4 text-slate-800 dark:text-white">
-              {t("settings.general")}
-            </h2>
-            <div className="space-y-4">
-              {settings
-                .map((setting) => (
-                  <div key={setting.id}>
-                    {getInputComponent(setting.name, setting.value, setting.description)}
-                  </div>
-                ))}
-            </div>
+        <div className="bg-white dark:bg-slate-800/50 p-4 md:p-6 rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
+          <h2 className="text-lg font-medium mb-4 text-slate-800 dark:text-white">
+            {t("settings.general")}
+          </h2>
+          <div className="space-y-4">
+            {settings?.map((setting) => (
+              <div key={setting.id}>
+                {getInputComponent(setting.name, setting.value, setting.description)}
+              </div>
+            ))}
           </div>
+        </div>
       </div>
     </DashboardLayout>
   );

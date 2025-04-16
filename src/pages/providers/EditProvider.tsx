@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -21,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { ArrowLeft } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { useTranslation } from "react-i18next";
 
 // Schema for provider form validation
 const providerSchema = z.object({
@@ -34,6 +34,7 @@ const providerSchema = z.object({
 type ProviderFormValues = z.infer<typeof providerSchema>;
 
 const EditProvider = () => {
+	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 	const { toast } = useToast();
@@ -107,16 +108,16 @@ const EditProvider = () => {
 			queryClient.invalidateQueries({ queryKey: ["providers"] });
 			queryClient.invalidateQueries({ queryKey: ["provider", id] });
 			toast({
-				title: "Provider updated",
-				description: "The provider has been successfully updated.",
+				title: t("providers.providerUpdated"),
+				description: t("providers.providerUpdatedDescription"),
 			});
 			navigate("/providers");
 		},
 		onError: (error) => {
 			console.error("Error updating provider:", error);
 			toast({
-				title: "Error",
-				description: "Failed to update the provider. Please try again.",
+				title: t("common.error"),
+				description: t("providers.providerUpdateError"),
 				variant: "destructive",
 			});
 		},
@@ -132,10 +133,10 @@ const EditProvider = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Provider</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.editProvider")}</h1>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-slate-500 dark:text-slate-400">Loading provider details...</p>
+						<p className="text-slate-500 dark:text-slate-400">{t("common.loading")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -147,15 +148,15 @@ const EditProvider = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Provider</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.editProvider")}</h1>
 					</div>
 					<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-						<p className="text-red-600 dark:text-red-400">Provider not found</p>
+						<p className="text-red-600 dark:text-red-400">{t("providers.providerNotFound")}</p>
 						<Button
 							className="mt-4"
 							onClick={() => navigate("/providers")}
 						>
-							Back to Providers
+							{t("providers.backToProviders")}
 						</Button>
 					</div>
 				</div>
@@ -167,9 +168,9 @@ const EditProvider = () => {
 		<DashboardLayout>
 			<div className="p-6 max-w-4xl mx-auto">
 				<div className="mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Provider</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.editProvider")}</h1>
 					<p className="text-slate-500 dark:text-slate-400 mt-1">
-						Update provider details
+						{t("providers.updateProviderDescription")}
 					</p>
 				</div>
 
@@ -181,9 +182,9 @@ const EditProvider = () => {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Provider Name</FormLabel>
+										<FormLabel>{t("providers.providerName")}</FormLabel>
 										<FormControl>
-											<Input placeholder="Enter provider name" {...field} />
+											<Input placeholder={t("providers.enterProviderName")} {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -195,9 +196,9 @@ const EditProvider = () => {
 								name="email"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Email</FormLabel>
+										<FormLabel>{t("common.email")}</FormLabel>
 										<FormControl>
-											<Input type="email" placeholder="Enter email address" {...field} />
+											<Input type="email" placeholder={t("providers.enterEmail")} {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -210,10 +211,10 @@ const EditProvider = () => {
 									name="country"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Country</FormLabel>
+											<FormLabel>{t("providers.country")}</FormLabel>
 											<FormControl>
 												<Input
-													placeholder="Enter country (optional)"
+													placeholder={t("providers.enterCountry")}
 													{...field}
 													value={field.value || ""}
 												/>
@@ -228,10 +229,10 @@ const EditProvider = () => {
 									name="iban"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>IBAN</FormLabel>
+											<FormLabel>{t("providers.iban")}</FormLabel>
 											<FormControl>
 												<Input
-													placeholder="Enter IBAN (optional)"
+													placeholder={t("providers.enterIban")}
 													{...field}
 													value={field.value || ""}
 												/>
@@ -248,9 +249,9 @@ const EditProvider = () => {
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 										<div className="space-y-0.5">
-											<FormLabel className="text-sm">Active Provider</FormLabel>
+											<FormLabel className="text-sm">{t("providers.active")}</FormLabel>
 											<div className="text-sm text-muted-foreground">
-												Mark this provider as active
+												{t("providers.activeDescription")}
 											</div>
 										</div>
 										<FormControl>
@@ -266,7 +267,7 @@ const EditProvider = () => {
 							<div className="flex justify-between pt-4">
 								<Button variant="outline" onClick={() => navigate("/providers")}>
 									<ArrowLeft className="mr-2 h-4 w-4" />
-									Back to Providers
+									{t("providers.backToProviders")}
 								</Button>
 
 								<div className="flex justify-end space-x-4">
@@ -275,10 +276,10 @@ const EditProvider = () => {
 										variant="outline"
 										onClick={() => navigate("/providers")}
 									>
-										Cancel
+										{t("common.cancel")}
 									</Button>
 									<Button type="submit" disabled={updateProvider.isPending}>
-										{updateProvider.isPending ? "Updating..." : "Update Provider"}
+										{updateProvider.isPending ? t("common.updating") : t("providers.updateProvider")}
 									</Button>
 								</div>
 							</div>

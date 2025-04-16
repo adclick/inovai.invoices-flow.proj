@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -19,6 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useTranslation } from "react-i18next";
 
 // Schema for provider form validation
 const providerSchema = z.object({
@@ -32,6 +32,7 @@ const providerSchema = z.object({
 type ProviderFormValues = z.infer<typeof providerSchema>;
 
 const CreateProvider = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -69,16 +70,16 @@ const CreateProvider = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["providers"] });
       toast({
-        title: "Provider created",
-        description: "The provider has been successfully created.",
+        title: t("providers.providerCreated"),
+        description: t("providers.providerCreatedDescription"),
       });
       navigate("/providers");
     },
     onError: (error) => {
       console.error("Error creating provider:", error);
       toast({
-        title: "Error",
-        description: "Failed to create the provider. Please try again.",
+        title: t("common.error"),
+        description: t("providers.providerCreateError"),
         variant: "destructive",
       });
     },
@@ -93,9 +94,9 @@ const CreateProvider = () => {
     <DashboardLayout>
       <div className="p-6 max-w-4xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Create Provider</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.createNew")}</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Create a new provider
+            {t("providers.createProviderDescription")}
           </p>
         </div>
 
@@ -107,9 +108,9 @@ const CreateProvider = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Provider Name</FormLabel>
+                    <FormLabel>{t("providers.providerName")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter provider name" {...field} />
+                      <Input placeholder={t("providers.enterProviderName")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -121,9 +122,9 @@ const CreateProvider = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("common.email")}</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="Enter email address" {...field} />
+                      <Input type="email" placeholder={t("providers.enterEmail")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -136,10 +137,10 @@ const CreateProvider = () => {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>{t("providers.country")}</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter country (optional)"
+                          placeholder={t("providers.enterCountry")}
                           {...field}
                           value={field.value || ""}
                         />
@@ -154,10 +155,10 @@ const CreateProvider = () => {
                   name="iban"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>IBAN</FormLabel>
+                      <FormLabel>{t("providers.iban")}</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter IBAN (optional)"
+                          placeholder={t("providers.enterIban")}
                           {...field}
                           value={field.value || ""}
                         />
@@ -180,9 +181,9 @@ const CreateProvider = () => {
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Active Provider</FormLabel>
+                      <FormLabel>{t("providers.active")}</FormLabel>
                       <p className="text-sm text-slate-500 dark:text-slate-400">
-                        Mark this provider as active
+                        {t("providers.activeDescription")}
                       </p>
                     </div>
                   </FormItem>
@@ -195,10 +196,10 @@ const CreateProvider = () => {
                   variant="outline"
                   onClick={() => navigate("/providers")}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button type="submit" disabled={createProvider.isPending}>
-                  {createProvider.isPending ? "Creating..." : "Create Provider"}
+                  {createProvider.isPending ? t("common.creating") : t("providers.createNew")}
                 </Button>
               </div>
             </form>

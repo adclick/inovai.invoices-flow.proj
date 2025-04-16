@@ -32,6 +32,7 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from "@/components/ui/pagination";
+import { useTranslation } from "react-i18next";
 
 type Provider = {
   id: string;
@@ -44,6 +45,7 @@ type Provider = {
 };
 
 const ProvidersList = () => {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [providerToDelete, setProviderToDelete] = useState<Provider | null>(null);
@@ -155,10 +157,10 @@ const ProvidersList = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Providers</h1>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.title")}</h1>
           </div>
           <div className="flex justify-center items-center h-64">
-            <p className="text-slate-500 dark:text-slate-400">Loading providers...</p>
+            <p className="text-slate-500 dark:text-slate-400">{t("common.loading")}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -170,10 +172,10 @@ const ProvidersList = () => {
       <DashboardLayout>
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Providers</h1>
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.title")}</h1>
           </div>
           <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-            <p className="text-red-600 dark:text-red-400">Error loading providers: {(error as Error).message}</p>
+            <p className="text-red-600 dark:text-red-400">{t("common.errorLoading")}: {(error as Error).message}</p>
           </div>
         </div>
       </DashboardLayout>
@@ -184,20 +186,20 @@ const ProvidersList = () => {
     <DashboardLayout>
       <div className="p-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Providers</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.title")}</h1>
           <Button onClick={() => navigate("/providers/create")} className="shrink-0">
             <PlusCircle className="mr-2 h-4 w-4" />
-            New Provider
+            {t("providers.newProvider")}
           </Button>
         </div>
 
         {paginatedData.length === 0 ? (
           <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
-            <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No providers found</h3>
-            <p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first provider.</p>
+            <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">{t("providers.noProviders")}</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-4">{t("providers.getStarted")}</p>
             <Button onClick={() => navigate("/providers/create")}>
               <PlusCircle className="mr-2 h-4 w-4" />
-              Create Provider
+              {t("providers.createProvider")}
             </Button>
           </div>
         ) : (
@@ -206,12 +208,12 @@ const ProvidersList = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>IBAN</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t("providers.providerName")}</TableHead>
+                    <TableHead>{t("providers.email")}</TableHead>
+                    <TableHead>{t("providers.country")}</TableHead>
+                    <TableHead>{t("providers.status")}</TableHead>
+                    <TableHead>{t("providers.iban")}</TableHead>
+                    <TableHead className="text-right">{t("common.actions")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -226,19 +228,19 @@ const ProvidersList = () => {
                             ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
                             : "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
                         }`}>
-                          {provider.active ? "Active" : "Inactive"}
+                          {provider.active ? t("providers.active") : t("providers.inactive")}
                         </span>
                       </TableCell>
-											<TableCell>{provider.iban}</TableCell>
+                      <TableCell>{provider.iban}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Link
                             onClick={e =>{ e.stopPropagation(); handleDeleteClick(provider)}}
-														to={null}
+                            to={null}
                             className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
                           >
                             <Trash2 className="h-4 w-4" />
-                            <span className="sr-only">Delete</span>
+                            <span className="sr-only">{t("common.delete")}</span>
                           </Link>
                         </div>
                       </TableCell>
@@ -257,15 +259,15 @@ const ProvidersList = () => {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t("common.areYouSure")}</AlertDialogTitle>
             <AlertDialogDescription>
-              You are about to delete the provider "{providerToDelete?.name}". This action cannot be undone.
+              {t("providers.deleteConfirmation", { name: providerToDelete?.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-              Delete
+              {t("common.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

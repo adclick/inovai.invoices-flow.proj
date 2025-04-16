@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -101,13 +100,14 @@ const EditClient = () => {
 			queryClient.invalidateQueries({ queryKey: ["client", id] });
 			toast({
 				title: t("clients.clientUpdated"),
+				description: t("clients.clientUpdatedDescription"),
 			});
 			navigate("/clients");
 		},
 		onError: (error) => {
 			toast({
 				title: t("common.error"),
-				description: `${t("clients.clientUpdated")}: ${error.message}`,
+				description: t("clients.clientUpdateError"),
 				variant: "destructive",
 			});
 		},
@@ -129,7 +129,7 @@ const EditClient = () => {
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p>{t("common.loading")}</p>
+						<p>{t("clients.loadingClientData")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -147,7 +147,7 @@ const EditClient = () => {
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-red-500">{t("common.error")}</p>
+						<p className="text-red-500">{t("clients.errorLoadingClientData")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -160,7 +160,7 @@ const EditClient = () => {
 				<div className="mb-6">
 					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("clients.editClient")}</h1>
 					<p className="text-slate-500 dark:text-slate-400 mt-1">
-						{t("clients.clientDetails")}
+						{t("clients.updateClientDescription")}
 					</p>
 				</div>
 
@@ -174,7 +174,7 @@ const EditClient = () => {
 									<FormItem>
 										<FormLabel>{t("clients.clientName")}</FormLabel>
 										<FormControl>
-											<Input placeholder={t("clients.clientName")} {...field} />
+											<Input placeholder={t("clients.enterClientName")} {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -187,9 +187,9 @@ const EditClient = () => {
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 										<div className="space-y-0.5">
-											<FormLabel className="text-sm">{t("clients.active")}</FormLabel>
+											<FormLabel className="text-sm">{t("clients.activeClient")}</FormLabel>
 											<div className="text-sm text-muted-foreground">
-												{t("clients.activeDescription")}
+												{t("clients.markAsActive")}
 											</div>
 										</div>
 										<FormControl>
@@ -219,7 +219,7 @@ const EditClient = () => {
 										type="submit"
 										disabled={updateClientMutation.isPending}
 									>
-										{updateClientMutation.isPending ? t("common.updating") : t("common.save")}
+										{updateClientMutation.isPending ? t("clients.saving") : t("clients.saveChanges")}
 									</Button>
 								</div>
 							</div>

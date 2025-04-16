@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Client {
 	id: string;
@@ -33,6 +33,7 @@ interface Client {
 }
 
 const ClientsList = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const queryClient = useQueryClient();
@@ -70,16 +71,16 @@ const ClientsList = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["clients"] });
 			toast({
-				title: "Client deleted",
-				description: "The client has been successfully deleted.",
+				title: t("clients.clientDeleted"),
+				description: t("clients.clientDeletedDescription"),
 			});
 			setDeleteDialogOpen(false);
 			setClientToDelete(null);
 		},
 		onError: (error) => {
 			toast({
-				title: "Error",
-				description: `Failed to delete client: ${error.message}`,
+				title: t("common.error"),
+				description: t("clients.clientDeleteError"),
 				variant: "destructive",
 			});
 		},
@@ -101,16 +102,16 @@ const ClientsList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-bold">Clients</h1>
+						<h1 className="text-2xl font-bold">{t("clients.title")}</h1>
 						<Button asChild>
 							<Link to="/clients/create">
 								<PlusCircle className="mr-2 h-4 w-4" />
-								New Client
+								{t("clients.createNew")}
 							</Link>
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p>Loading clients...</p>
+						<p>{t("clients.loadingClients")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -122,16 +123,16 @@ const ClientsList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-bold">Clients</h1>
+						<h1 className="text-2xl font-bold">{t("clients.title")}</h1>
 						<Button asChild>
 							<Link to="/clients/create">
 								<PlusCircle className="mr-2 h-4 w-4" />
-								New Client
+								{t("clients.createNew")}
 							</Link>
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-red-500">Error loading clients. Please try again later.</p>
+						<p className="text-red-500">{t("clients.errorLoadingClients")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -142,11 +143,11 @@ const ClientsList = () => {
 		<DashboardLayout>
 			<div className="p-6">
 				<div className="flex justify-between items-center mb-6">
-					<h1 className="text-2xl font-bold">Clients</h1>
+					<h1 className="text-2xl font-bold">{t("clients.title")}</h1>
 					<Button asChild>
 						<Link to="/clients/create">
 							<PlusCircle className="mr-2 h-4 w-4" />
-							New Client
+							{t("clients.createNew")}
 						</Link>
 					</Button>
 				</div>
@@ -156,9 +157,9 @@ const ClientsList = () => {
 						<Table>
 							<TableHeader>
 								<TableRow>
-									<TableHead>Name</TableHead>
-									<TableHead>Status</TableHead>
-									<TableHead className="w-[120px] text-right">Actions</TableHead>
+									<TableHead>{t("clients.clientName")}</TableHead>
+									<TableHead>{t("common.status")}</TableHead>
+									<TableHead className="w-[120px] text-right">{t("common.actions")}</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
@@ -166,8 +167,11 @@ const ClientsList = () => {
 									<TableRow key={client.id} onClick={() => navigate(`/clients/edit/${client.id}`)} className="cursor-pointer">
 										<TableCell className="font-medium">{client.name}</TableCell>
 										<TableCell>
-											<span className={`px-2 py-1 rounded-full text-xs ${client.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-												{client.active ? 'Active' : 'Inactive'}
+											<span className={`px-2 py-1 rounded-full text-xs ${client.active 
+													? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
+                        	: "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
+												}`}>
+												{client.active ? t("common.active") : t("common.inactive")}
 											</span>
 										</TableCell>
 										<TableCell className="text-right">
@@ -178,7 +182,7 @@ const ClientsList = () => {
 													className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
 												>
 													<Trash2 className="h-4 w-4" />
-													<span className="sr-only">Delete</span>
+													<span className="sr-only">{t("common.delete")}</span>
 												</Link>
 											</div>
 										</TableCell>
@@ -189,11 +193,11 @@ const ClientsList = () => {
 					</div>
 				) : (
 					<div className="flex flex-col items-center justify-center border rounded-lg p-8 bg-slate-50 dark:bg-slate-800">
-						<p className="text-slate-500 dark:text-slate-400 mb-4">No clients found</p>
+						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("clients.noClients")}</p>
 						<Button asChild>
 							<Link to="/clients/create">
 								<PlusCircle className="mr-2 h-4 w-4" />
-								Create your first client
+								{t("clients.createFirstClient")}
 							</Link>
 						</Button>
 					</div>
@@ -203,21 +207,21 @@ const ClientsList = () => {
 				<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
 					<DialogContent>
 						<DialogHeader>
-							<DialogTitle>Delete Client</DialogTitle>
+							<DialogTitle>{t("clients.deleteClient")}</DialogTitle>
 							<DialogDescription>
-								Are you sure you want to delete {clientToDelete?.name}? This action cannot be undone.
+								{t("clients.deleteConfirmation", { name: clientToDelete?.name })}
 							</DialogDescription>
 						</DialogHeader>
 						<DialogFooter>
 							<Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-								Cancel
+								{t("common.cancel")}
 							</Button>
 							<Button
 								variant="destructive"
 								onClick={confirmDelete}
 								disabled={deleteClientMutation.isPending}
 							>
-								{deleteClientMutation.isPending ? "Deleting..." : "Delete"}
+								{deleteClientMutation.isPending ? t("clients.deleting") : t("common.delete")}
 							</Button>
 						</DialogFooter>
 					</DialogContent>

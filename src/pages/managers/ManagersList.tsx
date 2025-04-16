@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { PlusCircle, Edit, Trash2, Mail } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface Manager {
 	id: string;
@@ -34,6 +34,7 @@ interface Manager {
 }
 
 const ManagersList = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const queryClient = useQueryClient();
@@ -71,16 +72,16 @@ const ManagersList = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["managers"] });
 			toast({
-				title: "Manager deleted",
-				description: "The manager has been successfully deleted.",
+				title: t("managers.managerDeleted"),
+				description: t("managers.managerDeletedDescription"),
 			});
 			setDeleteDialogOpen(false);
 			setManagerToDelete(null);
 		},
 		onError: (error) => {
 			toast({
-				title: "Error",
-				description: `Failed to delete manager: ${error.message}`,
+				title: t("common.error"),
+				description: t("managers.managerDeleteError"),
 				variant: "destructive",
 			});
 		},
@@ -102,16 +103,16 @@ const ManagersList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-bold">Managers</h1>
+						<h1 className="text-2xl font-bold">{t("managers.title")}</h1>
 						<Button asChild>
 							<Link to="/managers/create">
 								<PlusCircle className="mr-2 h-4 w-4" />
-								New Manager
+								{t("managers.createNew")}
 							</Link>
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p>Loading managers...</p>
+						<p>{t("managers.loadingManagers")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -123,16 +124,16 @@ const ManagersList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-bold">Managers</h1>
+						<h1 className="text-2xl font-bold">{t("managers.title")}</h1>
 						<Button asChild>
 							<Link to="/managers/create">
 								<PlusCircle className="mr-2 h-4 w-4" />
-								New Manager
+								{t("managers.createNew")}
 							</Link>
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-red-500">Error loading managers. Please try again later.</p>
+						<p className="text-red-500">{t("managers.errorLoadingManagers")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -143,11 +144,11 @@ const ManagersList = () => {
 		<DashboardLayout>
 			<div className="p-6">
 				<div className="flex justify-between items-center mb-6">
-					<h1 className="text-2xl font-bold">Managers</h1>
+					<h1 className="text-2xl font-bold">{t("managers.title")}</h1>
 					<Button asChild>
 						<Link to="/managers/create">
 							<PlusCircle className="mr-2 h-4 w-4" />
-							New Manager
+							{t("managers.createNew")}
 						</Link>
 					</Button>
 				</div>
@@ -157,10 +158,10 @@ const ManagersList = () => {
 						<Table>
 							<TableHeader>
 								<TableRow>
-									<TableHead>Name</TableHead>
-									<TableHead>Email</TableHead>
-									<TableHead>Status</TableHead>
-									<TableHead className="w-[120px] text-right">Actions</TableHead>
+									<TableHead>{t("managers.managerName")}</TableHead>
+									<TableHead>{t("managers.email")}</TableHead>
+									<TableHead>{t("common.status")}</TableHead>
+									<TableHead className="w-[120px] text-right">{t("common.actions")}</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
@@ -174,8 +175,11 @@ const ManagersList = () => {
 											</div>
 										</TableCell>
 										<TableCell>
-											<span className={`px-2 py-1 rounded-full text-xs ${manager.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-												{manager.active ? 'Active' : 'Inactive'}
+											<span className={`px-2 py-1 rounded-full text-xs ${manager.active 
+														? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
+                          	: "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
+												}`}>
+												{manager.active ? t("common.active") : t("common.inactive")}
 											</span>
 										</TableCell>
 										<TableCell className="text-right">
@@ -186,7 +190,7 @@ const ManagersList = () => {
 													className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
 												>
 													<Trash2 className="h-4 w-4" />
-													<span className="sr-only">Delete</span>
+													<span className="sr-only">{t("common.delete")}</span>
 												</Link>
 											</div>
 										</TableCell>
@@ -197,11 +201,11 @@ const ManagersList = () => {
 					</div>
 				) : (
 					<div className="flex flex-col items-center justify-center border rounded-lg p-8 bg-slate-50 dark:bg-slate-800">
-						<p className="text-slate-500 dark:text-slate-400 mb-4">No managers found</p>
+						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("managers.noManagers")}</p>
 						<Button asChild>
 							<Link to="/managers/create">
 								<PlusCircle className="mr-2 h-4 w-4" />
-								Create your first manager
+								{t("managers.createFirstManager")}
 							</Link>
 						</Button>
 					</div>
@@ -211,21 +215,21 @@ const ManagersList = () => {
 				<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
 					<DialogContent>
 						<DialogHeader>
-							<DialogTitle>Delete Manager</DialogTitle>
+							<DialogTitle>{t("managers.deleteManager")}</DialogTitle>
 							<DialogDescription>
-								Are you sure you want to delete {managerToDelete?.name}? This action cannot be undone.
+								{t("managers.deleteConfirmation", { name: managerToDelete?.name })}
 							</DialogDescription>
 						</DialogHeader>
 						<DialogFooter>
 							<Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-								Cancel
+								{t("common.cancel")}
 							</Button>
 							<Button
 								variant="destructive"
 								onClick={confirmDelete}
 								disabled={deleteManagerMutation.isPending}
 							>
-								{deleteManagerMutation.isPending ? "Deleting..." : "Delete"}
+								{deleteManagerMutation.isPending ? t("managers.deleting") : t("common.delete")}
 							</Button>
 						</DialogFooter>
 					</DialogContent>

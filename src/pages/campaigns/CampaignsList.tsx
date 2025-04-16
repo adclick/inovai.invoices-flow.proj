@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -33,6 +32,7 @@ import {
 	PaginationNext,
 	PaginationPrevious
 } from "@/components/ui/pagination";
+import { useTranslation } from "react-i18next";
 
 type Campaign = {
 	id: string;
@@ -47,6 +47,7 @@ type Campaign = {
 };
 
 const CampaignsList = () => {
+	const { t } = useTranslation();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [campaignToDelete, setCampaignToDelete] = useState<Campaign | null>(null);
@@ -83,7 +84,7 @@ const CampaignsList = () => {
 			// Add client names to campaigns
 			return campaigns.map((campaign: Campaign) => ({
 				...campaign,
-				client_name: clientMap[campaign.client_id] || "Unknown Client"
+				client_name: clientMap[campaign.client_id] || t("campaigns.unknownClient")
 			}));
 		},
 	});
@@ -102,8 +103,8 @@ const CampaignsList = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["campaigns"] });
 			toast({
-				title: "Campaign deleted",
-				description: "The campaign has been successfully deleted.",
+				title: t("campaigns.campaignDeleted"),
+				description: t("campaigns.campaignDeletedDescription"),
 			});
 			setIsDeleteDialogOpen(false);
 			setCampaignToDelete(null);
@@ -111,8 +112,8 @@ const CampaignsList = () => {
 		onError: (error) => {
 			console.error("Error deleting campaign:", error);
 			toast({
-				title: "Error",
-				description: "Failed to delete the campaign. Please try again.",
+				title: t("common.error"),
+				description: t("campaigns.campaignDeleteError"),
 				variant: "destructive",
 			});
 		},
@@ -177,10 +178,10 @@ const CampaignsList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Campaigns</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.title")}</h1>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-slate-500 dark:text-slate-400">Loading campaigns...</p>
+						<p className="text-slate-500 dark:text-slate-400">{t("campaigns.loadingCampaigns")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -192,10 +193,10 @@ const CampaignsList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Campaigns</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.title")}</h1>
 					</div>
 					<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-						<p className="text-red-600 dark:text-red-400">Error loading campaigns: {(error as Error).message}</p>
+						<p className="text-red-600 dark:text-red-400">{t("campaigns.errorLoadingCampaigns")}: {(error as Error).message}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -206,20 +207,20 @@ const CampaignsList = () => {
 		<DashboardLayout>
 			<div className="p-6">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Campaigns</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.title")}</h1>
 					<Button onClick={() => navigate("/campaigns/create")} className="shrink-0">
 						<PlusCircle className="mr-2 h-4 w-4" />
-						New Campaign
+						{t("campaigns.newCampaign")}
 					</Button>
 				</div>
 
 				{paginatedData.length === 0 ? (
 					<div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
-						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No campaigns found</h3>
-						<p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first campaign.</p>
+						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">{t("campaigns.noCampaigns")}</h3>
+						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("campaigns.getStarted")}</p>
 						<Button onClick={() => navigate("/campaigns/create")}>
 							<PlusCircle className="mr-2 h-4 w-4" />
-							Create Campaign
+							{t("campaigns.createCampaign")}
 						</Button>
 					</div>
 				) : (
@@ -228,13 +229,13 @@ const CampaignsList = () => {
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>Name</TableHead>
-										<TableHead>Client</TableHead>
-										<TableHead>Duration</TableHead>
-										<TableHead>Status</TableHead>
-										<TableHead>Estimated Cost</TableHead>
-										<TableHead>Revenue</TableHead>
-										<TableHead className="text-right">Actions</TableHead>
+										<TableHead>{t("campaigns.campaignName")}</TableHead>
+										<TableHead>{t("campaigns.client")}</TableHead>
+										<TableHead>{t("campaigns.duration")}</TableHead>
+										<TableHead>{t("common.status")}</TableHead>
+										<TableHead>{t("campaigns.estimatedCost")}</TableHead>
+										<TableHead>{t("campaigns.revenue")}</TableHead>
+										<TableHead className="text-right">{t("common.actions")}</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
@@ -242,13 +243,13 @@ const CampaignsList = () => {
 										<TableRow key={campaign.id} onClick={() => navigate(`/campaigns/edit/${campaign.id}`)} className="cursor-pointer">
 											<TableCell className="font-medium">{campaign.name}</TableCell>
 											<TableCell>{campaign.client_name}</TableCell>
-											<TableCell>{campaign.duration} days</TableCell>
+											<TableCell>{campaign.duration} {t("campaigns.days")}</TableCell>
 											<TableCell>
 												<span className={`px-2 py-1 rounded-full text-xs font-medium ${campaign.active
-														? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-														: "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
+														? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
+                            : "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
 													}`}>
-													{campaign.active ? "Active" : "Inactive"}
+													{campaign.active ? t("common.active") : t("common.inactive")}
 												</span>
 											</TableCell>
 											<TableCell>
@@ -265,7 +266,7 @@ const CampaignsList = () => {
 														className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
 													>
 														<Trash2 className="h-4 w-4" />
-														<span className="sr-only">Delete</span>
+														<span className="sr-only">{t("common.delete")}</span>
 													</Link>
 												</div>
 											</TableCell>
@@ -284,15 +285,15 @@ const CampaignsList = () => {
 			<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+						<AlertDialogTitle>{t("common.areYouSure")}</AlertDialogTitle>
 						<AlertDialogDescription>
-							You are about to delete the campaign "{campaignToDelete?.name}". This action cannot be undone.
+							{t("campaigns.deleteConfirmation", { name: campaignToDelete?.name })}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
 						<AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-							Delete
+							{t("common.delete")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

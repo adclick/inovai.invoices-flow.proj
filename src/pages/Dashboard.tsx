@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatJobStatus } from "@/types/job";
+import { useTranslation } from "react-i18next";
 
 const Dashboard: React.FC = () => {
+	const { t } = useTranslation();
 	const { user, isLoading } = useAuth();
 
 	// Query to fetch job statistics
@@ -99,9 +101,9 @@ const Dashboard: React.FC = () => {
 								<div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
 									<Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
 								</div>
-								<span className="text-sm text-slate-600 dark:text-slate-300">In Progress</span>
+								<span className="text-sm text-slate-600 dark:text-slate-300">{t("dashboard.inProgress")}</span>
 							</div>
-							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Drafts Jobs</h2>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.draftJobs")}</h2>
 							<p className="text-2xl font-bold text-primary dark:text-primary/90">{stats?.new || 0}</p>
 						</div>
 					</div>
@@ -111,9 +113,9 @@ const Dashboard: React.FC = () => {
 								<div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
 									<Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
 								</div>
-								<span className="text-sm text-slate-600 dark:text-slate-300">In Progress</span>
+								<span className="text-sm text-slate-600 dark:text-slate-300">{t("dashboard.inProgress")}</span>
 							</div>
-							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Active Jobs</h2>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.activeJobs")}</h2>
 							<p className="text-2xl font-bold text-primary dark:text-primary/90">{stats?.active || 0}</p>
 						</div>
 					</div>
@@ -123,9 +125,9 @@ const Dashboard: React.FC = () => {
 								<div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
 									<AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
 								</div>
-								<span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
+								<span className="text-sm text-slate-600 dark:text-slate-300">{t("dashboard.awaitingAction")}</span>
 							</div>
-							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Pending Invoice</h2>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.pendingInvoice")}</h2>
 							<p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingInvoice || 0}</p>
 						</div>
 					</div>
@@ -135,9 +137,9 @@ const Dashboard: React.FC = () => {
 								<div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
 									<AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
 								</div>
-								<span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
+								<span className="text-sm text-slate-600 dark:text-slate-300">{t("dashboard.awaitingAction")}</span>
 							</div>
-							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Pending Validation</h2>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.pendingValidation")}</h2>
 							<p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingValidation || 0}</p>
 						</div>
 					</div>
@@ -147,9 +149,9 @@ const Dashboard: React.FC = () => {
 								<div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
 									<AlertCircle className="w-4 h-4 text-orange-600 dark:text-orange-400" />
 								</div>
-								<span className="text-sm text-slate-600 dark:text-slate-300">Awaiting action</span>
+								<span className="text-sm text-slate-600 dark:text-slate-300">{t("dashboard.awaitingAction")}</span>
 							</div>
-							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Pending Payment</h2>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.pendingPayment")}</h2>
 							<p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats?.pendingPayment || 0}</p>
 						</div>
 					</div>
@@ -159,13 +161,12 @@ const Dashboard: React.FC = () => {
 								<div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
 									<CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
 								</div>
-								<span className="text-sm text-slate-600 dark:text-slate-300">Processed successfully</span>
+								<span className="text-sm text-slate-600 dark:text-slate-300">{t("dashboard.processedSuccessfully")}</span>
 							</div>
-							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">Paid</h2>
+							<h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.paid")}</h2>
 							<p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats?.paid || 0}</p>
 						</div>
 					</div>
-
 				</div>
 
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
@@ -177,12 +178,12 @@ const Dashboard: React.FC = () => {
 									<Clock className="w-5 h-5 text-primary" />
 								</div>
 								<div>
-									<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Recent Activity</h2>
-									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">Latest invoice submissions</p>
+									<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.recentActivity")}</h2>
+									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">{t("dashboard.latestInvoiceSubmissions")}</p>
 								</div>
 							</div>
 							<div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
-								<p>No recent activity to display</p>
+								<p>{t("dashboard.noRecentActivity")}</p>
 							</div>
 						</div>
 					</div>
@@ -195,12 +196,12 @@ const Dashboard: React.FC = () => {
 									<Megaphone className="w-5 h-5 text-primary" />
 								</div>
 								<div>
-									<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Active Campaigns</h2>
-									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">Campaigns on going</p>
+									<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.activeCampaigns")}</h2>
+									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">{t("dashboard.campaignsOnGoing")}</p>
 								</div>
 							</div>
 							<div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
-								<p>Not yet implemented</p>
+								<p>{t("dashboard.notYetImplemented")}</p>
 							</div>
 						</div>
 					</div>
@@ -214,14 +215,14 @@ const Dashboard: React.FC = () => {
 								<div className="p-2 bg-primary/10 rounded-lg">
 									<FileText className="w-5 h-5 text-primary" />
 								</div>
-								<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">Jobs Management</h2>
+								<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.jobsManagement")}</h2>
 							</div>
 							<div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
 								<div className="relative">
 									<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
 									<input
 										type="text"
-										placeholder="Search invoices..."
+										placeholder={t("dashboard.searchInvoices")}
 										className="pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full sm:w-64"
 									/>
 								</div>
@@ -231,23 +232,23 @@ const Dashboard: React.FC = () => {
 							</div>
 						</div>
 						<div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
-							<button className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium whitespace-nowrap">New</button>
-							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">Pending Invoice</button>
-							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">Pending Payment</button>
-							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">Paid</button>
+							<button className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium whitespace-nowrap">{t("dashboard.new")}</button>
+							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">{t("dashboard.pendingInvoice")}</button>
+							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">{t("dashboard.pendingPayment")}</button>
+							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">{t("dashboard.paid")}</button>
 						</div>
 						<div className="text-sm text-slate-600 dark:text-slate-400 overflow-x-auto">
 							<div className="min-w-[600px]">
 								<div className="grid grid-cols-6 gap-4 px-4 py-2 font-medium border-b border-slate-200 dark:border-slate-700">
-									<div>Client</div>
-									<div>Campaign</div>
-									<div>Manager</div>
-									<div>Provider</div>
-									<div>Value</div>
-									<div>Status</div>
+									<div>{t("dashboard.client")}</div>
+									<div>{t("dashboard.campaign")}</div>
+									<div>{t("dashboard.manager")}</div>
+									<div>{t("dashboard.provider")}</div>
+									<div>{t("dashboard.value")}</div>
+									<div>{t("dashboard.status")}</div>
 								</div>
 								<div className="text-center py-8">
-									<p>Not yet implemented</p>
+									<p>{t("dashboard.notYetImplemented")}</p>
 								</div>
 							</div>
 						</div>

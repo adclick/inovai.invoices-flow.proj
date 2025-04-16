@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
@@ -37,13 +36,13 @@ const Profile: React.FC = () => {
             setFullName(data.full_name);
           }
         } catch (error) {
-          console.error("Error fetching user profile:", error);
+          console.error(t("profile.errorFetchingProfile"), error);
         }
       }
     };
 
     fetchUserProfile();
-  }, [user]);
+  }, [user, t]);
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value);
@@ -58,12 +57,13 @@ const Profile: React.FC = () => {
       await changeLanguage(selectedLanguage);
       toast({
         title: t("profile.updateSuccess"),
-        // Removed the "success" variant to fix the type error
+        description: t("profile.languageUpdated"),
       });
     } catch (error) {
-      console.error("Error updating language preference:", error);
+      console.error(t("profile.errorUpdatingLanguage"), error);
       toast({
         title: t("profile.updateError"),
+        description: t("profile.languageUpdateError"),
         variant: "destructive",
       });
     } finally {

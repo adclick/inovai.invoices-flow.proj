@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -27,24 +26,33 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { useTranslation } from "react-i18next";
 
-// Schema for campaign form validation
-const campaignSchema = z.object({
-	name: z.string().min(2, "Name must be at least 2 characters"),
-	client_id: z.string().min(1, "Please select a client"),
-	duration: z.coerce.number().min(1, "Duration must be at least 1 day"),
-	estimated_cost: z.coerce.number().optional(),
-	revenue: z.coerce.number().optional(),
-	active: z.boolean().default(true),
-});
-
-type CampaignFormValues = z.infer<typeof campaignSchema>;
+type CampaignFormValues = {
+	name: string;
+	client_id: string;
+	duration: number;
+	estimated_cost?: number;
+	revenue?: number;
+	active: boolean;
+};
 
 const EditCampaign = () => {
+	const { t } = useTranslation();
 	const { id } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const queryClient = useQueryClient();
+
+	// Schema for campaign form validation
+	const campaignSchema = z.object({
+		name: z.string().min(2, t("campaigns.nameError")).max(100, t("campaigns.nameError")),
+		client_id: z.string().min(1, t("campaigns.clientError")),
+		duration: z.coerce.number().min(1, t("campaigns.durationError")),
+		estimated_cost: z.coerce.number().optional(),
+		revenue: z.coerce.number().optional(),
+		active: z.boolean().default(true),
+	});
 
 	// Fetch campaign details
 	const { data: campaign, isLoading: isLoadingCampaign } = useQuery({
@@ -124,16 +132,16 @@ const EditCampaign = () => {
 			queryClient.invalidateQueries({ queryKey: ["campaigns"] });
 			queryClient.invalidateQueries({ queryKey: ["campaign", id] });
 			toast({
-				title: "Campaign updated",
-				description: "The campaign has been successfully updated.",
+				title: t("campaigns.campaignUpdated"),
+				description: t("campaigns.campaignUpdatedDescription"),
 			});
 			navigate("/campaigns");
 		},
 		onError: (error) => {
 			console.error("Error updating campaign:", error);
 			toast({
-				title: "Error",
-				description: "Failed to update the campaign. Please try again.",
+				title: t("common.error"),
+				description: t("campaigns.campaignUpdateError"),
 				variant: "destructive",
 			});
 		},
@@ -149,10 +157,10 @@ const EditCampaign = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Campaign</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.editCampaign")}</h1>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-slate-500 dark:text-slate-400">Loading campaign details...</p>
+						<p className="text-slate-500 dark:text-slate-400">{t("campaigns.loadingCampaignDetails")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -164,15 +172,15 @@ const EditCampaign = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Campaign</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.editCampaign")}</h1>
 					</div>
 					<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-						<p className="text-red-600 dark:text-red-400">Campaign not found</p>
+						<p className="text-red-600 dark:text-red-400">{t("campaigns.campaignNotFound")}</p>
 						<Button
 							className="mt-4"
 							onClick={() => navigate("/campaigns")}
 						>
-							Back to Campaigns
+							{t("campaigns.backToCampaigns")}
 						</Button>
 					</div>
 				</div>
@@ -184,9 +192,9 @@ const EditCampaign = () => {
 		<DashboardLayout>
 			<div className="p-6 max-w-4xl mx-auto">
 				<div className="mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Campaign</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.editCampaign")}</h1>
 					<p className="text-slate-500 dark:text-slate-400 mt-1">
-						Update campaign details
+						{t("campaigns.updateCampaignDescription")}
 					</p>
 				</div>
 
@@ -198,9 +206,9 @@ const EditCampaign = () => {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Campaign Name</FormLabel>
+										<FormLabel>{t("campaigns.name")}</FormLabel>
 										<FormControl>
-											<Input placeholder="Enter campaign name" {...field} />
+											<Input placeholder={t("campaigns.enterCampaignName")} {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -212,20 +220,20 @@ const EditCampaign = () => {
 								name="client_id"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Client</FormLabel>
+										<FormLabel>{t("campaigns.client")}</FormLabel>
 										<Select
 											onValueChange={field.onChange}
 											value={field.value}
 										>
 											<FormControl>
 												<SelectTrigger>
-													<SelectValue placeholder="Select a client" />
+													<SelectValue placeholder={t("campaigns.selectClient")} />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
 												{isLoadingClients ? (
 													<SelectItem value="loading" disabled>
-														Loading clients...
+														{t("campaigns.loadingClients")}
 													</SelectItem>
 												) : clients && clients.length > 0 ? (
 													clients.map((client) => (
@@ -235,7 +243,7 @@ const EditCampaign = () => {
 													))
 												) : (
 													<SelectItem value="no-clients" disabled>
-														No clients available
+														{t("campaigns.noClientsAvailable")}
 													</SelectItem>
 												)}
 											</SelectContent>
@@ -247,13 +255,67 @@ const EditCampaign = () => {
 
 							<FormField
 								control={form.control}
+								name="duration"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>{t("campaigns.duration")}</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												placeholder={t("campaigns.enterDuration")}
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="estimated_cost"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>{t("campaigns.estimatedCost")}</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												placeholder={t("campaigns.enterEstimatedCost")}
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="revenue"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>{t("campaigns.revenue")}</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												placeholder={t("campaigns.enterRevenue")}
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
 								name="active"
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 										<div className="space-y-0.5">
-											<FormLabel className="text-sm">Active Campaign</FormLabel>
+											<FormLabel className="text-sm">{t("campaigns.activeCampaign")}</FormLabel>
 											<div className="text-sm text-muted-foreground">
-												Mark this campaign as active
+												{t("campaigns.markAsActive")}
 											</div>
 										</div>
 										<FormControl>
@@ -272,10 +334,10 @@ const EditCampaign = () => {
 									variant="outline"
 									onClick={() => navigate("/campaigns")}
 								>
-									Cancel
+									{t("common.cancel")}
 								</Button>
 								<Button type="submit" disabled={updateCampaign.isPending}>
-									{updateCampaign.isPending ? "Updating..." : "Update Campaign"}
+									{updateCampaign.isPending ? t("common.updating") : t("campaigns.updateCampaign")}
 								</Button>
 							</div>
 						</form>

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { useTranslation } from "react-i18next";
 
 // Define form validation schema
 const managerFormSchema = z.object({
@@ -31,6 +31,7 @@ const managerFormSchema = z.object({
 type ManagerFormValues = z.infer<typeof managerFormSchema>;
 
 const EditManager = () => {
+	const { t } = useTranslation();
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const { toast } = useToast();
@@ -102,15 +103,15 @@ const EditManager = () => {
 			queryClient.invalidateQueries({ queryKey: ["managers"] });
 			queryClient.invalidateQueries({ queryKey: ["manager", id] });
 			toast({
-				title: "Manager updated",
-				description: "The manager has been successfully updated.",
+				title: t("managers.managerUpdated"),
+				description: t("managers.managerUpdatedDescription"),
 			});
 			navigate("/managers");
 		},
 		onError: (error) => {
 			toast({
-				title: "Error",
-				description: `Failed to update manager: ${error.message}`,
+				title: t("common.error"),
+				description: t("managers.managerUpdateError"),
 				variant: "destructive",
 			});
 		},
@@ -128,11 +129,11 @@ const EditManager = () => {
 					<div className="mb-6">
 						<Button variant="ghost" onClick={() => navigate("/managers")}>
 							<ArrowLeft className="mr-2 h-4 w-4" />
-							Back to Managers
+							{t("managers.backToManagers")}
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p>Loading manager data...</p>
+						<p>{t("managers.loadingManagerData")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -146,11 +147,11 @@ const EditManager = () => {
 					<div className="mb-6">
 						<Button variant="ghost" onClick={() => navigate("/managers")}>
 							<ArrowLeft className="mr-2 h-4 w-4" />
-							Back to Managers
+							{t("managers.backToManagers")}
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-red-500">Error loading manager data. Please try again later.</p>
+						<p className="text-red-500">{t("managers.errorLoadingManagerData")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -161,9 +162,9 @@ const EditManager = () => {
 		<DashboardLayout>
 			<div className="p-6 max-w-4xl mx-auto">
 				<div className="mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Edit Manager</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("managers.editManager")}</h1>
 					<p className="text-slate-500 dark:text-slate-400 mt-1">
-						Update manager information
+						{t("managers.updateManagerDescription")}
 					</p>
 				</div>
 
@@ -175,9 +176,9 @@ const EditManager = () => {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Manager Name</FormLabel>
+										<FormLabel>{t("managers.managerName")}</FormLabel>
 										<FormControl>
-											<Input placeholder="Enter manager name" {...field} />
+											<Input placeholder={t("managers.enterManagerName")} {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -189,11 +190,11 @@ const EditManager = () => {
 								name="email"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Email Address</FormLabel>
+										<FormLabel>{t("managers.email")}</FormLabel>
 										<FormControl>
 											<Input
 												type="email"
-												placeholder="Enter manager email"
+												placeholder={t("managers.enterManagerEmail")}
 												{...field}
 											/>
 										</FormControl>
@@ -208,9 +209,9 @@ const EditManager = () => {
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 										<div className="space-y-0.5">
-											<FormLabel className="text-sm">Active Manager</FormLabel>
+											<FormLabel className="text-sm">{t("managers.activeManager")}</FormLabel>
 											<div className="text-sm text-muted-foreground">
-												Mark this manager as active
+												{t("managers.markAsActive")}
 											</div>
 										</div>
 										<FormControl>
@@ -226,7 +227,7 @@ const EditManager = () => {
 							<div className="flex justify-between pt-4">
 								<Button variant="outline" onClick={() => navigate("/managers")}>
 									<ArrowLeft className="mr-2 h-4 w-4" />
-									Back to Managers
+									{t("managers.backToManagers")}
 								</Button>
 								<div className="flex justify-end space-x-4">
 									<Button
@@ -234,13 +235,13 @@ const EditManager = () => {
 										variant="outline"
 										onClick={() => navigate("/managers")}
 									>
-										Cancel
+										{t("common.cancel")}
 									</Button>
 									<Button
 										type="submit"
 										disabled={updateManagerMutation.isPending}
 									>
-										{updateManagerMutation.isPending ? "Saving..." : "Save Changes"}
+										{updateManagerMutation.isPending ? t("managers.saving") : t("managers.saveChanges")}
 									</Button>
 								</div>
 							</div>
