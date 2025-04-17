@@ -116,6 +116,9 @@ importers:
       embla-carousel-react:
         specifier: ^8.3.0
         version: 8.5.2(react@18.3.1)
+      i18next:
+        specifier: ^25.0.0
+        version: 25.0.0(typescript@5.8.2)
       i18next-browser-languagedetector:
         specifier: ^7.1.0
         version: 7.2.2
