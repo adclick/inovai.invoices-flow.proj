@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -83,13 +84,32 @@ TableHead.displayName = "TableHead"
 
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
+  React.TdHTMLAttributes<HTMLTableCellElement> & {
+    isEditable?: boolean
+  }
+>(({ className, isEditable, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
+    className={cn(
+      "p-4 align-middle [&:has([role=checkbox])]:pr-0", 
+      isEditable && "cursor-pointer relative group",
+      className
+    )}
     {...props}
-  />
+  >
+    {props.children}
+    {isEditable && (
+      <div className="absolute inset-0 bg-transparent group-hover:bg-primary/5 pointer-events-none rounded-sm">
+        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100">
+          <div className="bg-primary/10 text-primary p-0.5 rounded-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    )}
+  </td>
 ))
 TableCell.displayName = "TableCell"
 
