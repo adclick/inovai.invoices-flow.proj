@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,7 +40,7 @@ import {
 	CollapsibleTrigger
 } from "@/components/ui/collapsible";
 import { Job } from "@/types/job";
-
+import { useTranslation } from "react-i18next";
 
 type GroupedJobs = {
 	[clientId: string]: {
@@ -65,6 +66,7 @@ const formatCurrency = (value: number, currency: string) => {
 };
 
 const JobsGroupedList = () => {
+	const { t } = useTranslation();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
@@ -133,8 +135,8 @@ const JobsGroupedList = () => {
 	});
 
 	// Group jobs by client and then by campaign
-	const groupJobsByClientAndCampaign = (jobs: Job[] = []): GroupedJobs => {
-		return jobs.reduce((acc: GroupedJobs, job) => {
+	const groupedJobs = useMemo<GroupedJobs>(() => {
+		return (data || []).reduce((acc: GroupedJobs, job) => {
 			// Get the client_id from the derived property
 			const clientId = job.client_id || 'unknown';
 			
@@ -167,7 +169,7 @@ const JobsGroupedList = () => {
 			acc[clientId].campaigns[job.campaign_id].jobs.push(job);
 			return acc;
 		}, {});
-	};
+	}, [data, expandedClients, expandedCampaigns]);
 
 	// Delete job mutation
 	const deleteJob = useMutation({
@@ -183,8 +185,8 @@ const JobsGroupedList = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["jobs"] });
 			toast({
-				title: "Job deleted",
-				description: "The job has been successfully deleted.",
+				title: t("jobs.deleteSuccess"),
+				description: t("jobs.jobDeletedDescription"),
 			});
 			setIsDeleteDialogOpen(false);
 			setJobToDelete(null);
@@ -192,8 +194,8 @@ const JobsGroupedList = () => {
 		onError: (error) => {
 			console.error("Error deleting job:", error);
 			toast({
-				title: "Error",
-				description: "Failed to delete the job. Please try again.",
+				title: t("common.error"),
+				description: t("jobs.deleteError"),
 				variant: "destructive",
 			});
 		},
@@ -275,12 +277,18 @@ const JobsGroupedList = () => {
 
 	const getStatusBadge = (status: string) => {
 		switch (status) {
+			case 'draft':
+				return <Badge variant="outline" className="text-slate-500">{t("jobs.draft")}</Badge>;
 			case 'active':
-				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">Active</Badge>;
-			case 'inactive':
-				return <Badge variant="outline" className="text-slate-500">Inactive</Badge>;
-			case 'closed':
-				return <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">Closed</Badge>;
+				return <Badge className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">{t("jobs.active")}</Badge>;
+			case 'pending_invoice':
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">{t("jobs.pendingInvoice")}</Badge>;
+			case 'pending_validation':
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">{t("jobs.pendingValidation")}</Badge>;
+			case 'pending_payment':
+				return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400">{t("jobs.pendingPayment")}</Badge>;
+			case 'paid':
+				return <Badge className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300">{t("jobs.paid")}</Badge>;
 			default:
 				return <Badge variant="outline">{status}</Badge>;
 		}
@@ -291,10 +299,10 @@ const JobsGroupedList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Jobs by Client & Campaign</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.titleGrouped")}</h1>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-slate-500 dark:text-slate-400">Loading jobs...</p>
+						<p className="text-slate-500 dark:text-slate-400">{t("jobs.loadingJobs")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -306,10 +314,10 @@ const JobsGroupedList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Jobs by Client & Campaign</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.titleGrouped")}</h1>
 					</div>
 					<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-						<p className="text-red-600 dark:text-red-400">Error loading jobs: {(error as Error).message}</p>
+						<p className="text-red-600 dark:text-red-400">{t("jobs.errorLoadingJobs")}: {(error as Error).message}</p>
 					</div>
 				</div>
 			</DashboardLayout>
@@ -320,20 +328,20 @@ const JobsGroupedList = () => {
 		<DashboardLayout>
 			<div className="p-6">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Jobs by Client & Campaign</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.titleGrouped")}</h1>
 					<Button onClick={() => navigate("/jobs/create")} className="shrink-0">
 						<PlusCircle className="mr-2 h-4 w-4" />
-						New Job
+						{t("jobs.createNew")}
 					</Button>
 				</div>
 
-				{data.length === 0 ? (
+				{data && data.length === 0 ? (
 					<div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
-						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">No jobs found</h3>
-						<p className="text-slate-500 dark:text-slate-400 mb-4">Get started by creating your first job.</p>
+						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">{t("jobs.noJobsFound")}</h3>
+						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("jobs.getStarted")}</p>
 						<Button onClick={() => navigate("/jobs/create")}>
 							<PlusCircle className="mr-2 h-4 w-4" />
-							Create Job
+							{t("jobs.createJob")}
 						</Button>
 					</div>
 				) : (
@@ -341,9 +349,9 @@ const JobsGroupedList = () => {
 						<div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-hidden">
 							<div className="bg-slate-50 dark:bg-slate-800/50 p-3 border-b border-slate-200 dark:border-slate-700">
 								<div className="flex justify-between items-center">
-									<h3 className="font-medium text-slate-900 dark:text-slate-200">Clients</h3>
+									<h3 className="font-medium text-slate-900 dark:text-slate-200">{t("jobs.clients")}</h3>
 									<div className="text-sm text-slate-600 dark:text-slate-400">
-										Total: {data.length} job{data.length !== 1 ? 's' : ''}
+										{t("jobs.total")}: {data.length} {data.length !== 1 ? t("jobs.plural") : t("jobs.singular")}
 									</div>
 								</div>
 							</div>
@@ -366,7 +374,7 @@ const JobsGroupedList = () => {
 												{groupedJobs[clientId].clientName}
 											</div>
 											<div className="text-sm text-slate-500 dark:text-slate-400">
-												{Object.keys(groupedJobs[clientId].campaigns).length} campaign(s)
+												{Object.keys(groupedJobs[clientId].campaigns).length} {t("jobs.campaigns")}
 											</div>
 										</CollapsibleTrigger>
 										<CollapsibleContent>
@@ -394,7 +402,7 @@ const JobsGroupedList = () => {
 																	</span>
 																</div>
 																<div className="text-sm text-slate-500 dark:text-slate-400">
-																	{campaignData.jobs.length} job(s)
+																	{campaignData.jobs.length} {campaignData.jobs.length !== 1 ? t("jobs.plural") : t("jobs.singular")}
 																</div>
 															</CollapsibleTrigger>
 
@@ -402,12 +410,12 @@ const JobsGroupedList = () => {
 																<Table>
 																	<TableHeader>
 																		<TableRow>
-																			<TableHead>Manager</TableHead>
-																			<TableHead>Provider</TableHead>
-																			<TableHead>Value</TableHead>
-																			<TableHead>Status</TableHead>
-																			<TableHead>Invoice</TableHead>
-																			<TableHead className="text-right">Actions</TableHead>
+																			<TableHead>{t("jobs.manager")}</TableHead>
+																			<TableHead>{t("jobs.provider")}</TableHead>
+																			<TableHead>{t("jobs.value")}</TableHead>
+																			<TableHead>{t("jobs.status")}</TableHead>
+																			<TableHead>{t("jobs.invoice")}</TableHead>
+																			<TableHead className="text-right">{t("jobs.actions")}</TableHead>
 																		</TableRow>
 																	</TableHeader>
 																	<TableBody>
@@ -425,7 +433,7 @@ const JobsGroupedList = () => {
 																					{job.documents && job.documents.length > 0 ? (
 																						<Link to={job.documents[0]} onClick={e => e.stopPropagation()} target="_blank">
 																							<Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30">
-																								{job.documents[0]}
+																								{t("jobs.viewDocument")}
 																							</Badge>
 																						</Link>
 																					) : (
@@ -439,7 +447,7 @@ const JobsGroupedList = () => {
 																							className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
 																						>
 																							<Trash2 className="h-4 w-4" />
-																							<span className="sr-only">Delete</span>
+																							<span className="sr-only">{t("common.delete")}</span>
 																						</button>
 																					</div>
 																				</TableCell>
@@ -457,7 +465,7 @@ const JobsGroupedList = () => {
 								))
 							) : (
 								<div className="p-4 text-center text-slate-500 dark:text-slate-400">
-									No jobs to display on this page
+									{t("jobs.noJobsToDisplay")}
 								</div>
 							)}
 						</div>
@@ -471,15 +479,15 @@ const JobsGroupedList = () => {
 			<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+						<AlertDialogTitle>{t("jobs.deleteJob")}</AlertDialogTitle>
 						<AlertDialogDescription>
-							You are about to delete this job. This action cannot be undone.
+							{t("jobs.deleteConfirmation")}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
 						<AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
-							Delete
+							{t("common.delete")}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

@@ -21,6 +21,7 @@ export type Job = {
   provider_name?: string;
   manager_name?: string;
   client_name?: string; // We keep this for display purposes, but it will be derived from the campaign
+  client_id?: string; // Adding this to support the current implementation in JobsGroupedList
 };
 
 // Helper function to format status labels for display
