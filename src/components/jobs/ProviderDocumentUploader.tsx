@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -7,6 +6,7 @@ import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
+import { useTranslation } from "react-i18next";
 
 type ProviderDocumentUploaderProps = {
   jobId: string;
@@ -34,6 +34,7 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
   isSubmitting,
   setIsSubmitting
 }) => {
+  const { t } = useTranslation();
   const [uploadingFiles, setUploadingFiles] = useState<FileUploadState[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -80,7 +81,7 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
 
   const processUploads = async () => {
     if (uploadingFiles.length === 0) {
-      toast.error("Please add files to upload");
+      toast.error(t("jobs.pleaseAddFiles"));
       return false;
     }
 
@@ -93,7 +94,7 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
       
       // Check if any uploads failed
       if (results.some(result => !result.success)) {
-        toast.error("Some files failed to upload");
+        toast.error(t("jobs.someFilesFailed"));
         setIsSubmitting(false);
         return false;
       }
@@ -106,12 +107,12 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
       // Use the final document list provided by the server
       onUploadComplete(newUrls);
       
-      toast.success("Files uploaded successfully");
+      toast.success(t("jobs.filesUploadedSuccessfully"));
       setIsSubmitting(false);
       return true;
     } catch (error) {
       console.error("Upload process error:", error);
-      toast.error("Upload process failed");
+      toast.error(t("jobs.uploadProcessFailed"));
       setIsSubmitting(false);
       return false;
     }
@@ -199,9 +200,9 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
       >
         <div className="flex flex-col items-center justify-center space-y-3">
           <Upload className="h-10 w-10 text-slate-400 dark:text-slate-500" />
-          <h3 className="text-lg font-medium text-slate-900 dark:text-slate-200">Drop files here or click to upload</h3>
+          <h3 className="text-lg font-medium text-slate-900 dark:text-slate-200">{t("jobs.dropFilesHere")}</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Upload any document related to this job (PDF, DOC, XLS, images)
+            {t("jobs.uploadAnyDocument")}
           </p>
         </div>
         <input
@@ -241,12 +242,12 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
                 )}
                 {fileState.status === 'completed' && (
                   <span className="text-xs text-green-600 dark:text-green-400 font-medium">
-                    Ready
+                    {t("common.ready")}
                   </span>
                 )}
                 {fileState.status === 'error' && (
                   <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                    Failed
+                    {t("common.failed")}
                   </span>
                 )}
                 <Button
@@ -269,7 +270,7 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
         <Alert variant="destructive" className="mt-4">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Some files failed to upload. Please try again.
+            {t("jobs.someFilesFailed")}
           </AlertDescription>
         </Alert>
       )}
@@ -279,7 +280,7 @@ export const ProviderDocumentUploader: React.FC<ProviderDocumentUploaderProps> =
         onClick={processUploads} 
         disabled={isSubmitting || uploadingFiles.length === 0}
       >
-        {isSubmitting ? "Uploading..." : "Upload Files"}
+        {isSubmitting ? t("common.uploading") : t("jobs.uploadFiles")}
       </Button>
     </div>
   );

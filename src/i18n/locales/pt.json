@@ -48,7 +48,11 @@
 		"december": "Dezembro",
 		"euro": "Euro",
 		"usd": "Dólar",
-		"done": "Feito"
+		"done": "Feito",
+		"client": "Cliente",
+		"campaign": "Campanha",
+		"provider": "Fornecedor",
+		"dueDate": "Data Limite"
   },
   "auth": {
     "signIn": "Iniciar Sessão",
@@ -206,7 +210,12 @@
     "deleteSuccess": "Trabalho eliminado com sucesso",
     "deleteError": "Falha ao eliminar o trabalho",
     "loadingJobs": "A carregar trabalhos...",
-    "errorLoadingJobs": "Erro ao carregar trabalhos"
+    "errorLoadingJobs": "Erro ao carregar trabalhos",
+		"uploadFiles": "Upload",
+		"dropFilesHere": "Carregue aqui os ficheiros",
+		"uploadAnyDocument": "Upload do Documento",
+		"uploadDocuments": "Upload de Documentos",
+		"uploadDocumentsFor": "Carregue o documento necessário para {{clientName}} - {{campaignName}}"
   },
   "clients": {
     "title": "Clientes",

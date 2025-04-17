@@ -48,7 +48,11 @@
 		"december": "December",
 		"euro": "Euro",
 		"usd": "Dollar",
-		"done": "Done"
+		"done": "Done",
+		"client": "Client",
+		"campaign": "Campaign",
+		"provider": "Provider",
+		"dueDate": "Due Date"
   },
   "auth": {
     "signIn": "Sign In",
@@ -206,7 +210,12 @@
     "deleteSuccess": "Job deleted successfully",
     "deleteError": "Failed to delete the job",
     "loadingJobs": "Loading jobs...",
-    "errorLoadingJobs": "Error loading jobs"
+    "errorLoadingJobs": "Error loading jobs",
+		"uploadFiles": "Upload Files",
+		"dropFilesHere": "Drop Files Here",
+		"uploadAnyDocument": "Upload Any Document",
+		"uploadDocuments": "Upload Documents",
+		"uploadDocumentsFor": "Please upload required documents for {{clientName}} - {{campaignName}}"
   },
   "clients": {
     "title": "Clients",
