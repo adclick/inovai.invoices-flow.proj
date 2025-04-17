@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -88,14 +87,10 @@ const JobsGroupedList = () => {
 
 			if (jobsError) throw jobsError;
 
-			// Fetch related entities to get their names
-			const { data: clients } = await supabase
-				.from("clients")
-				.select("id, name");
-
+			// Fetch campaigns with their client information
 			const { data: campaigns } = await supabase
 				.from("campaigns")
-				.select("id, name");
+				.select("id, name, client:client_id(id, name)");
 
 			const { data: providers } = await supabase
 				.from("providers")
@@ -106,13 +101,12 @@ const JobsGroupedList = () => {
 				.select("id, name");
 
 			// Create lookup tables for entity names
-			const clientMap = clients?.reduce((acc: Record<string, string>, client) => {
-				acc[client.id] = client.name;
-				return acc;
-			}, {}) || {};
-
-			const campaignMap = campaigns?.reduce((acc: Record<string, string>, campaign) => {
-				acc[campaign.id] = campaign.name;
+			const campaignMap = campaigns?.reduce((acc: Record<string, any>, campaign) => {
+				acc[campaign.id] = {
+					name: campaign.name,
+					client_id: campaign.client?.id || null,
+					client_name: campaign.client?.name || "Unknown Client"
+				};
 				return acc;
 			}, {}) || {};
 
@@ -127,54 +121,53 @@ const JobsGroupedList = () => {
 			}, {}) || {};
 
 			// Add entity names to jobs
-			return jobs.map((job: Job) => ({
+			return jobs.map((job: any) => ({
 				...job,
-				client_name: clientMap[job.client_id] || "Unknown Client",
-				campaign_name: campaignMap[job.campaign_id] || "Unknown Campaign",
+				campaign_name: campaignMap[job.campaign_id]?.name || "Unknown Campaign",
+				client_name: campaignMap[job.campaign_id]?.client_name || "Unknown Client",
+				client_id: campaignMap[job.campaign_id]?.client_id || null, // Derive client_id from campaign
 				provider_name: providerMap[job.provider_id] || "Unknown Provider",
 				manager_name: managerMap[job.manager_id] || "Unknown Manager"
 			}));
 		},
 	});
 
-	console.log(data);
-
 	// Group jobs by client and then by campaign
 	const groupJobsByClientAndCampaign = (jobs: Job[] = []): GroupedJobs => {
 		return jobs.reduce((acc: GroupedJobs, job) => {
+			// Get the client_id from the derived property
+			const clientId = job.client_id || 'unknown';
+			
 			// Initialize client if not exists
-			if (!acc[job.client_id]) {
-				acc[job.client_id] = {
+			if (!acc[clientId]) {
+				acc[clientId] = {
 					clientName: job.client_name || "Unknown Client",
 					campaigns: {}
 				};
 				// Initialize expanded state for this client
-				if (expandedClients[job.client_id] === undefined) {
-					setExpandedClients(prev => ({ ...prev, [job.client_id]: false }));
+				if (expandedClients[clientId] === undefined) {
+					setExpandedClients(prev => ({ ...prev, [clientId]: false }));
 				}
 			}
 
 			// Initialize campaign if not exists
-			if (!acc[job.client_id].campaigns[job.campaign_id]) {
-				acc[job.client_id].campaigns[job.campaign_id] = {
+			if (!acc[clientId].campaigns[job.campaign_id]) {
+				acc[clientId].campaigns[job.campaign_id] = {
 					campaignName: job.campaign_name || "Unknown Campaign",
 					jobs: []
 				};
 				// Initialize expanded state for this campaign
-				const campaignKey = `${job.client_id}-${job.campaign_id}`;
+				const campaignKey = `${clientId}-${job.campaign_id}`;
 				if (expandedCampaigns[campaignKey] === undefined) {
 					setExpandedCampaigns(prev => ({ ...prev, [campaignKey]: false }));
 				}
 			}
 
 			// Add job to campaign
-			acc[job.client_id].campaigns[job.campaign_id].jobs.push(job);
+			acc[clientId].campaigns[job.campaign_id].jobs.push(job);
 			return acc;
 		}, {});
 	};
-
-	const groupedJobs = groupJobsByClientAndCampaign(data);
-	const clientIds = Object.keys(groupedJobs);
 
 	// Delete job mutation
 	const deleteJob = useMutation({
@@ -237,9 +230,9 @@ const JobsGroupedList = () => {
 	};
 
 	// Pagination
-	const totalItems = clientIds.length;
+	const totalItems = Object.keys(groupedJobs).length;
 	const totalPages = Math.ceil(totalItems / itemsPerPage);
-	const paginatedClientIds = clientIds.slice(
+	const paginatedClientIds = Object.keys(groupedJobs).slice(
 		(currentPage - 1) * itemsPerPage,
 		currentPage * itemsPerPage
 	);

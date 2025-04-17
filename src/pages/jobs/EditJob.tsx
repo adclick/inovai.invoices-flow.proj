@@ -48,9 +48,10 @@ const EditJob = () => {
   const [currentTab, setCurrentTab] = useState("details");
   const [documents, setDocuments] = useState<string[] | null>(null);
   const [previousStatus, setPreviousStatus] = useState<string | null>(null);
+  const [selectedCampaign, setSelectedCampaign] = useState<string>("");
+  const [clientName, setClientName] = useState<string>("");
 
   const jobSchema = z.object({
-    client_id: z.string().min(1, t("jobs.selectClient")),
     campaign_id: z.string().min(1, t("jobs.selectCampaign")),
     provider_id: z.string().min(1, t("jobs.selectProvider")),
     manager_id: z.string().min(1, t("jobs.selectManager")),
@@ -99,13 +100,12 @@ const EditJob = () => {
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
-      client_id: "",
       campaign_id: "",
       provider_id: "",
       manager_id: "",
       value: 0,
       currency: "euro",
-      status: "New",
+      status: "draft",
       paid: false,
       manager_ok: false,
       months: [],
@@ -114,6 +114,38 @@ const EditJob = () => {
       private_notes: "",
     },
   });
+
+  const { data: campaigns } = useQuery({
+    queryKey: ["campaigns"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("campaigns")
+        .select("id, name, client:client_id(id, name)")
+        .order("name");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (selectedCampaign && campaigns) {
+      const campaign = campaigns.find(c => c.id === selectedCampaign);
+      setClientName(campaign?.client?.name || t("jobs.unknownClient"));
+    } else {
+      setClientName("");
+    }
+  }, [selectedCampaign, campaigns, t]);
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "campaign_id" && value.campaign_id) {
+        setSelectedCampaign(value.campaign_id as string);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   const { data: job, isLoading: isLoadingJob } = useQuery<Job>({
     queryKey: ["job", id],
@@ -127,9 +159,25 @@ const EditJob = () => {
         .single();
 
       if (error) throw error;
-      // return data as Job;
 
-			console.log(job);
+      const { data: campaign } = await supabase
+        .from("campaigns")
+        .select("name, client:client_id(name)")
+        .eq("id", job.campaign_id)
+        .single();
+
+      const { data: provider } = await supabase
+        .from("providers")
+        .select("name")
+        .eq("id", job.provider_id)
+        .single();
+
+      const { data: manager } = await supabase
+        .from("managers")
+        .select("name")
+        .eq("id", job.manager_id)
+        .single();
+
       let formattedDueDate = "";
       if (job.due_date) {
         const date = new Date(job.due_date);
@@ -137,9 +185,11 @@ const EditJob = () => {
       }
 
       setPreviousStatus(job.status);
-      
+      setSelectedCampaign(job.campaign_id);
+      setClientName(campaign?.client?.name || t("jobs.unknownClient"));
+      setDocuments(job.documents);
+
       form.reset({
-        client_id: job.client_id,
         campaign_id: job.campaign_id,
         provider_id: job.provider_id,
         manager_id: job.manager_id,
@@ -154,36 +204,22 @@ const EditJob = () => {
         private_notes: job.private_notes || "",
       });
 
-			return job as Job;
+      return {
+        ...job,
+        campaign_name: campaign?.name || t("jobs.unknownCampaign"),
+        client_name: campaign?.client?.name || t("jobs.unknownClient"),
+        provider_name: provider?.name || t("jobs.unknownProvider"),
+        manager_name: manager?.name || t("jobs.unknownManager"),
+      } as Job;
     },
     enabled: !!id,
   });
-
-  useEffect(() => {
-    if (job) {
-			
-    }
-  }, [job, form]);
 
   const { data: clients } = useQuery({
     queryKey: ["clients"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clients")
-        .select("id, name")
-        .order("name");
-
-      if (error) throw error;
-      return data;
-    },
-		
-  });
-
-  const { data: campaigns } = useQuery({
-    queryKey: ["campaigns"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("campaigns")
         .select("id, name")
         .order("name");
 
@@ -225,7 +261,6 @@ const EditJob = () => {
       const { data, error } = await supabase
         .from("jobs")
         .update({
-          client_id: values.client_id,
           campaign_id: values.campaign_id,
           provider_id: values.provider_id,
           manager_id: values.manager_id,
@@ -373,46 +408,15 @@ const EditJob = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
-                        name="client_id"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t("jobs.client")}</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder={t("jobs.selectClient")} />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {clients && clients.length > 0 ? (
-                                  clients.map((client) => (
-                                    <SelectItem key={client.id} value={client.id}>
-                                      {client.name}
-                                    </SelectItem>
-                                  ))
-                                ) : (
-                                  <SelectItem value="no-clients" disabled>
-                                    {t("clients.noClientsAvailable")}
-                                  </SelectItem>
-                                )}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
                         name="campaign_id"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>{t("jobs.campaign")}</FormLabel>
                             <Select
-                              onValueChange={field.onChange}
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                setSelectedCampaign(value);
+                              }}
                               value={field.value}
                             >
                               <FormControl>
@@ -438,6 +442,16 @@ const EditJob = () => {
                           </FormItem>
                         )}
                       />
+
+                      <div className="space-y-2">
+                        <FormLabel>{t("jobs.client")}</FormLabel>
+                        <div className="p-2 border rounded-md bg-slate-50 dark:bg-slate-800 h-10 flex items-center">
+                          {clientName || t("jobs.selectCampaignFirst")}
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          {t("jobs.clientDerivedFromCampaign")}
+                        </p>
+                      </div>
 
                       <FormField
                         control={form.control}

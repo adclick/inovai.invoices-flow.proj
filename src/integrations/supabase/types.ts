@@ -80,7 +80,6 @@ export type Database = {
       jobs: {
         Row: {
           campaign_id: string
-          client_id: string
           created_at: string
           currency: Database["public"]["Enums"]["currency_type"]
           documents: string[] | null
@@ -101,7 +100,6 @@ export type Database = {
         }
         Insert: {
           campaign_id: string
-          client_id: string
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]
           documents?: string[] | null
@@ -122,7 +120,6 @@ export type Database = {
         }
         Update: {
           campaign_id?: string
-          client_id?: string
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]
           documents?: string[] | null
@@ -147,13 +144,6 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "jobs_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
             referencedColumns: ["id"]
           },
           {

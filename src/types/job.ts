@@ -1,7 +1,6 @@
 
 export type Job = {
   id: string;
-  client_id: string;
   campaign_id: string;
   provider_id: string;
   manager_id: string;
@@ -18,10 +17,10 @@ export type Job = {
   public_token?: string | null;
   payment_token?: string | null;
   created_at: string;
-  client_name?: string;
   campaign_name?: string;
   provider_name?: string;
   manager_name?: string;
+  client_name?: string; // We keep this for display purposes, but it will be derived from the campaign
 };
 
 // Helper function to format status labels for display

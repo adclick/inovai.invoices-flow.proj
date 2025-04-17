@@ -26,14 +26,10 @@ export const useJobsData = () => {
 
       if (jobsError) throw jobsError;
 
-      // Fetch related entities to get their names
-      const { data: clients } = await supabase
-        .from("clients")
-        .select("id, name");
-
+      // Fetch campaigns with their client information
       const { data: campaigns } = await supabase
         .from("campaigns")
-        .select("id, name");
+        .select("id, name, client:client_id(id, name)");
 
       const { data: providers } = await supabase
         .from("providers")
@@ -44,13 +40,11 @@ export const useJobsData = () => {
         .select("id, name");
 
       // Create lookup tables for entity names
-      const clientMap = clients?.reduce((acc: Record<string, string>, client) => {
-        acc[client.id] = client.name;
-        return acc;
-      }, {}) || {};
-
-      const campaignMap = campaigns?.reduce((acc: Record<string, string>, campaign) => {
-        acc[campaign.id] = campaign.name;
+      const campaignMap = campaigns?.reduce((acc: Record<string, any>, campaign) => {
+        acc[campaign.id] = {
+          name: campaign.name,
+          client_name: campaign.client?.name || "Unknown Client"
+        };
         return acc;
       }, {}) || {};
 
@@ -67,8 +61,8 @@ export const useJobsData = () => {
       // Add entity names to jobs
       return jobs.map((job: any) => ({
         ...job,
-        client_name: clientMap[job.client_id] || "Unknown Client",
-        campaign_name: campaignMap[job.campaign_id] || "Unknown Campaign",
+        campaign_name: campaignMap[job.campaign_id]?.name || "Unknown Campaign",
+        client_name: campaignMap[job.campaign_id]?.client_name || "Unknown Client",
         provider_name: providerMap[job.provider_id] || "Unknown Provider",
         manager_name: managerMap[job.manager_id] || "Unknown Manager"
       })) as Job[];
@@ -92,16 +86,10 @@ export const useJobById = (jobId: string) => {
 
       if (jobError) throw jobError;
 
-      // Get associated entity names
-      const { data: client } = await supabase
-        .from("clients")
-        .select("name")
-        .eq("id", job.client_id)
-        .single();
-
+      // Get associated campaign with client information
       const { data: campaign } = await supabase
         .from("campaigns")
-        .select("name")
+        .select("name, client:client_id(name)")
         .eq("id", job.campaign_id)
         .single();
 
@@ -119,8 +107,8 @@ export const useJobById = (jobId: string) => {
 
       return {
         ...job,
-        client_name: client?.name || "Unknown Client",
         campaign_name: campaign?.name || "Unknown Campaign",
+        client_name: campaign?.client?.name || "Unknown Client",
         provider_name: provider?.name || "Unknown Provider",
         manager_name: manager?.name || "Unknown Manager"
       } as Job;

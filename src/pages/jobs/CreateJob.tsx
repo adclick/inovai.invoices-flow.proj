@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,10 +33,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 // Schema for job form validation
 const jobSchema = z.object({
-  client_id: z.string().min(1, "Please select a client"),
   campaign_id: z.string().min(1, "Please select a campaign"),
   provider_id: z.string().min(1, "Please select a provider"),
   manager_id: z.string().min(1, "Please select a manager"),
@@ -84,32 +83,20 @@ const statusOptions = [
 ];
 
 const CreateJob = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedCampaign, setSelectedCampaign] = useState<string>("");
+  const [clientName, setClientName] = useState<string>("");
 
-  // Fetch clients for the dropdown
-  const { data: clients } = useQuery({
-    queryKey: ["clients"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("clients")
-        .select("id, name")
-        .eq("active", true)
-        .order("name");
-      
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  // Fetch campaigns for the dropdown
+  // Fetch campaigns for the dropdown with client information
   const { data: campaigns } = useQuery({
     queryKey: ["campaigns"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("campaigns")
-        .select("id, name")
+        .select("id, name, client:client_id(id, name)")
         .eq("active", true)
         .order("name");
       
@@ -152,7 +139,6 @@ const CreateJob = () => {
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
-      client_id: "",
       campaign_id: "",
       provider_id: "",
       manager_id: "",
@@ -168,13 +154,33 @@ const CreateJob = () => {
     },
   });
 
+  // Update client name when campaign changes
+  useEffect(() => {
+    if (selectedCampaign && campaigns) {
+      const campaign = campaigns.find(c => c.id === selectedCampaign);
+      setClientName(campaign?.client?.name || t("jobs.unknownClient"));
+    } else {
+      setClientName("");
+    }
+  }, [selectedCampaign, campaigns, t]);
+
+  // Watch campaign_id changes
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "campaign_id" && value.campaign_id) {
+        setSelectedCampaign(value.campaign_id as string);
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
+
   // Create job mutation
   const createJob = useMutation({
     mutationFn: async (values: JobFormValues) => {
       const { data, error } = await supabase
         .from("jobs")
         .insert({
-          client_id: values.client_id,
           campaign_id: values.campaign_id,
           provider_id: values.provider_id,
           manager_id: values.manager_id,
@@ -197,16 +203,16 @@ const CreateJob = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       toast({
-        title: "Job created",
-        description: "The job has been successfully created.",
+        title: t("jobs.jobCreated"),
+        description: t("jobs.jobCreatedDescription"),
       });
       navigate("/jobs");
     },
     onError: (error) => {
       console.error("Error creating job:", error);
       toast({
-        title: "Error",
-        description: "Failed to create the job. Please try again.",
+        title: t("common.error"),
+        description: t("jobs.jobCreateError"),
         variant: "destructive",
       });
     },
@@ -221,72 +227,40 @@ const CreateJob = () => {
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Create Job</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.createJob")}</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Create a new job assignment
+            {t("jobs.createJobDescription")}
           </p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Job Details</CardTitle>
+            <CardTitle>{t("jobs.jobDetails")}</CardTitle>
             <CardDescription>
-              Fill out the form below to create a new job
+              {t("jobs.fillJobDetails")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Client Selection */}
-                  <FormField
-                    control={form.control}
-                    name="client_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Client</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a client" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {clients && clients.length > 0 ? (
-                              clients.map((client) => (
-                                <SelectItem key={client.id} value={client.id}>
-                                  {client.name}
-                                </SelectItem>
-                              ))
-                            ) : (
-                              <SelectItem value="no-clients" disabled>
-                                No clients available
-                              </SelectItem>
-                            )}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
                   {/* Campaign Selection */}
                   <FormField
                     control={form.control}
                     name="campaign_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Campaign</FormLabel>
+                        <FormLabel>{t("jobs.campaign")}</FormLabel>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            setSelectedCampaign(value);
+                          }}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a campaign" />
+                              <SelectValue placeholder={t("jobs.selectCampaign")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -298,7 +272,7 @@ const CreateJob = () => {
                               ))
                             ) : (
                               <SelectItem value="no-campaigns" disabled>
-                                No campaigns available
+                                {t("campaigns.noCampaignsAvailable")}
                               </SelectItem>
                             )}
                           </SelectContent>
@@ -308,20 +282,31 @@ const CreateJob = () => {
                     )}
                   />
 
+                  {/* Client Information (Read-only) */}
+                  <div className="space-y-2">
+                    <FormLabel>{t("jobs.client")}</FormLabel>
+                    <div className="p-2 border rounded-md bg-slate-50 dark:bg-slate-800 h-10 flex items-center">
+                      {clientName || t("jobs.selectCampaignFirst")}
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      {t("jobs.clientDerivedFromCampaign")}
+                    </p>
+                  </div>
+
                   {/* Provider Selection */}
                   <FormField
                     control={form.control}
                     name="provider_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Provider</FormLabel>
+                        <FormLabel>{t("jobs.provider")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a provider" />
+                              <SelectValue placeholder={t("jobs.selectProvider")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -333,7 +318,7 @@ const CreateJob = () => {
                               ))
                             ) : (
                               <SelectItem value="no-providers" disabled>
-                                No providers available
+                                {t("providers.noProvidersAvailable")}
                               </SelectItem>
                             )}
                           </SelectContent>
@@ -349,14 +334,14 @@ const CreateJob = () => {
                     name="manager_id"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Manager</FormLabel>
+                        <FormLabel>{t("jobs.manager")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a manager" />
+                              <SelectValue placeholder={t("jobs.selectManager")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -368,7 +353,7 @@ const CreateJob = () => {
                               ))
                             ) : (
                               <SelectItem value="no-managers" disabled>
-                                No managers available
+                                {t("managers.noManagersAvailable")}
                               </SelectItem>
                             )}
                           </SelectContent>
@@ -384,7 +369,7 @@ const CreateJob = () => {
                     name="value"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Value</FormLabel>
+                        <FormLabel>{t("jobs.value")}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -405,14 +390,14 @@ const CreateJob = () => {
                     name="currency"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Currency</FormLabel>
+                        <FormLabel>{t("jobs.currency")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select currency" />
+                              <SelectValue placeholder={t("jobs.selectCurrency")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -434,14 +419,14 @@ const CreateJob = () => {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Status</FormLabel>
+                        <FormLabel>{t("jobs.status")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
+                              <SelectValue placeholder={t("jobs.selectStatus")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -463,7 +448,7 @@ const CreateJob = () => {
                     name="due_date"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Due Date (optional)</FormLabel>
+                        <FormLabel>{t("jobs.dueDate")}</FormLabel>
                         <FormControl>
                           <Input
                             type="date"
@@ -484,9 +469,9 @@ const CreateJob = () => {
                   render={() => (
                     <FormItem>
                       <div className="mb-4">
-                        <FormLabel>Months</FormLabel>
+                        <FormLabel>{t("jobs.months")}</FormLabel>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Select months this job applies to
+                          {t("jobs.selectMonths")}
                         </p>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -536,7 +521,7 @@ const CreateJob = () => {
                     name="public_notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Public Notes (optional)</FormLabel>
+                        <FormLabel>{t("jobs.publicNotes")}</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Notes visible to all parties"
@@ -555,7 +540,7 @@ const CreateJob = () => {
                     name="private_notes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Private Notes (optional)</FormLabel>
+                        <FormLabel>{t("jobs.privateNotes")}</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Internal notes"
@@ -576,10 +561,10 @@ const CreateJob = () => {
                     variant="outline"
                     onClick={() => navigate("/jobs")}
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={createJob.isPending}>
-                    {createJob.isPending ? "Creating..." : "Create Job"}
+                    {createJob.isPending ? t("common.creating") : t("jobs.createJob")}
                   </Button>
                 </div>
               </form>
