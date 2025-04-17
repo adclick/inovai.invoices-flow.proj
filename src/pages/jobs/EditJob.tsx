@@ -38,6 +38,7 @@ import { ArrowLeft } from "lucide-react";
 import { DocumentUploader } from "@/components/jobs/DocumentUploader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Job } from "@/types/job";
+import { JobStatusField } from "@/components/jobs/JobStatusField";
 
 const EditJob = () => {
   const { t } = useTranslation();
@@ -382,10 +383,20 @@ const EditJob = () => {
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.editJob")}</h1>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+            {t("jobs.editJob")}
+          </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
             {t("jobs.updateJobDetails")}
           </p>
+        </div>
+
+        <div className="mb-6">
+          <JobStatusField
+            value={form.watch("status")}
+            onChange={(value) => form.setValue("status", value as any)}
+            disabled={updateJob.isPending}
+          />
         </div>
 
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-4">
