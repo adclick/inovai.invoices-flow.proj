@@ -234,6 +234,7 @@ export type Database = {
           email: string
           iban: string | null
           id: string
+          language: string
           name: string
           updated_at: string
         }
@@ -244,6 +245,7 @@ export type Database = {
           email: string
           iban?: string | null
           id?: string
+          language?: string
           name: string
           updated_at?: string
         }
@@ -254,6 +256,7 @@ export type Database = {
           email?: string
           iban?: string | null
           id?: string
+          language?: string
           name?: string
           updated_at?: string
         }
