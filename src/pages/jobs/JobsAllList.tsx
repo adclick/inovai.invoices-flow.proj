@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -45,7 +44,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
-import { EditableCell } from "@/components/jobs/EditableCell";
 
 const JobsAllList: React.FC = () => {
 	const { t } = useTranslation();
@@ -283,55 +281,13 @@ const JobsAllList: React.FC = () => {
 								</TableHeader>
 								<TableBody>
 									{paginatedJobs.map((job) => (
-										<TableRow key={job.id}>
-											<TableCell className="font-medium" isEditable>
-												<EditableCell 
-													value={job.client_name || t("jobs.unknownClient")} 
-													row={job} 
-													column="client_name"
-													onRowClick={() => navigate(`/jobs/edit/${job.id}`)}
-												/>
-											</TableCell>
-											<TableCell isEditable>
-												<EditableCell 
-													value={job.campaign_name || t("jobs.unknownCampaign")} 
-													row={job} 
-													column="campaign_name"
-													onRowClick={() => navigate(`/jobs/edit/${job.id}`)}
-												/>
-											</TableCell>
-											<TableCell isEditable>
-												<EditableCell 
-													value={job.manager_name || t("jobs.unknownManager")} 
-													row={job} 
-													column="manager_name"
-													onRowClick={() => navigate(`/jobs/edit/${job.id}`)}
-												/>
-											</TableCell>
-											<TableCell isEditable>
-												<EditableCell 
-													value={job.provider_name || t("jobs.unknownProvider")} 
-													row={job} 
-													column="provider_name"
-													onRowClick={() => navigate(`/jobs/edit/${job.id}`)}
-												/>
-											</TableCell>
-											<TableCell isEditable>
-												<EditableCell 
-													value={job.value} 
-													row={job} 
-													column="value"
-													onRowClick={() => navigate(`/jobs/edit/${job.id}`)}
-												/>
-											</TableCell>
-											<TableCell isEditable>
-												<EditableCell 
-													value={job.status} 
-													row={job} 
-													column="status"
-													onRowClick={() => navigate(`/jobs/edit/${job.id}`)}
-												/>
-											</TableCell>
+										<TableRow key={job.id} onClick={() => navigate(`/jobs/edit/${job.id}`)} className="cursor-pointer">
+											<TableCell className="font-medium">{job.client_name || t("jobs.unknownClient")}</TableCell>
+											<TableCell>{job.campaign_name || t("jobs.unknownCampaign")}</TableCell>
+											<TableCell>{job.manager_name || t("jobs.unknownManager")}</TableCell>
+											<TableCell>{job.provider_name || t("jobs.unknownProvider")}</TableCell>
+											<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
+											<TableCell>{getStatusBadge(job.status)}</TableCell>
 											<TableCell className="text-right">
 												<div className="flex justify-end space-x-2">
 													<Link
@@ -342,15 +298,6 @@ const JobsAllList: React.FC = () => {
 														<Trash2 className="h-4 w-4" />
 														<span className="sr-only">{t("common.delete")}</span>
 													</Link>
-													<Button
-														size="icon"
-														variant="ghost"
-														onClick={() => navigate(`/jobs/edit/${job.id}`)}
-														className="h-9 w-9 text-slate-600"
-													>
-														<Edit className="h-4 w-4" />
-														<span className="sr-only">{t("common.edit")}</span>
-													</Button>
 												</div>
 											</TableCell>
 										</TableRow>
