@@ -48,15 +48,49 @@ const emailTemplates = {
       subject: (job: any) => `Pedido de Fatura: ${job.clients.name}/${job.campaigns.name}`,
       html: (context: any) => `
         <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background-color: #f8f9fa; padding: 20px; text-align: center; border-bottom: 3px solid #3b82f6; }
+              .content { padding: 20px; }
+              .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+              .details { background-color: #f0f9ff; padding: 15px; margin: 15px 0; border-radius: 5px; }
+              .important { background-color: #fff0f0; padding: 15px; margin: 15px 0; border-radius: 5px; border-left: 4px solid #f43f5e; }
+              h1 { color: #3b82f6; }
+              .button { display: inline-block; background-color: #3b82f6; color: white !important; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            </style>
+          </head>
           <body>
-            <h1>Pedido de Fatura</h1>
-            <p>Olá ${context.providerName},</p>
-            <p>Precisamos que faça o upload da fatura para o seguinte projeto:</p>
-            <div>
-              <p><strong>Cliente:</strong> ${context.clientName}</p>
-              <p><strong>Campanha:</strong> ${context.campaignName}</p>
-              <p><strong>Valor:</strong> ${context.jobValue}</p>
-              <a href="${context.uploadUrl}">Carregar Documentos</a>
+            <div class="container">
+              <div class="header">
+                <h1>Pedido de Fatura</h1>
+              </div>
+              <div class="content">
+                <p>Olá ${context.providerName},</p>
+                <p>Estamos a solicitar uma fatura para o seu trabalho no seguinte projeto:</p>
+                <div class="details">
+                  <h3>Detalhes do Trabalho:</h3>
+                  <p><strong>Cliente:</strong> ${context.clientName}</p>
+                  <p><strong>Campanha:</strong> ${context.campaignName}</p>
+                  <p><strong>Valor:</strong> ${context.jobValue}</p>
+                  <p><strong>Data Limite:</strong> ${context.dueDate}</p>
+                  <p><strong>Notas Adicionais:</strong> ${context.publicNotes}</p>
+                </div>
+                <div class="important">
+                  <h3>Ação Necessária:</h3>
+                  <p>Por favor, carregue a sua fatura e documentos de suporte usando o link seguro abaixo:</p>
+                  <p>
+                    <a href="${context.uploadUrl}" class="button">Carregar Documentos</a>
+                  </p>
+                  <p>Nota: Este link é específico para o seu trabalho e expirará quando o estado do trabalho mudar.</p>
+                </div>
+                <p>Obrigado pela sua atenção a este assunto.</p>
+                <p>Cumprimentos,<br>A Equipa InvoicesFlow</p>
+              </div>
+              <div class="footer">
+                <p>Esta é uma mensagem automática do InvoicesFlow. Por favor não responda a este email.</p>
+              </div>
             </div>
           </body>
         </html>
@@ -69,15 +103,49 @@ const emailTemplates = {
       subject: (job: any) => `Invoice Request: ${job.clients.name}/${job.campaigns.name}`,
       html: (context: any) => `
         <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background-color: #f8f9fa; padding: 20px; text-align: center; border-bottom: 3px solid #3b82f6; }
+              .content { padding: 20px; }
+              .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+              .details { background-color: #f0f9ff; padding: 15px; margin: 15px 0; border-radius: 5px; }
+              .important { background-color: #fff0f0; padding: 15px; margin: 15px 0; border-radius: 5px; border-left: 4px solid #f43f5e; }
+              h1 { color: #3b82f6; }
+              .button { display: inline-block; background-color: #3b82f6; color: white !important; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            </style>
+          </head>
           <body>
-            <h1>Invoice Request</h1>
-            <p>Hello ${context.providerName},</p>
-            <p>We need you to upload the invoice for the following project:</p>
-            <div>
-              <p><strong>Client:</strong> ${context.clientName}</p>
-              <p><strong>Campaign:</strong> ${context.campaignName}</p>
-              <p><strong>Value:</strong> ${context.jobValue}</p>
-              <a href="${context.uploadUrl}">Upload Documents</a>
+            <div class="container">
+              <div class="header">
+                <h1>Invoice Requested</h1>
+              </div>
+              <div class="content">
+                <p>Hello ${context.providerName},</p>
+                <p>We are requesting an invoice for your work on the following project:</p>
+                <div class="details">
+                  <h3>Job Details:</h3>
+                  <p><strong>Client:</strong> ${context.clientName}</p>
+                  <p><strong>Campaign:</strong> ${context.campaignName}</p>
+                  <p><strong>Value:</strong> ${context.jobValue}</p>
+                  <p><strong>Due Date:</strong> ${context.dueDate}</p>
+                  <p><strong>Additional Notes:</strong> ${context.publicNotes}</p>
+                </div>
+                <div class="important">
+                  <h3>Action Required:</h3>
+                  <p>Please upload your invoice and any supporting documents using the secure link below:</p>
+                  <p>
+                    <a href="${context.uploadUrl}" class="button">Upload Documents</a>
+                  </p>
+                  <p>Note: This link is specific to your job and will expire once the job status changes.</p>
+                </div>
+                <p>Thank you for your prompt attention to this matter.</p>
+                <p>Best regards,<br>The InvoicesFlow Team</p>
+              </div>
+              <div class="footer">
+                <p>This is an automated message from InvoicesFlow. Please do not reply to this email.</p>
+              </div>
             </div>
           </body>
         </html>
@@ -90,15 +158,49 @@ const emailTemplates = {
       subject: (job: any) => `Solicitud de Factura: ${job.clients.name}/${job.campaigns.name}`,
       html: (context: any) => `
         <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+              .header { background-color: #f8f9fa; padding: 20px; text-align: center; border-bottom: 3px solid #3b82f6; }
+              .content { padding: 20px; }
+              .footer { background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+              .details { background-color: #f0f9ff; padding: 15px; margin: 15px 0; border-radius: 5px; }
+              .important { background-color: #fff0f0; padding: 15px; margin: 15px 0; border-radius: 5px; border-left: 4px solid #f43f5e; }
+              h1 { color: #3b82f6; }
+              .button { display: inline-block; background-color: #3b82f6; color: white !important; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+            </style>
+          </head>
           <body>
-            <h1>Solicitud de Factura</h1>
-            <p>Hola ${context.providerName},</p>
-            <p>Necesitamos que suba la factura para el siguiente proyecto:</p>
-            <div>
-              <p><strong>Cliente:</strong> ${context.clientName}</p>
-              <p><strong>Campaña:</strong> ${context.campaignName}</p>
-              <p><strong>Valor:</strong> ${context.jobValue}</p>
-              <a href="${context.uploadUrl}">Subir Documentos</a>
+            <div class="container">
+              <div class="header">
+                <h1>Solicitud de Factura</h1>
+              </div>
+              <div class="content">
+                <p>Hola ${context.providerName},</p>
+                <p>Estamos solicitando una factura por su trabajo en el siguiente proyecto:</p>
+                <div class="details">
+                  <h3>Detalles del Trabajo:</h3>
+                  <p><strong>Cliente:</strong> ${context.clientName}</p>
+                  <p><strong>Campaña:</strong> ${context.campaignName}</p>
+                  <p><strong>Valor:</strong> ${context.jobValue}</p>
+                  <p><strong>Fecha Límite:</strong> ${context.dueDate}</p>
+                  <p><strong>Notas Adicionales:</strong> ${context.publicNotes}</p>
+                </div>
+                <div class="important">
+                  <h3>Acción Requerida:</h3>
+                  <p>Por favor, suba su factura y documentos de respaldo usando el enlace seguro a continuación:</p>
+                  <p>
+                    <a href="${context.uploadUrl}" class="button">Subir Documentos</a>
+                  </p>
+                  <p>Nota: Este enlace es específico para su trabajo y expirará cuando cambie el estado del trabajo.</p>
+                </div>
+                <p>Gracias por su pronta atención a este asunto.</p>
+                <p>Saludos cordiales,<br>El Equipo de InvoicesFlow</p>
+              </div>
+              <div class="footer">
+                <p>Este es un mensaje automático de InvoicesFlow. Por favor no responda a este correo.</p>
+              </div>
             </div>
           </body>
         </html>
