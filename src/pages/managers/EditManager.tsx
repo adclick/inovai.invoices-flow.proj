@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,13 +18,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+  Switch,
+} from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -115,7 +111,7 @@ const EditManager = () => {
       });
       navigate("/managers");
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: t("common.error"),
         description: t("managers.managerUpdateError"),
@@ -247,3 +243,4 @@ const EditManager = () => {
 };
 
 export default EditManager;
+

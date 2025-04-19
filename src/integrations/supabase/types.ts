@@ -224,7 +224,7 @@ export type Database = {
           email: string
           iban: string | null
           id: string
-          language: string
+          language: Database["public"]["Enums"]["language_enum"]
           name: string
           updated_at: string
         }
@@ -235,7 +235,7 @@ export type Database = {
           email: string
           iban?: string | null
           id?: string
-          language?: string
+          language?: Database["public"]["Enums"]["language_enum"]
           name: string
           updated_at?: string
         }
@@ -246,7 +246,7 @@ export type Database = {
           email?: string
           iban?: string | null
           id?: string
-          language?: string
+          language?: Database["public"]["Enums"]["language_enum"]
           name?: string
           updated_at?: string
         }
@@ -340,6 +340,7 @@ export type Database = {
         | "pending_validation"
         | "pending_payment"
         | "paid"
+      language_enum: "en" | "pt" | "es"
       month_type:
         | "january"
         | "february"
@@ -478,6 +479,7 @@ export const Constants = {
         "pending_payment",
         "paid",
       ],
+      language_enum: ["en", "pt", "es"],
       month_type: [
         "january",
         "february",
