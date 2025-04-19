@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,7 +13,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -40,6 +41,7 @@ type Provider = {
   email: string;
   country: string | null;
   iban: string | null;
+  language: string;
   active: boolean;
   created_at: string;
 };
@@ -54,7 +56,6 @@ const ProvidersList = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Query to fetch providers
   const { data, isLoading, error } = useQuery({
     queryKey: ["providers"],
     queryFn: async () => {
@@ -68,7 +69,6 @@ const ProvidersList = () => {
     },
   });
 
-  // Delete provider mutation
   const deleteProvider = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
@@ -82,8 +82,8 @@ const ProvidersList = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["providers"] });
       toast({
-        title: "Provider deleted",
-        description: "The provider has been successfully deleted.",
+        title: t("providers.providerDeleted"),
+        description: t("providers.providerDeletedDescription"),
       });
       setIsDeleteDialogOpen(false);
       setProviderToDelete(null);
@@ -91,14 +91,13 @@ const ProvidersList = () => {
     onError: (error) => {
       console.error("Error deleting provider:", error);
       toast({
-        title: "Error",
-        description: "Failed to delete the provider. Please try again.",
+        title: t("common.error"),
+        description: t("providers.providerDeleteError"),
         variant: "destructive",
       });
     },
   });
 
-  // Handle delete confirmation
   const handleDeleteClick = (provider: Provider) => {
     setProviderToDelete(provider);
     setIsDeleteDialogOpen(true);
@@ -110,7 +109,6 @@ const ProvidersList = () => {
     }
   };
 
-  // Pagination
   const totalPages = data ? Math.ceil(data.length / itemsPerPage) : 0;
   const paginatedData = data
     ? data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -211,6 +209,7 @@ const ProvidersList = () => {
                     <TableHead>{t("providers.providerName")}</TableHead>
                     <TableHead>{t("providers.email")}</TableHead>
                     <TableHead>{t("providers.country")}</TableHead>
+                    <TableHead>{t("common.language")}</TableHead>
                     <TableHead>{t("providers.status")}</TableHead>
                     <TableHead>{t("providers.iban")}</TableHead>
                     <TableHead className="text-right">{t("common.actions")}</TableHead>
@@ -222,6 +221,9 @@ const ProvidersList = () => {
                       <TableCell className="font-medium">{provider.name}</TableCell>
                       <TableCell>{provider.email}</TableCell>
                       <TableCell>{provider.country || "—"}</TableCell>
+                      <TableCell>
+                        <span className="capitalize">{provider.language || "en"}</span>
+                      </TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           provider.active 
@@ -255,7 +257,6 @@ const ProvidersList = () => {
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -277,3 +278,4 @@ const ProvidersList = () => {
 };
 
 export default ProvidersList;
+

@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -8,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import {
 	Form,
@@ -29,6 +29,7 @@ const providerSchema = z.object({
 	country: z.string().optional(),
 	iban: z.string().optional(),
 	active: z.boolean().default(true),
+	language: z.string().min(2, "Language must be at least 2 characters").optional(),
 }).required();
 
 type ProviderFormValues = z.infer<typeof providerSchema>;
@@ -67,6 +68,7 @@ const EditProvider = () => {
 			country: "",
 			iban: "",
 			active: true,
+			language: "",
 		},
 	});
 
@@ -79,11 +81,11 @@ const EditProvider = () => {
 				country: provider.country || "",
 				iban: provider.iban || "",
 				active: provider.active,
+				language: provider.language || "",
 			});
 		}
 	}, [provider, form]);
 
-	// Update provider mutation
 	const updateProvider = useMutation({
 		mutationFn: async (values: ProviderFormValues) => {
 			if (!id) throw new Error("Provider ID is required");
@@ -95,7 +97,8 @@ const EditProvider = () => {
 					email: values.email,
 					country: values.country || null,
 					iban: values.iban || null,
-					active: values.active
+					active: values.active,
+					language: values.language || null,
 				})
 				.eq("id", id)
 				.select("id")
@@ -123,7 +126,6 @@ const EditProvider = () => {
 		},
 	});
 
-	// Form submission handler
 	const onSubmit = (values: ProviderFormValues) => {
 		updateProvider.mutate(values);
 	};
@@ -205,7 +207,7 @@ const EditProvider = () => {
 								)}
 							/>
 
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 								<FormField
 									control={form.control}
 									name="country"
@@ -215,6 +217,24 @@ const EditProvider = () => {
 											<FormControl>
 												<Input
 													placeholder={t("providers.enterCountry")}
+													{...field}
+													value={field.value || ""}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name="language"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>{t("common.language")}</FormLabel>
+											<FormControl>
+												<Input
+													placeholder={t("providers.enterLanguage")}
 													{...field}
 													value={field.value || ""}
 												/>
@@ -292,3 +312,4 @@ const EditProvider = () => {
 };
 
 export default EditProvider;
+
