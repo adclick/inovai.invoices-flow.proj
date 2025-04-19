@@ -29,10 +29,15 @@ const providerSchema = z.object({
 	country: z.string().optional(),
 	iban: z.string().optional(),
 	active: z.boolean().default(true),
-	language: z.string().min(2, "Language must be at least 2 characters").optional(),
+	language: z.enum(["en", "pt", "es"]).optional(),
 }).required();
 
 type ProviderFormValues = z.infer<typeof providerSchema>;
+
+const LANGUAGES = ["en", "pt", "es"] as const;
+
+const isValidLanguage = (lang: unknown): lang is "en" | "pt" | "es" =>
+	LANGUAGES.includes(lang as any);
 
 const EditProvider = () => {
 	const { t } = useTranslation();
@@ -68,20 +73,25 @@ const EditProvider = () => {
 			country: "",
 			iban: "",
 			active: true,
-			language: "",
+			language: undefined,
 		},
 	});
 
 	// Update form values when provider data is loaded
 	useEffect(() => {
 		if (provider) {
+			// Ensure language type matches enum
+			const languageValue = isValidLanguage(provider.language)
+				? provider.language
+				: undefined;
+
 			form.reset({
 				name: provider.name,
 				email: provider.email,
 				country: provider.country || "",
 				iban: provider.iban || "",
 				active: provider.active,
-				language: provider.language || "",
+				language: languageValue,
 			});
 		}
 	}, [provider, form]);
