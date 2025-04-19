@@ -33,7 +33,6 @@ const managerFormSchema = z.object({
   name: z.string().min(1, "Manager name is required").max(100, "Manager name must be less than 100 characters"),
   email: z.string().email("Invalid email address").min(1, "Email is required"),
   active: z.boolean().default(true),
-  language: z.string().min(1, "Language is required"),
 });
 
 type ManagerFormValues = z.infer<typeof managerFormSchema>;
@@ -52,7 +51,6 @@ const EditManager = () => {
       name: "",
       email: "",
       active: true,
-      language: "en",
     },
   });
 
@@ -83,7 +81,6 @@ const EditManager = () => {
         name: manager.name,
         email: manager.email,
         active: manager.active,
-        language: manager.language || "en",
       });
     }
   }, [manager, form]);
@@ -99,7 +96,6 @@ const EditManager = () => {
           name: values.name,
           email: values.email,
           active: values.active,
-          language: values.language,
           updated_at: new Date().toISOString(),
         })
         .eq("id", id)
@@ -205,28 +201,6 @@ const EditManager = () => {
                     <FormControl>
                       <Input type="email" placeholder={t("managers.enterManagerEmail")} {...field} />
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="language"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("common.language")}</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t("profile.selectLanguage")} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="en">{t("profile.english")}</SelectItem>
-                        <SelectItem value="pt">{t("profile.portuguese")}</SelectItem>
-                      </SelectContent>
-                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

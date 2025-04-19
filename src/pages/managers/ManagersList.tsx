@@ -31,7 +31,6 @@ interface Manager {
   active: boolean;
   created_at: string;
   updated_at: string;
-  language: string;
 }
 
 const ManagersList = () => {
@@ -159,7 +158,6 @@ const ManagersList = () => {
                 <TableRow>
                   <TableHead>{t("managers.managerName")}</TableHead>
                   <TableHead>{t("managers.email")}</TableHead>
-                  <TableHead>{t("common.language")}</TableHead>
                   <TableHead>{t("common.status")}</TableHead>
                   <TableHead className="w-[120px] text-right">{t("common.actions")}</TableHead>
                 </TableRow>
@@ -173,9 +171,6 @@ const ManagersList = () => {
                         <Mail className="h-4 w-4 mr-2 text-slate-400" />
                         {manager.email}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="capitalize">{manager.language || "en"}</span>
                     </TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${manager.active 
