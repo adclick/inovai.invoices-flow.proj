@@ -20,14 +20,14 @@ export type Job = {
   campaign_name?: string;
   provider_name?: string;
   manager_name?: string;
-  client_name?: string; // We keep this for display purposes, but it will be derived from the campaign
+  client_name?: string; // We keep this for display purposes, derived from the campaign
   client_id?: string; // Adding this to support the current implementation in JobsGroupedList
 };
 
 // Helper function to format status labels for display
 export const formatJobStatus = (status: string): string => {
   const statusMap: Record<string, string> = {
-    'draft': 'Active',
+    'draft': 'Draft',
     'active': 'Active',
     'pending_invoice': 'Pending Invoice',
     'pending_validation': 'Pending Validation',

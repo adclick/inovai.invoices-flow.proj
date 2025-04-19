@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.46.0";
 
@@ -228,12 +229,18 @@ serve(async (req) => {
     }
 
     // Fetch job details including related entities and provider's language
+    // Now fetching campaign and then the client through the campaign
     const { data: job, error: jobError } = await supabase
       .from("jobs")
       .select(`
         *,
-        clients:client_id (name),
-        campaigns:campaign_id (name),
+        campaigns:campaign_id (
+          name,
+          client_id,
+          clients:client_id (
+            name
+          )
+        ),
         providers:provider_id (name, email, language),
         managers:manager_id (name, email)
       `)
@@ -247,6 +254,10 @@ serve(async (req) => {
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Extract client info from the campaigns.clients relationship
+    const clientName = job.campaigns?.clients?.name || "Unknown Client";
+    const clientId = job.campaigns?.client_id || null;
 
     // Format currency for email
     const formatCurrency = (value: number, currency: string) => {
@@ -291,7 +302,7 @@ serve(async (req) => {
                 <p>The status of a job has been updated to <strong>${new_status}</strong>.</p>
                 <div class="details">
                   <h3>Job Details:</h3>
-                  <p><strong>Client:</strong> ${job.clients.name}</p>
+                  <p><strong>Client:</strong> ${clientName}</p>
                   <p><strong>Campaign:</strong> ${job.campaigns.name}</p>
                   <p><strong>Provider:</strong> ${job.providers.name}</p>
                   <p><strong>Value:</strong> ${jobValue}</p>
@@ -313,7 +324,7 @@ serve(async (req) => {
       await smtp.send({
         from: EMAIL_FROM,
         to: job.managers.email,
-        subject: `Job Status Updated: ${new_status} - ${job.clients.name}/${job.campaigns.name}`,
+        subject: `Job Status Updated: ${new_status} - ${clientName}/${job.campaigns.name}`,
         html: managerEmailHtml,
       });
 
@@ -351,9 +362,11 @@ serve(async (req) => {
         subject: template.subject(job),
         html: template.html({
           providerName: job.providers.name,
-          clientName: job.clients.name,
+          clientName: clientName,
           campaignName: job.campaigns.name,
-          jobValue: `€${job.value.toLocaleString()}`,
+          jobValue: jobValue,
+          dueDate: dueDate,
+          publicNotes: job.public_notes || "",
           uploadUrl
         }),
       });
@@ -398,7 +411,7 @@ serve(async (req) => {
                 <p>The status of a job has been updated to <strong>${new_status}</strong>.</p>
                 <div class="details">
                   <h3>Job Details:</h3>
-                  <p><strong>Client:</strong> ${job.clients.name}</p>
+                  <p><strong>Client:</strong> ${clientName}</p>
                   <p><strong>Campaign:</strong> ${job.campaigns.name}</p>
                   <p><strong>Provider:</strong> ${job.providers.name}</p>
                   <p><strong>Value:</strong> ${jobValue}</p>
@@ -420,7 +433,7 @@ serve(async (req) => {
       await smtp.send({
         from: EMAIL_FROM,
         to: setting.value,
-        subject: `Job Status Updated: ${new_status} - ${job.clients.name}/${job.campaigns.name}`,
+        subject: `Job Status Updated: ${new_status} - ${clientName}/${job.campaigns.name}`,
         html: financeEmailHtml,
       });
 
