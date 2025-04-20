@@ -21,6 +21,15 @@ import {
 import { ArrowLeft } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "react-i18next";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Schema for provider form validation
 const providerSchema = z.object({
@@ -34,10 +43,14 @@ const providerSchema = z.object({
 
 type ProviderFormValues = z.infer<typeof providerSchema>;
 
-const LANGUAGES = ["en", "pt", "es"] as const;
+const LANGUAGES = [
+	{ value: "en", labelKey: "languages.english" },
+	{ value: "pt", labelKey: "languages.portuguese" },
+	{ value: "es", labelKey: "languages.spanish" },
+] as const;
 
 const isValidLanguage = (lang: unknown): lang is "en" | "pt" | "es" =>
-	LANGUAGES.includes(lang as any);
+	LANGUAGES.map(l => l.value).includes(lang as any);
 
 const EditProvider = () => {
 	const { t } = useTranslation();
@@ -243,11 +256,24 @@ const EditProvider = () => {
 										<FormItem>
 											<FormLabel>{t("common.language")}</FormLabel>
 											<FormControl>
-												<Input
-													placeholder={t("providers.enterLanguage")}
-													{...field}
-													value={field.value || ""}
-												/>
+												<Select
+													onValueChange={field.onChange}
+													defaultValue={field.value}
+													value={field.value}
+												>
+													<SelectTrigger className="w-full">
+														<SelectValue placeholder={t("providers.selectLanguage")} />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectGroup>
+															{LANGUAGES.map(({ value, labelKey }) => (
+																<SelectItem key={value} value={value}>
+																	{t(labelKey)}
+																</SelectItem>
+															))}
+														</SelectGroup>
+													</SelectContent>
+												</Select>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
