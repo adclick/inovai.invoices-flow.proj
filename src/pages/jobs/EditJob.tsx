@@ -19,6 +19,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription
 } from "@/components/ui/form";
 import {
   Select,
@@ -189,7 +190,7 @@ const EditJob = () => {
 
       setPreviousStatus(job.status);
       setSelectedCampaign(job.campaign_id);
-      setClientName(campaign?.client?.name || t("jobs.unknownClient"));
+      setClientName((job as any).client_name || t("jobs.unknownClient"));
       setDocuments(job.documents);
 
       form.reset({
@@ -722,28 +723,28 @@ const EditJob = () => {
                         )}
                       />
                     </div>
-                      <FormField
-                        control={form.control}
-                        name="provider_message"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t("jobs.providerMessage")}</FormLabel>
-                            <FormDescription>
-                              {t("jobs.providerMessageDescription")}
-                            </FormDescription>
-                            <FormControl>
-                              <Textarea
-                                placeholder={t("jobs.providerMessagePlaceholder")}
-                                className="resize-none border-2 border-purple-400 bg-purple-50 dark:bg-purple-900 p-3 rounded-md"
-                                rows={4}
-                                {...field}
-                                value={field.value || ""}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                    <FormField
+                      control={form.control}
+                      name="provider_message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("jobs.providerMessage")}</FormLabel>
+                          <FormDescription>
+                            {t("jobs.providerMessageDescription")}
+                          </FormDescription>
+                          <FormControl>
+                            <Textarea
+                              placeholder={t("jobs.providerMessagePlaceholder")}
+                              className="resize-none border-2 border-purple-400 bg-purple-50 dark:bg-purple-900 p-3 rounded-md"
+                              rows={4}
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <div className="flex justify-between pt-4">
                       <Button variant="outline" onClick={() => navigate("/jobs")}>
