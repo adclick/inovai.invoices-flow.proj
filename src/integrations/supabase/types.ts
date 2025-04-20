@@ -92,6 +92,7 @@ export type Database = {
           payment_token: string | null
           private_notes: string | null
           provider_id: string
+          provider_message: string | null
           public_notes: string | null
           public_token: string | null
           status: Database["public"]["Enums"]["job_status"]
@@ -112,6 +113,7 @@ export type Database = {
           payment_token?: string | null
           private_notes?: string | null
           provider_id: string
+          provider_message?: string | null
           public_notes?: string | null
           public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
@@ -132,6 +134,7 @@ export type Database = {
           payment_token?: string | null
           private_notes?: string | null
           provider_id?: string
+          provider_message?: string | null
           public_notes?: string | null
           public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]

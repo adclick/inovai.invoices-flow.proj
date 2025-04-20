@@ -65,6 +65,7 @@ const EditJob = () => {
     due_date: z.string().optional(),
     public_notes: z.string().optional(),
     private_notes: z.string().optional(),
+    provider_message: z.string().optional(),
   });
 
   type JobFormValues = z.infer<typeof jobSchema>;
@@ -113,6 +114,7 @@ const EditJob = () => {
       due_date: "",
       public_notes: "",
       private_notes: "",
+      provider_message: "",
     },
   });
 
@@ -144,7 +146,7 @@ const EditJob = () => {
         setSelectedCampaign(value.campaign_id as string);
       }
     });
-    
+
     return () => subscription.unsubscribe();
   }, [form.watch]);
 
@@ -203,6 +205,7 @@ const EditJob = () => {
         due_date: formattedDueDate,
         public_notes: job.public_notes || "",
         private_notes: job.private_notes || "",
+        provider_message: job.provider_message || "",
       });
 
       return {
@@ -274,6 +277,7 @@ const EditJob = () => {
           due_date: values.due_date || null,
           public_notes: values.public_notes || null,
           private_notes: values.private_notes || null,
+          provider_message: values.provider_message || null,
         })
         .eq("id", id)
         .select("id")
@@ -319,7 +323,7 @@ const EditJob = () => {
           description: t("jobs.jobUpdatedDescription"),
         });
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       queryClient.invalidateQueries({ queryKey: ["job", id] });
       navigate("/jobs");
@@ -718,6 +722,28 @@ const EditJob = () => {
                         )}
                       />
                     </div>
+                      <FormField
+                        control={form.control}
+                        name="provider_message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("jobs.providerMessage")}</FormLabel>
+                            <FormDescription>
+                              {t("jobs.providerMessageDescription")}
+                            </FormDescription>
+                            <FormControl>
+                              <Textarea
+                                placeholder={t("jobs.providerMessagePlaceholder")}
+                                className="resize-none border-2 border-purple-400 bg-purple-50 dark:bg-purple-900 p-3 rounded-md"
+                                rows={4}
+                                {...field}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
                     <div className="flex justify-between pt-4">
                       <Button variant="outline" onClick={() => navigate("/jobs")}>
