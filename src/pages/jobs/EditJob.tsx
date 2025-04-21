@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -14,6 +15,17 @@ import { Job } from "@/types/job";
 import DetailsForm from "@/components/jobs/DetailsForm";
 import DocumentsTab from "@/components/jobs/DocumentsTab";
 import StatusSection from "@/components/jobs/StatusSection";
+
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 const jobSchema = z.object({
   campaign_id: z.string().min(1, "jobs.selectCampaign"),
@@ -61,9 +73,14 @@ const EditJob: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState<string>("");
   const [clientName, setClientName] = useState<string>("");
 
-  // Form definition with translations passed as keys (will be replaced later)
+  // Modal control
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [pendingFormData, setPendingFormData] = useState<JobFormValues | null>(null);
+  const [providerMessageForModal, setProviderMessageForModal] = useState<string>("");
+
+  // Form definition
   const form = useForm<JobFormValues>({
-    resolver: zodResolver(jobSchema.transform((data) => data)), // the resolver expects valid translation keys for errors
+    resolver: zodResolver(jobSchema),
     defaultValues: {
       campaign_id: "",
       provider_id: "",
@@ -184,7 +201,7 @@ const EditJob: React.FC = () => {
   }, [form.watch]);
 
   // Mutation to update jobs
-  const updateJobMutation = useMutation({
+  const updateJobMutation = useMutation<Job, unknown, JobFormValues>({
     mutationFn: async (values: JobFormValues) => {
       if (!id) throw new Error("Job ID is required");
 
@@ -210,7 +227,7 @@ const EditJob: React.FC = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Job;
     },
     onSuccess: async (data, values) => {
       if (previousStatus && values.status !== previousStatus) {
@@ -264,9 +281,44 @@ const EditJob: React.FC = () => {
     },
   });
 
+  // Handle documents updated callback
   const handleDocumentsUpdated = (newDocuments: string[]) => {
     setDocuments(newDocuments);
     queryClient.invalidateQueries({ queryKey: ["job", id] });
+  };
+
+  // Handle initial form submit - open confirmation modal instead of direct save
+  const handleFormSubmit = (data: JobFormValues) => {
+    setPendingFormData(data);
+    if (data.status === "pending_invoice") {
+      // Pre-fill provider_message for modal from form or clear
+      setProviderMessageForModal(data.provider_message || "");
+    } else {
+      setProviderMessageForModal("");
+    }
+    setIsConfirmOpen(true);
+  };
+
+  // Handle confirmation modal cancel
+  const handleConfirmCancel = () => {
+    setIsConfirmOpen(false);
+    setPendingFormData(null);
+    setProviderMessageForModal("");
+  };
+
+  // Handle confirmation modal confirm save
+  const handleConfirmSave = () => {
+    if (!pendingFormData) {
+      setIsConfirmOpen(false);
+      return;
+    }
+    // If status is pending_invoice, override provider_message with modal value
+    const saveData = {
+      ...pendingFormData,
+      provider_message: pendingFormData.status === "pending_invoice" ? providerMessageForModal : pendingFormData.provider_message,
+    };
+    updateJobMutation.mutate(saveData);
+    setIsConfirmOpen(false);
   };
 
   if (isLoadingJob) {
@@ -305,6 +357,52 @@ const EditJob: React.FC = () => {
       </DashboardLayout>
     );
   }
+
+  // Confirmation modal subcomponent
+  const ConfirmUpdateModal: React.FC = () => (
+    <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{t("jobs.confirmJobUpdate")}</DialogTitle>
+          <DialogDescription>
+            {t("jobs.confirmUpdateMessage")}
+          </DialogDescription>
+        </DialogHeader>
+
+        {pendingFormData && pendingFormData.status === "pending_invoice" && (
+          <div className="mt-4">
+            <label
+              htmlFor="providerMessage"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
+              {t("jobs.messageToProviderLabel")}
+            </label>
+            <textarea
+              id="providerMessage"
+              rows={4}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-slate-800 dark:text-white"
+              value={providerMessageForModal}
+              onChange={(e) => setProviderMessageForModal(e.target.value)}
+            />
+          </div>
+        )}
+
+        <DialogFooter className="flex justify-end space-x-2 mt-6">
+          <Button
+            variant="outline"
+            onClick={handleConfirmCancel}
+          >
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={handleConfirmSave}>
+            {t("common.confirm")}
+          </Button>
+        </DialogFooter>
+
+        <DialogClose />
+      </DialogContent>
+    </Dialog>
+  );
 
   return (
     <DashboardLayout>
@@ -354,8 +452,10 @@ const EditJob: React.FC = () => {
               selectedCampaign={selectedCampaign}
               setSelectedCampaign={setSelectedCampaign}
               updateJobMutation={updateJobMutation}
-              t={t}
               onCancel={() => navigate("/jobs")}
+              // Change form submit to open modal
+              formSubmitHandler={handleFormSubmit}
+              t={t}
             />
           </TabsContent>
 
@@ -370,10 +470,12 @@ const EditJob: React.FC = () => {
             />
           )}
         </Tabs>
+
+        {/* Confirmation modal */}
+        <ConfirmUpdateModal />
       </div>
     </DashboardLayout>
   );
 };
 
 export default EditJob;
-
