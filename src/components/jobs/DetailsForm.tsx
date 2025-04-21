@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Job } from "@/types/job";
 import { z } from "zod";
+
 
 const jobSchema = z.object({
   campaign_id: z.string().min(1, "jobs.selectCampaign"),
@@ -66,6 +67,7 @@ const DetailsForm: React.FC<{
   >;
   t: (key: string) => string;
   onCancel: () => void;
+	formSubmitHandler: (data: JobFormValues) => void
 }> = ({
   form,
   campaigns,
@@ -78,6 +80,7 @@ const DetailsForm: React.FC<{
   selectedCampaign,
   setSelectedCampaign,
   updateJobMutation,
+	formSubmitHandler,
   t,
   onCancel,
 }) => {
@@ -89,7 +92,7 @@ const DetailsForm: React.FC<{
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((data) => updateJobMutation.mutate(data))} className="space-y-6">
+          <form onSubmit={form.handleSubmit((data) => formSubmitHandler(data))} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -381,29 +384,6 @@ const DetailsForm: React.FC<{
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="provider_message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("jobs.providerMessage")}</FormLabel>
-                  <FormDescription>
-                    {t("jobs.providerMessageDescription")}
-                  </FormDescription>
-                  <FormControl>
-                    <Textarea
-                      placeholder={t("jobs.providerMessagePlaceholder")}
-                      className="resize-none border-2 border-purple-400 bg-purple-50 dark:bg-purple-900 p-3 rounded-md"
-                      rows={4}
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-between pt-4">
               <Button variant="outline" onClick={onCancel}>

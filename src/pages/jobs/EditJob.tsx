@@ -15,7 +15,6 @@ import { Job } from "@/types/job";
 import DetailsForm from "@/components/jobs/DetailsForm";
 import DocumentsTab from "@/components/jobs/DocumentsTab";
 import StatusSection from "@/components/jobs/StatusSection";
-
 import {
   Dialog,
   DialogTrigger,
@@ -290,16 +289,11 @@ const EditJob: React.FC = () => {
   // Handle initial form submit - open confirmation modal instead of direct save
   const handleFormSubmit = (data: JobFormValues) => {
     setPendingFormData(data);
-    if (data.status === "pending_invoice") {
-      // Pre-fill provider_message for modal from form or clear
-      setProviderMessageForModal(data.provider_message || "");
-    } else {
-      setProviderMessageForModal("");
-    }
+		setProviderMessageForModal("");
     setIsConfirmOpen(true);
   };
 
-  // Handle confirmation modal cancel
+	// Handle confirmation modal cancel
   const handleConfirmCancel = () => {
     setIsConfirmOpen(false);
     setPendingFormData(null);
@@ -320,6 +314,53 @@ const EditJob: React.FC = () => {
     updateJobMutation.mutate(saveData);
     setIsConfirmOpen(false);
   };
+
+	// Confirmation modal subcomponent
+const ConfirmUpdateModal: React.FC = () => (
+	<Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+		<DialogContent className="max-w-lg">
+			<DialogHeader>
+				<DialogTitle>{t("jobs.confirmJobUpdate")}</DialogTitle>
+				<DialogDescription>
+					{t("jobs.confirmUpdateMessage")}
+				</DialogDescription>
+			</DialogHeader>
+
+			{pendingFormData && pendingFormData.status === "pending_invoice" && (
+				<div className="mt-4">
+					<label
+						htmlFor="providerMessage"
+						className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+					>
+						{t("jobs.messageToProviderLabel")}
+					</label>
+					<textarea
+						id="providerMessage"
+						rows={4}
+						className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-slate-800 dark:text-white"
+						value={providerMessageForModal}
+						onChange={(e) => setProviderMessageForModal(e.target.value)}
+					/>
+				</div>
+			)}
+
+			<DialogFooter className="flex justify-end space-x-2 mt-6">
+				<Button
+					variant="outline"
+					onClick={handleConfirmCancel}
+				>
+					{t("common.cancel")}
+				</Button>
+				<Button onClick={handleConfirmSave}>
+					{t("common.confirm")}
+				</Button>
+			</DialogFooter>
+
+			<DialogClose />
+		</DialogContent>
+	</Dialog>
+);
+
 
   if (isLoadingJob) {
     return (
@@ -357,52 +398,6 @@ const EditJob: React.FC = () => {
       </DashboardLayout>
     );
   }
-
-  // Confirmation modal subcomponent
-  const ConfirmUpdateModal: React.FC = () => (
-    <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{t("jobs.confirmJobUpdate")}</DialogTitle>
-          <DialogDescription>
-            {t("jobs.confirmUpdateMessage")}
-          </DialogDescription>
-        </DialogHeader>
-
-        {pendingFormData && pendingFormData.status === "pending_invoice" && (
-          <div className="mt-4">
-            <label
-              htmlFor="providerMessage"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              {t("jobs.messageToProviderLabel")}
-            </label>
-            <textarea
-              id="providerMessage"
-              rows={4}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-slate-800 dark:text-white"
-              value={providerMessageForModal}
-              onChange={(e) => setProviderMessageForModal(e.target.value)}
-            />
-          </div>
-        )}
-
-        <DialogFooter className="flex justify-end space-x-2 mt-6">
-          <Button
-            variant="outline"
-            onClick={handleConfirmCancel}
-          >
-            {t("common.cancel")}
-          </Button>
-          <Button onClick={handleConfirmSave}>
-            {t("common.confirm")}
-          </Button>
-        </DialogFooter>
-
-        <DialogClose />
-      </DialogContent>
-    </Dialog>
-  );
 
   return (
     <DashboardLayout>
