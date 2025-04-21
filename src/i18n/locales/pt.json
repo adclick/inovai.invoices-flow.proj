@@ -1,4 +1,3 @@
-
 {
   "common": {
     "loading": "A carregar...",
@@ -169,7 +168,7 @@
     "value": "Valor",
     "currency": "Moeda",
     "status": "Estado",
-    "dueDate": "Data de Vencimento (opcional)",
+    "dueDate": "Data Limite",
     "months": "Meses",
     "selectMonthsDescription": "Selecione os meses a que este trabalho se aplica",
     "publicNotes": "Notas Públicas (opcional)",
@@ -215,7 +214,10 @@
 		"dropFilesHere": "Carregue aqui os ficheiros",
 		"uploadAnyDocument": "Upload do Documento",
 		"uploadDocuments": "Upload de Documentos",
-		"uploadDocumentsFor": "Carregue o documento necessário para {{clientName}} - {{campaignName}}"
+		"uploadDocumentsFor": "Carregue o documento necessário para {{clientName}} - {{campaignName}}",
+    "confirmJobUpdate": "Confirmar Atualização do Trabalho",
+    "confirmUpdateMessage": "Por favor, reveja as alterações antes de confirmar a atualização.",
+    "messageToProviderLabel": "Mensagem para o Fornecedor"
   },
   "clients": {
     "title": "Clientes",

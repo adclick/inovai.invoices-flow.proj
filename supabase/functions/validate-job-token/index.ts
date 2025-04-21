@@ -42,7 +42,6 @@ serve(async (req) => {
       .from('jobs')
       .select(`
         id, 
-        client_id, 
         campaign_id, 
         provider_id, 
         manager_id, 
@@ -57,7 +56,6 @@ serve(async (req) => {
         private_notes, 
         documents,
         public_token,
-        clients (name),
         campaigns (name),
         providers (name)
       `)

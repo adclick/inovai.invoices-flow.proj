@@ -1,4 +1,3 @@
-
 {
   "common": {
     "loading": "Loading...",
@@ -169,7 +168,7 @@
     "value": "Value",
     "currency": "Currency",
     "status": "Status",
-    "dueDate": "Due Date (optional)",
+    "dueDate": "Due Date",
     "months": "Months",
     "selectMonthsDescription": "Select months this job applies to",
     "publicNotes": "Public Notes (optional)",
@@ -215,7 +214,10 @@
 		"dropFilesHere": "Drop Files Here",
 		"uploadAnyDocument": "Upload Any Document",
 		"uploadDocuments": "Upload Documents",
-		"uploadDocumentsFor": "Please upload required documents for {{clientName}} - {{campaignName}}"
+		"uploadDocumentsFor": "Please upload required documents for {{clientName}} - {{campaignName}}",
+    "confirmJobUpdate": "Confirm Job Update",
+    "confirmUpdateMessage": "Please review the changes before confirming the update.",
+    "messageToProviderLabel": "Message to Provider"
   },
   "clients": {
     "title": "Clients",

@@ -10,7 +10,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Job } from "@/types/job";
+import { formatJobStatus, Job } from "@/types/job";
 import DetailsForm from "@/components/jobs/DetailsForm";
 import DocumentsTab from "@/components/jobs/DocumentsTab";
 import StatusSection from "@/components/jobs/StatusSection";
@@ -22,6 +22,7 @@ import {
 	DialogDescription,
 	DialogClose
 } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 const jobSchema = z.object({
   campaign_id: z.string().min(1, "jobs.selectCampaign"),
@@ -84,6 +85,7 @@ const ConfirmUpdateModal: React.FC<ConfirmUpdateModalProps> = ({
         <DialogDescription>
           {t("jobs.confirmUpdateMessage")}
         </DialogDescription>
+				
       </DialogHeader>
 
       {pendingFormData && pendingFormData.status === "pending_invoice" && (
@@ -415,9 +417,24 @@ const EditJob: React.FC = () => {
     );
   }
 
+	const getStatusColor = (status: string): string => {
+		const colorMap: Record<string, string> = {
+			'draft': 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100',
+			'active': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+			'pending_invoice': 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100',
+			'pending_validation': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
+			'pending_payment': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
+			'paid': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+		};
+		
+		return colorMap[status] || colorMap['draft'];
+	};
+
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
+				<div className=" flex justify-between items-center">
+
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
             {t("jobs.editJob")}
@@ -426,6 +443,13 @@ const EditJob: React.FC = () => {
             {t("jobs.updateJobDetails")}
           </p>
         </div>
+					<Badge 
+							className={`${getStatusColor(job.status)} px-3 py-1 text-sm font-medium`}
+							variant="outline"
+						>
+							{formatJobStatus(job.status)}
+					</Badge>
+				</div>
 
         <StatusSection
           status={form.watch("status")}

@@ -276,6 +276,7 @@ const JobsAllList: React.FC = () => {
 										<TableHead>{t("jobs.provider")}</TableHead>
 										<TableHead>{t("jobs.value")}</TableHead>
 										<TableHead>{t("jobs.status")}</TableHead>
+										<TableHead>{t("jobs.documents")}</TableHead>
 										<TableHead className="text-right">{t("jobs.actions")}</TableHead>
 									</TableRow>
 								</TableHeader>
@@ -288,6 +289,17 @@ const JobsAllList: React.FC = () => {
 											<TableCell>{job.provider_name || t("jobs.unknownProvider")}</TableCell>
 											<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 											<TableCell>{getStatusBadge(job.status)}</TableCell>
+											<TableCell className="w-2">
+												{job.documents && job.documents.length > 0 ? (
+													<Link to={job.documents[0]} onClick={e => e.stopPropagation()} target="_blank">
+														<Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30">
+															{job.documents[0]}
+														</Badge>
+													</Link>
+												) : (
+													<span className="text-slate-400 text-sm">-</span>
+												)}
+											</TableCell>
 											<TableCell className="text-right">
 												<div className="flex justify-end space-x-2">
 													<Link
@@ -300,6 +312,7 @@ const JobsAllList: React.FC = () => {
 													</Link>
 												</div>
 											</TableCell>
+
 										</TableRow>
 									))}
 								</TableBody>
