@@ -247,6 +247,7 @@ const EditJob: React.FC = () => {
   // watch for campaign changes to update client name
   useEffect(() => {
     if (selectedCampaign && campaigns) {
+			console.log(selectedCampaign, campaigns);
       const campaign = campaigns.find((c) => c.id === selectedCampaign);
       setClientName(campaign?.client?.name || t("jobs.unknownClient"));
     } else {
@@ -333,7 +334,6 @@ const EditJob: React.FC = () => {
 
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       queryClient.invalidateQueries({ queryKey: ["job", id] });
-      navigate("/jobs");
     },
     onError: (error) => {
       console.error("Error updating job:", error);
@@ -430,6 +430,15 @@ const EditJob: React.FC = () => {
 		return colorMap[status] || colorMap['draft'];
 	};
 
+	const statusMap: Record<string, string> = {
+    'draft': t('jobs.draft'),
+    'active': t('jobs.active'),
+    'pending_invoice': t('jobs.pending_invoice'),
+    'pending_validation': t('jobs.pending_validation'),
+    'pending_payment': t('jobs.pending_payment'),
+    'paid': t('jobs.paid'),
+  };
+  
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
@@ -447,7 +456,7 @@ const EditJob: React.FC = () => {
 							className={`${getStatusColor(job.status)} px-3 py-1 text-sm font-medium`}
 							variant="outline"
 						>
-							{formatJobStatus(job.status)}
+							{statusMap[job.status]}
 					</Badge>
 				</div>
 

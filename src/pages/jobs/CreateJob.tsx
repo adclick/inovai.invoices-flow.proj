@@ -237,7 +237,7 @@ const CreateJob = () => {
           <CardHeader>
             <CardTitle>{t("jobs.jobDetails")}</CardTitle>
             <CardDescription>
-              {t("jobs.fillJobDetails")}
+              {t("jobs.updateJobDetails")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -288,9 +288,6 @@ const CreateJob = () => {
                     <div className="p-2 border rounded-md bg-slate-50 dark:bg-slate-800 h-10 flex items-center">
                       {clientName || t("jobs.selectCampaignFirst")}
                     </div>
-                    <p className="text-xs text-slate-500">
-                      {t("jobs.clientDerivedFromCampaign")}
-                    </p>
                   </div>
 
                   {/* Provider Selection */}

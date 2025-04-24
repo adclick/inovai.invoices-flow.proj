@@ -159,6 +159,7 @@
     "fillForm": "Preencha o formulário abaixo para criar um novo trabalho",
     "selectClient": "Por favor, selecione um cliente",
     "selectCampaign": "Por favor, selecione uma campanha",
+		"selectCampaignFirst": "Por favor, selecione uma campanha primeiro",
     "selectProvider": "Por favor, selecione um fornecedor",
     "selectManager": "Por favor, selecione um gestor",
     "valueRequired": "O valor deve ser pelo menos 0",

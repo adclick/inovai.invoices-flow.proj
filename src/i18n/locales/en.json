@@ -159,6 +159,7 @@
     "fillForm": "Fill out the form below to create a new job",
     "selectClient": "Please select a client",
     "selectCampaign": "Please select a campaign",
+    "selectCampaignFirst": "Please select a campaign first",
     "selectProvider": "Please select a provider",
     "selectManager": "Please select a manager",
     "valueRequired": "Value must be at least 0",

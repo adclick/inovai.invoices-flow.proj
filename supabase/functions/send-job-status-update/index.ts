@@ -77,13 +77,13 @@ const emailTemplates = {
                   <p><strong>Data Limite:</strong> ${context.dueDate}</p>
                   <p><strong>Notas Adicionais:</strong> ${context.publicNotes}</p>
                 </div>
-                ${context.providerMessage ? `
+								${context.providerMessage ? `
                 <div class="important" style="background-color:#fff0f0; padding:15px; margin:15px 0; border-radius:5px; border-left:4px solid #f43f5e;">
                   <h3>Mensagem para o Fornecedor:</h3>
                   <p>${context.providerMessage}</p>
                 </div>
                 ` : ''}
-                <div class="important">
+								<div class="important">
                   <h3>Ação Necessária:</h3>
                   <p>Por favor, carregue a sua fatura e documentos de suporte usando o link seguro abaixo:</p>
                   <p>
@@ -137,13 +137,13 @@ const emailTemplates = {
                   <p><strong>Due Date:</strong> ${context.dueDate}</p>
                   <p><strong>Additional Notes:</strong> ${context.publicNotes}</p>
                 </div>
-                ${context.providerMessage ? `
+								${context.providerMessage ? `
                 <div class="important" style="background-color:#fff0f0; padding:15px; margin:15px 0; border-radius:5px; border-left:4px solid #f43f5e;">
                   <h3>Message to Provider:</h3>
                   <p>${context.providerMessage}</p>
                 </div>
                 ` : ''}
-                <div class="important">
+								<div class="important">
                   <h3>Action Required:</h3>
                   <p>Please upload your invoice and any supporting documents using the secure link below:</p>
                   <p>
@@ -197,13 +197,13 @@ const emailTemplates = {
                   <p><strong>Fecha Límite:</strong> ${context.dueDate}</p>
                   <p><strong>Notas Adicionales:</strong> ${context.publicNotes}</p>
                 </div>
-                ${context.providerMessage ? `
+								${context.providerMessage ? `
                 <div class="important" style="background-color:#fff0f0; padding:15px; margin:15px 0; border-radius:5px; border-left:4px solid #f43f5e;">
                   <h3>Mensaje para el Proveedor:</h3>
                   <p>${context.providerMessage}</p>
                 </div>
                 ` : ''}
-                <div class="important">
+								<div class="important">
                   <h3>Acción Requerida:</h3>
                   <p>Por favor, suba su factura y documentos de respaldo usando el enlace seguro a continuación:</p>
                   <p>
