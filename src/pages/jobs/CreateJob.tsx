@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -88,21 +89,45 @@ const CreateJob = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedCampaign, setSelectedCampaign] = useState<string>("");
-  const [clientName, setClientName] = useState<string>("");
+  const [selectedClientId, setSelectedClientId] = useState<string>("");
 
-  // Fetch campaigns for the dropdown with client information
-  const { data: campaigns } = useQuery({
-    queryKey: ["campaigns"],
+  // Fetch clients for dropdown
+  const { data: clients, isLoading: isLoadingClients } = useQuery({
+    queryKey: ["clients"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("campaigns")
-        .select("id, name, client:client_id(id, name)")
+        .from("clients")
+        .select("id, name")
         .eq("active", true)
         .order("name");
       
       if (error) throw error;
       return data;
     },
+  });
+
+  // Fetch campaigns for the dropdown with client information
+  const { data: campaigns, isLoading: isLoadingCampaigns } = useQuery({
+    queryKey: ["campaigns", selectedClientId],
+    queryFn: async () => {
+      // Base query
+      let query = supabase
+        .from("campaigns")
+        .select("id, name, client:client_id(id, name)")
+        .eq("active", true)
+        .order("name");
+      
+      // Filter by client if one is selected
+      if (selectedClientId) {
+        query = query.eq("client_id", selectedClientId);
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: true, // Always enabled, we'll filter results based on selected client
   });
 
   // Fetch providers for the dropdown
@@ -135,6 +160,13 @@ const CreateJob = () => {
     },
   });
 
+  // Set the first client as default when clients are loaded
+  useEffect(() => {
+    if (clients && clients.length > 0 && !selectedClientId) {
+      setSelectedClientId(clients[0].id);
+    }
+  }, [clients, selectedClientId]);
+
   // Form setup
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
@@ -154,26 +186,31 @@ const CreateJob = () => {
     },
   });
 
-  // Update client name when campaign changes
-  useEffect(() => {
-    if (selectedCampaign && campaigns) {
-      const campaign = campaigns.find(c => c.id === selectedCampaign);
-      setClientName(campaign?.client?.name || t("jobs.unknownClient"));
-    } else {
-      setClientName("");
-    }
-  }, [selectedCampaign, campaigns, t]);
-
   // Watch campaign_id changes
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === "campaign_id" && value.campaign_id) {
         setSelectedCampaign(value.campaign_id as string);
+        
+        // Find campaign to get its client
+        const campaign = campaigns?.find(c => c.id === value.campaign_id);
+        if (campaign?.client?.id && campaign.client.id !== selectedClientId) {
+          setSelectedClientId(campaign.client.id);
+        }
       }
     });
     
     return () => subscription.unsubscribe();
-  }, [form.watch]);
+  }, [form.watch, campaigns, selectedClientId]);
+
+  // Handle client selection change
+  const handleClientChange = (clientId: string) => {
+    setSelectedClientId(clientId);
+    
+    // Reset campaign selection
+    setSelectedCampaign("");
+    form.setValue("campaign_id", "");
+  };
 
   // Create job mutation
   const createJob = useMutation({
@@ -223,6 +260,11 @@ const CreateJob = () => {
     createJob.mutate(values);
   };
 
+  // Filter campaigns based on selected client
+  const filteredCampaigns = selectedClientId && campaigns 
+    ? campaigns.filter(campaign => campaign.client?.id === selectedClientId)
+    : campaigns || [];
+
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
@@ -244,7 +286,42 @@ const CreateJob = () => {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Campaign Selection */}
+                  {/* Client Selection */}
+                  <FormField
+                    control={form.control}
+                    name="client_id"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.client")}</FormLabel>
+                        <Select
+                          value={selectedClientId}
+                          onValueChange={handleClientChange}
+                          disabled={isLoadingClients}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("jobs.selectClient")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {clients && clients.length > 0 ? (
+                              clients.map((client) => (
+                                <SelectItem key={client.id} value={client.id}>
+                                  {client.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value="no-clients" disabled>
+                                {t("clients.noClientsAvailable")}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Campaign Selection - now filtered by client */}
                   <FormField
                     control={form.control}
                     name="campaign_id"
@@ -257,22 +334,23 @@ const CreateJob = () => {
                             setSelectedCampaign(value);
                           }}
                           defaultValue={field.value}
+                          disabled={!selectedClientId || isLoadingCampaigns}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t("jobs.selectCampaign")} />
+                              <SelectValue placeholder={selectedClientId ? t("jobs.selectCampaign") : t("jobs.selectClientFirst")} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {campaigns && campaigns.length > 0 ? (
-                              campaigns.map((campaign) => (
+                            {filteredCampaigns.length > 0 ? (
+                              filteredCampaigns.map((campaign) => (
                                 <SelectItem key={campaign.id} value={campaign.id}>
                                   {campaign.name}
                                 </SelectItem>
                               ))
                             ) : (
                               <SelectItem value="no-campaigns" disabled>
-                                {t("campaigns.noCampaignsAvailable")}
+                                {selectedClientId ? t("campaigns.noCampaignsForClient") : t("campaigns.selectClientFirst")}
                               </SelectItem>
                             )}
                           </SelectContent>
@@ -281,14 +359,6 @@ const CreateJob = () => {
                       </FormItem>
                     )}
                   />
-
-                  {/* Client Information (Read-only) */}
-                  <div className="space-y-2">
-                    <FormLabel>{t("jobs.client")}</FormLabel>
-                    <div className="p-2 border rounded-md bg-slate-50 dark:bg-slate-800 h-10 flex items-center">
-                      {clientName || t("jobs.selectCampaignFirst")}
-                    </div>
-                  </div>
 
                   {/* Provider Selection */}
                   <FormField

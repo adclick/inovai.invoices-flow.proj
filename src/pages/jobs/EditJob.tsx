@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -135,7 +136,7 @@ const EditJob: React.FC = () => {
   const [documents, setDocuments] = useState<string[] | null>(null);
   const [previousStatus, setPreviousStatus] = useState<string | null>(null);
   const [selectedCampaign, setSelectedCampaign] = useState<string>("");
-  const [clientName, setClientName] = useState<string>("");
+  const [selectedClientId, setSelectedClientId] = useState<string>("");
 
   // Modal control
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -162,17 +163,41 @@ const EditJob: React.FC = () => {
     },
   });
 
-  // Data fetching queries
-  const { data: campaigns } = useQuery({
-    queryKey: ["campaigns"],
+  // Fetch clients for dropdown
+  const { data: clients } = useQuery({
+    queryKey: ["clients"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("campaigns")
-        .select("id, name, client:client_id(id, name)")
+        .from("clients")
+        .select("id, name")
+        .eq("active", true)
         .order("name");
+      
       if (error) throw error;
       return data;
     },
+  });
+
+  // Data fetching queries
+  const { data: campaigns } = useQuery({
+    queryKey: ["campaigns", selectedClientId],
+    queryFn: async () => {
+      // Base query
+      let query = supabase
+        .from("campaigns")
+        .select("id, name, client:client_id(id, name)")
+        .order("name");
+      
+      // Filter by client if one is selected
+      if (selectedClientId) {
+        query = query.eq("client_id", selectedClientId);
+      }
+      
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+    enabled: true, // Always fetch campaigns, we'll filter them by client
   });
 
   const { data: providers } = useQuery({
@@ -202,7 +227,7 @@ const EditJob: React.FC = () => {
       const { data: job, error } = await supabase.from("jobs").select("*").eq("id", id).single();
       if (error) throw error;
 
-      const { data: campaign } = await supabase.from("campaigns").select("name, client:client_id(name)").eq("id", job.campaign_id).single();
+      const { data: campaign } = await supabase.from("campaigns").select("name, client:client_id(id, name)").eq("id", job.campaign_id).single();
       const { data: provider } = await supabase.from("providers").select("name").eq("id", job.provider_id).single();
       const { data: manager } = await supabase.from("managers").select("name").eq("id", job.manager_id).single();
 
@@ -214,8 +239,11 @@ const EditJob: React.FC = () => {
 
       setPreviousStatus(job.status);
       setSelectedCampaign(job.campaign_id);
-      setClientName((job as any).client_name || t("jobs.unknownClient"));
-      setDocuments(job.documents);
+      
+      // Set the client ID based on campaign
+      if (campaign?.client?.id) {
+        setSelectedClientId(campaign.client.id);
+      }
 
       form.reset({
         campaign_id: job.campaign_id,
@@ -233,6 +261,8 @@ const EditJob: React.FC = () => {
         provider_message: job.provider_message || "",
       });
 
+      setDocuments(job.documents);
+
       return {
         ...job,
         campaign_name: campaign?.name || t("jobs.unknownCampaign"),
@@ -244,16 +274,15 @@ const EditJob: React.FC = () => {
     enabled: !!id,
   });
 
-  // watch for campaign changes to update client name
+  // watch for campaign changes to update client id
   useEffect(() => {
     if (selectedCampaign && campaigns) {
-			console.log(selectedCampaign, campaigns);
       const campaign = campaigns.find((c) => c.id === selectedCampaign);
-      setClientName(campaign?.client?.name || t("jobs.unknownClient"));
-    } else {
-      setClientName("");
+      if (campaign?.client?.id && campaign.client.id !== selectedClientId) {
+        setSelectedClientId(campaign.client.id);
+      }
     }
-  }, [selectedCampaign, campaigns, t]);
+  }, [selectedCampaign, campaigns, selectedClientId]);
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
@@ -351,14 +380,34 @@ const EditJob: React.FC = () => {
     queryClient.invalidateQueries({ queryKey: ["job", id] });
   };
 
+  // Handle client selection change
+  const handleClientChange = (clientId: string) => {
+    setSelectedClientId(clientId);
+    
+    // Reset campaign selection if the selected campaign isn't from this client
+    if (campaigns) {
+      const clientCampaigns = campaigns.filter(c => c.client?.id === clientId);
+      if (clientCampaigns.length > 0) {
+        if (!clientCampaigns.some(c => c.id === selectedCampaign)) {
+          setSelectedCampaign("");
+          form.setValue("campaign_id", "");
+        }
+      } else {
+        // No campaigns for this client, reset selection
+        setSelectedCampaign("");
+        form.setValue("campaign_id", "");
+      }
+    }
+  };
+
   // Handle initial form submit - open confirmation modal instead of direct save
   const handleFormSubmit = (data: JobFormValues) => {
     setPendingFormData(data);
-		setProviderMessageForModal("");
+    setProviderMessageForModal("");
     setIsConfirmOpen(true);
   };
 
-	// Handle confirmation modal cancel
+  // Handle confirmation modal cancel
   const handleConfirmCancel = () => {
     setIsConfirmOpen(false);
     setPendingFormData(null);
@@ -417,20 +466,20 @@ const EditJob: React.FC = () => {
     );
   }
 
-	const getStatusColor = (status: string): string => {
-		const colorMap: Record<string, string> = {
-			'draft': 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100',
-			'active': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-			'pending_invoice': 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100',
-			'pending_validation': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
-			'pending_payment': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
-			'paid': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-		};
-		
-		return colorMap[status] || colorMap['draft'];
-	};
+  const getStatusColor = (status: string): string => {
+    const colorMap: Record<string, string> = {
+      'draft': 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100',
+      'active': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+      'pending_invoice': 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100',
+      'pending_validation': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100',
+      'pending_payment': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
+      'paid': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+    };
+    
+    return colorMap[status] || colorMap['draft'];
+  };
 
-	const statusMap: Record<string, string> = {
+  const statusMap: Record<string, string> = {
     'draft': t('jobs.draft'),
     'active': t('jobs.active'),
     'pending_invoice': t('jobs.pending_invoice'),
@@ -442,23 +491,22 @@ const EditJob: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
-				<div className=" flex justify-between items-center">
-
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
-            {t("jobs.editJob")}
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            {t("jobs.updateJobDetails")}
-          </p>
+        <div className=" flex justify-between items-center">
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+              {t("jobs.editJob")}
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">
+              {t("jobs.updateJobDetails")}
+            </p>
+          </div>
+          <Badge 
+            className={`${getStatusColor(job.status)} px-3 py-1 text-sm font-medium`}
+            variant="outline"
+          >
+            {statusMap[job.status]}
+          </Badge>
         </div>
-					<Badge 
-							className={`${getStatusColor(job.status)} px-3 py-1 text-sm font-medium`}
-							variant="outline"
-						>
-							{statusMap[job.status]}
-					</Badge>
-				</div>
 
         <StatusSection
           status={form.watch("status")}
@@ -492,12 +540,13 @@ const EditJob: React.FC = () => {
                 { value: "pending_payment", label: t("jobs.pendingPayment") },
                 { value: "paid", label: t("jobs.paid") },
               ]}
-              selectedCampaignClientName={clientName}
+              clients={clients || []}
+              selectedClientId={selectedClientId}
+              onClientChange={handleClientChange}
               selectedCampaign={selectedCampaign}
               setSelectedCampaign={setSelectedCampaign}
               updateJobMutation={updateJobMutation}
               onCancel={() => navigate("/jobs")}
-              // Change form submit to open modal
               formSubmitHandler={handleFormSubmit}
               t={t}
             />
@@ -515,7 +564,6 @@ const EditJob: React.FC = () => {
           )}
         </Tabs>
 
-        {/* Update ConfirmUpdateModal usage */}
         <ConfirmUpdateModal
           isOpen={isConfirmOpen}
           onOpenChange={setIsConfirmOpen}

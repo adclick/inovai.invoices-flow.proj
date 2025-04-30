@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -55,10 +56,12 @@ const DetailsForm: React.FC<{
 	campaigns: any[];
 	providers: any[];
 	managers: any[];
+	clients: any[];
 	months: { value: string; label: string }[];
 	currencyOptions: { value: string; label: string }[];
 	statusOptions: { value: string; label: string }[];
-	selectedCampaignClientName: string;
+	selectedClientId: string;
+	onClientChange: (clientId: string) => void;
 	selectedCampaign: string;
 	setSelectedCampaign: React.Dispatch<React.SetStateAction<string>>;
 	updateJobMutation: ReturnType<
@@ -66,16 +69,18 @@ const DetailsForm: React.FC<{
 	>;
 	t: (key: string) => string;
 	onCancel: () => void;
-	formSubmitHandler: (data: JobFormValues) => void
+	formSubmitHandler: (data: JobFormValues) => void;
 }> = ({
 	form,
 	campaigns,
 	providers,
 	managers,
+	clients,
 	months,
 	currencyOptions,
 	statusOptions,
-	selectedCampaignClientName,
+	selectedClientId,
+	onClientChange,
 	selectedCampaign,
 	setSelectedCampaign,
 	updateJobMutation,
@@ -83,6 +88,11 @@ const DetailsForm: React.FC<{
 	t,
 	onCancel,
 }) => {
+		// Filter campaigns by selected client
+		const filteredCampaigns = selectedClientId 
+			? campaigns.filter(campaign => campaign.client?.id === selectedClientId)
+			: campaigns;
+
 		return (
 			<Card>
 				<CardHeader>
@@ -94,17 +104,43 @@ const DetailsForm: React.FC<{
 						<form onSubmit={form.handleSubmit((data) => formSubmitHandler(data))} className="space-y-6">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-								<div className="space-y-2">
-									<FormLabel>{t("jobs.client")}</FormLabel>
-									<div
-										className="p-2 border rounded-md bg-slate-50 dark:bg-slate-800 h-10 flex items-center"
-										aria-live="polite"
-									>
-										{selectedCampaignClientName ||
-											t("jobs.selectCampaignFirst")}
-									</div>
-								</div>
+								{/* Client Selection */}
+								<FormField
+									control={form.control}
+									name="client_id"
+									render={() => (
+										<FormItem>
+											<FormLabel>{t("jobs.client")}</FormLabel>
+											<Select
+												value={selectedClientId}
+												onValueChange={(value) => {
+													onClientChange(value);
+												}}
+											>
+												<FormControl>
+													<SelectTrigger>
+														<SelectValue placeholder={t("jobs.selectClient")} />
+													</SelectTrigger>
+												</FormControl>
+												<SelectContent>
+													{clients && clients.length > 0 ? (
+														clients.map((client) => (
+															<SelectItem key={client.id} value={client.id}>
+																{client.name}
+															</SelectItem>
+														))
+													) : (
+														<SelectItem value="no-clients" disabled>
+															{t("clients.noClientsAvailable")}
+														</SelectItem>
+													)}
+												</SelectContent>
+											</Select>
+										</FormItem>
+									)}
+								/>
 								
+								{/* Campaign Selection */}
 								<FormField
 									control={form.control}
 									name="campaign_id"
@@ -117,22 +153,23 @@ const DetailsForm: React.FC<{
 													setSelectedCampaign(value);
 												}}
 												value={field.value}
+												disabled={!selectedClientId}
 											>
 												<FormControl>
 													<SelectTrigger>
-														<SelectValue placeholder={t("jobs.selectCampaign")} />
+														<SelectValue placeholder={selectedClientId ? t("jobs.selectCampaign") : t("jobs.selectClientFirst")} />
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
-													{campaigns && campaigns.length > 0 ? (
-														campaigns.map((campaign) => (
+													{filteredCampaigns && filteredCampaigns.length > 0 ? (
+														filteredCampaigns.map((campaign) => (
 															<SelectItem key={campaign.id} value={campaign.id}>
 																{campaign.name}
 															</SelectItem>
 														))
 													) : (
 														<SelectItem value="no-campaigns" disabled>
-															{t("campaigns.noCampaignsAvailable")}
+															{selectedClientId ? t("campaigns.noCampaignsForClient") : t("campaigns.selectClientFirst")}
 														</SelectItem>
 													)}
 												</SelectContent>
@@ -141,8 +178,6 @@ const DetailsForm: React.FC<{
 										</FormItem>
 									)}
 								/>
-
-
 
 								<FormField
 									control={form.control}
