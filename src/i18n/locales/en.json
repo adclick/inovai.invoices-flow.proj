@@ -4,6 +4,7 @@
     "error": "An error occurred",
     "save": "Save",
     "cancel": "Cancel",
+		"saving": "Saving",
     "edit": "Edit",
     "delete": "Delete",
     "create": "Create",
@@ -51,7 +52,13 @@
 		"client": "Client",
 		"campaign": "Campaign",
 		"provider": "Provider",
-		"dueDate": "Due Date"
+		"dueDate": "Due Date",
+		"language": "Language",
+		"english": "English",
+    "portuguese": "Portuguese",
+		"spanish": "Spanish",
+    "nameMinLength": "Name must be at least 2 characters",
+    "validEmail": "Please enter a valid email address"
   },
   "auth": {
     "signIn": "Sign In",
@@ -218,7 +225,8 @@
 		"uploadDocumentsFor": "Please upload required documents for {{clientName}} - {{campaignName}}",
     "confirmJobUpdate": "Confirm Job Update",
     "confirmUpdateMessage": "Please review the changes before confirming the update.",
-    "messageToProviderLabel": "Message to Provider"
+    "messageToProviderLabel": "Message to Provider",
+		"uploadedDocuments": "Uploaded Documents"
   },
   "clients": {
     "title": "Clients",
@@ -233,7 +241,9 @@
     "clientUpdated": "Client updated successfully",
     "confirmDelete": "Are you sure you want to delete this client?",
     "clientDeleted": "Client deleted successfully",
-    "backToClients": "Back to Clients"
+    "backToClients": "Back to Clients",
+		"updateClientDescription": "Update the client information",
+		"deleteClient": "Delete Client"
   },
   "campaigns": {
     "title": "Campaigns",
@@ -255,7 +265,9 @@
     "selectClient": "Select a client",
     "loadingClients": "Loading clients...",
     "noClientsAvailable": "No clients available",
-    "backToCampaigns": "Back to Campaigns"
+    "backToCampaigns": "Back to Campaigns",
+		"updateCampaignDescription": "Update the campaign information",
+		"deleteCampaign": "Delete Campaign"
   },
   "managers": {
     "title": "Managers",
@@ -324,7 +336,8 @@
     "enterCountry": "Enter country (optional)",
     "enterIban": "Enter IBAN (optional)",
     "providerNotFound": "Provider not found",
-    "updateProvider": "Update Provider"
+    "updateProvider": "Update Provider",
+		"deleteProvider": "Delete Provider"
   },
   "publicPages": {
     "upload": {

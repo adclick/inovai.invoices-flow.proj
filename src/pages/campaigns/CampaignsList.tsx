@@ -229,21 +229,17 @@ const CampaignsList = () => {
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>{t("campaigns.campaignName")}</TableHead>
 										<TableHead>{t("campaigns.client")}</TableHead>
-										<TableHead>{t("campaigns.duration")}</TableHead>
+										<TableHead>{t("campaigns.campaignName")}</TableHead>
 										<TableHead>{t("common.status")}</TableHead>
-										<TableHead>{t("campaigns.estimatedCost")}</TableHead>
-										<TableHead>{t("campaigns.revenue")}</TableHead>
 										<TableHead className="text-right">{t("common.actions")}</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
 									{paginatedData.map((campaign) => (
 										<TableRow key={campaign.id} onClick={() => navigate(`/campaigns/edit/${campaign.id}`)} className="cursor-pointer">
-											<TableCell className="font-medium">{campaign.name}</TableCell>
 											<TableCell>{campaign.client_name}</TableCell>
-											<TableCell>{campaign.duration} {t("campaigns.days")}</TableCell>
+											<TableCell className="font-medium">{campaign.name}</TableCell>
 											<TableCell>
 												<span className={`px-2 py-1 rounded-full text-xs font-medium ${campaign.active
 														? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
@@ -251,12 +247,6 @@ const CampaignsList = () => {
 													}`}>
 													{campaign.active ? t("common.active") : t("common.inactive")}
 												</span>
-											</TableCell>
-											<TableCell>
-												{campaign.estimated_cost ? `$${campaign.estimated_cost.toLocaleString()}` : "—"}
-											</TableCell>
-											<TableCell>
-												{campaign.revenue ? `$${campaign.revenue.toLocaleString()}` : "—"}
 											</TableCell>
 											<TableCell className="text-right">
 												<div className="flex justify-end gap-2">
@@ -285,9 +275,9 @@ const CampaignsList = () => {
 			<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>{t("common.areYouSure")}</AlertDialogTitle>
+						<AlertDialogTitle>{t("campaigns.deleteCampaign")}</AlertDialogTitle>
 						<AlertDialogDescription>
-							{t("campaigns.deleteConfirmation", { name: campaignToDelete?.name })}
+							{t("campaigns.confirmDelete", { name: campaignToDelete?.name })}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>

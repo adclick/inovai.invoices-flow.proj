@@ -222,7 +222,7 @@ const ProvidersList = () => {
                       <TableCell>{provider.email}</TableCell>
                       <TableCell>{provider.country || "—"}</TableCell>
                       <TableCell>
-                        <span className="capitalize">{provider.language || "en"}</span>
+                        <span className="uppercase">{provider.language || "en"}</span>
                       </TableCell>
                       <TableCell>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -260,7 +260,7 @@ const ProvidersList = () => {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("common.areYouSure")}</AlertDialogTitle>
+            <AlertDialogTitle>{t("providers.deleteProvider")}</AlertDialogTitle>
             <AlertDialogDescription>
               {t("providers.deleteConfirmation", { name: providerToDelete?.name })}
             </AlertDialogDescription>

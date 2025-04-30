@@ -167,7 +167,7 @@ const EditManager = () => {
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("managers.editManager")}</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1">
-            {t("managers.updateManagerDescription")}
+            {t("managers.updateManagerInfo")}
           </p>
         </div>
 
@@ -230,7 +230,7 @@ const EditManager = () => {
                     {t("common.cancel")}
                   </Button>
                   <Button type="submit" disabled={updateManagerMutation.isPending}>
-                    {updateManagerMutation.isPending ? t("managers.saving") : t("managers.saveChanges")}
+                    {updateManagerMutation.isPending ? t("common.saving") : t("common.save")}
                   </Button>
                 </div>
               </div>

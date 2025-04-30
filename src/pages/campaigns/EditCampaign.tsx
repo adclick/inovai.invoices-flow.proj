@@ -206,7 +206,7 @@ const EditCampaign = () => {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>{t("campaigns.name")}</FormLabel>
+										<FormLabel>{t("common.name")}</FormLabel>
 										<FormControl>
 											<Input placeholder={t("campaigns.enterCampaignName")} {...field} />
 										</FormControl>
@@ -255,67 +255,13 @@ const EditCampaign = () => {
 
 							<FormField
 								control={form.control}
-								name="duration"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("campaigns.duration")}</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												placeholder={t("campaigns.enterDuration")}
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name="estimated_cost"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("campaigns.estimatedCost")}</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												placeholder={t("campaigns.enterEstimatedCost")}
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name="revenue"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("campaigns.revenue")}</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												placeholder={t("campaigns.enterRevenue")}
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
 								name="active"
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 										<div className="space-y-0.5">
-											<FormLabel className="text-sm">{t("campaigns.activeCampaign")}</FormLabel>
+											<FormLabel className="text-sm">{t("common.active")}</FormLabel>
 											<div className="text-sm text-muted-foreground">
-												{t("campaigns.markAsActive")}
+												{t("campaigns.activeDescription")}
 											</div>
 										</div>
 										<FormControl>
@@ -337,7 +283,7 @@ const EditCampaign = () => {
 									{t("common.cancel")}
 								</Button>
 								<Button type="submit" disabled={updateCampaign.isPending}>
-									{updateCampaign.isPending ? t("common.updating") : t("campaigns.updateCampaign")}
+									{updateCampaign.isPending ? t("common.saving") : t("common.save")}
 								</Button>
 							</div>
 						</form>

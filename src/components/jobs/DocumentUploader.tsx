@@ -270,7 +270,7 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 								>
 									<div className="flex items-center space-x-3 overflow-hidden">
 										<FileIcon className="h-4 w-4 flex-shrink-0 text-primary" />
-										<span className="text-sm truncate">{displayName}</span>
+										<span className="text-sm truncate">{docUrl}</span>
 									</div>
 									<a
 										href={docUrl}

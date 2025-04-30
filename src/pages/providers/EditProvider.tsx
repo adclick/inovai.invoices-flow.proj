@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -31,22 +30,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Schema for provider form validation
-const providerSchema = z.object({
-	name: z.string().min(2, "Name must be at least 2 characters"),
-	email: z.string().email("Please enter a valid email address"),
-	country: z.string().optional(),
-	iban: z.string().optional(),
-	active: z.boolean().default(true),
-	language: z.enum(["en", "pt", "es"]).optional(),
-}).required();
-
-type ProviderFormValues = z.infer<typeof providerSchema>;
-
 const LANGUAGES = [
-	{ value: "en", labelKey: "languages.english" },
-	{ value: "pt", labelKey: "languages.portuguese" },
-	{ value: "es", labelKey: "languages.spanish" },
+	{ value: "en", labelKey: "common.english" },
+	{ value: "pt", labelKey: "common.portuguese" },
+	{ value: "es", labelKey: "common.spanish" },
 ] as const;
 
 const isValidLanguage = (lang: unknown): lang is "en" | "pt" | "es" =>
@@ -58,6 +45,18 @@ const EditProvider = () => {
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const queryClient = useQueryClient();
+
+	// Schema for provider form validation
+	const providerSchema = z.object({
+		name: z.string().min(2, t("common.nameMinLength")),
+		email: z.string().email(t("common.validEmail")),
+		country: z.string().optional(),
+		iban: z.string().optional(),
+		active: z.boolean().default(true),
+		language: z.enum(["en", "pt", "es"]).optional(),
+	}).required();
+
+	type ProviderFormValues = z.infer<typeof providerSchema>;
 
 	// Fetch provider details
 	const { data: provider, isLoading: isLoadingProvider } = useQuery({
@@ -230,24 +229,7 @@ const EditProvider = () => {
 								)}
 							/>
 
-							<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-								<FormField
-									control={form.control}
-									name="country"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>{t("providers.country")}</FormLabel>
-											<FormControl>
-												<Input
-													placeholder={t("providers.enterCountry")}
-													{...field}
-													value={field.value || ""}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
 								<FormField
 									control={form.control}

@@ -20,22 +20,22 @@ import {
 } from "@/components/ui/form";
 import { useTranslation } from "react-i18next";
 
-// Schema for provider form validation
+const CreateProvider = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+	// Schema for provider form validation
 const providerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
+  name: z.string().min(2, t("common.nameMinLength")),
+  email: z.string().email(t("common.validEmail")),
   country: z.string().optional(),
   iban: z.string().optional(),
   active: z.boolean().default(true),
 }).required();
 
 type ProviderFormValues = z.infer<typeof providerSchema>;
-
-const CreateProvider = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   // Form setup
   const form = useForm<ProviderFormValues>({

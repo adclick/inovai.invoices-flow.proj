@@ -4,6 +4,7 @@
     "error": "Ocorreu um erro",
     "save": "Guardar",
     "cancel": "Cancelar",
+		"saving": "A guardar",
     "edit": "Editar",
     "delete": "Eliminar",
     "create": "Criar",
@@ -51,7 +52,13 @@
 		"client": "Cliente",
 		"campaign": "Campanha",
 		"provider": "Fornecedor",
-		"dueDate": "Data Limite"
+		"dueDate": "Data Limite",
+		"language": "Linguagem",
+		"english": "Inglês",
+    "portuguese": "Português",
+		"spanish": "Espanhol",
+    "nameMinLength": "O nome deve ter pelo menos 2 caracteres",
+    "validEmail": "Por favor, introduza um endereço de email válido"
   },
   "auth": {
     "signIn": "Iniciar Sessão",
@@ -218,7 +225,8 @@
 		"uploadDocumentsFor": "Carregue o documento necessário para {{clientName}} - {{campaignName}}",
     "confirmJobUpdate": "Confirmar Atualização do Trabalho",
     "confirmUpdateMessage": "Por favor, reveja as alterações antes de confirmar a atualização.",
-    "messageToProviderLabel": "Mensagem para o Fornecedor"
+    "messageToProviderLabel": "Mensagem para o Fornecedor",
+		"uploadedDocuments": "Documentos Carregados"
   },
   "clients": {
     "title": "Clientes",
@@ -233,7 +241,9 @@
     "clientUpdated": "Cliente atualizado com sucesso",
     "confirmDelete": "Tem a certeza que deseja eliminar este cliente?",
     "clientDeleted": "Cliente eliminado com sucesso",
-    "backToClients": "Voltar para Clientes"
+    "backToClients": "Voltar para Clientes",
+		"updateClientDescription": "Atualize as informações do cliente",
+		"deleteClient": "Eliminar Cliente"
   },
   "campaigns": {
     "title": "Campanhas",
@@ -255,7 +265,9 @@
     "selectClient": "Selecionar um cliente",
     "loadingClients": "A carregar clientes...",
     "noClientsAvailable": "Nenhum cliente disponível",
-    "backToCampaigns": "Voltar para Campanhas"
+    "backToCampaigns": "Voltar para Campanhas",
+		"updateCampaignDescription": "Atualize as informações da campanha",
+		"deleteCampaign": "Delete Campanha"
   },
   "managers": {
     "title": "Gestores",
@@ -324,7 +336,8 @@
     "enterCountry": "Introduza o país (opcional)",
     "enterIban": "Introduza o IBAN (opcional)",
     "providerNotFound": "Fornecedor não encontrado",
-    "updateProvider": "Atualizar Fornecedor"
+    "updateProvider": "Atualizar Fornecedor",
+		"deleteProvider": "Eliminar Fornecedor"
   },
   "publicPages": {
     "upload": {

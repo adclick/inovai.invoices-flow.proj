@@ -187,9 +187,9 @@ const EditClient = () => {
 								render={({ field }) => (
 									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 										<div className="space-y-0.5">
-											<FormLabel className="text-sm">{t("clients.activeClient")}</FormLabel>
+											<FormLabel className="text-sm">{t("common.active")}</FormLabel>
 											<div className="text-sm text-muted-foreground">
-												{t("clients.markAsActive")}
+												{t("clients.activeDescription")}
 											</div>
 										</div>
 										<FormControl>
@@ -219,7 +219,7 @@ const EditClient = () => {
 										type="submit"
 										disabled={updateClientMutation.isPending}
 									>
-										{updateClientMutation.isPending ? t("clients.saving") : t("clients.saveChanges")}
+										{updateClientMutation.isPending ? t("common.saving") : t("common.save")}
 									</Button>
 								</div>
 							</div>
