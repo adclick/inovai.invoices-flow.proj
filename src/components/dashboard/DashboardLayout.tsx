@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import {
@@ -27,6 +26,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const location = useLocation();
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const checkIfMobile = () => {
@@ -62,22 +62,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 			<TooltipProvider delayDuration={100}>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<Link
-							to={path}
-							className={`flex items-center px-3 py-2 rounded-lg transition-colors duration-200 group
-                                ${isActive
+						<button
+							onClick={() => {
+								setMobileMenuOpen(false);
+								navigate(path);
+							}}
+							className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors duration-200 group
+								${isActive
 									? 'bg-white/10 text-white font-medium dark:bg-slate-700 dark:text-primary'
 									: 'text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white'
 								}`}
-							onClick={() => setMobileMenuOpen(false)}
 						>
 							<div className="flex items-center">
 								<Icon size={iconSize} className="flex-shrink-0" />
-								{(sidebarOpen || isMobile) && (
+								{sidebarOpen && (
 									<span className="ml-3 text-sm">{label}</span>
 								)}
 							</div>
-						</Link>
+						</button>
 					</TooltipTrigger>
 					{!sidebarOpen && !isMobile && (
 						<TooltipContent side="right" align="center">
@@ -114,7 +116,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					<div className="p-2 rounded-full bg-white/10 dark:bg-primary/20 mr-2">
 						<div className="text-white dark:text-primary/90 font-bold text-lg">IF</div>
 					</div>
-					<span className={`text-lg font-semibold text-white dark:text-white ${isMobile || sidebarOpen ? '' : 'hidden'}`}>InvoicesFlow</span>
+					{sidebarOpen && (
+						<span className="text-lg font-semibold text-white dark:text-white">InvoicesFlow</span>
+					)}
 				</div>
 			</div>
 			<nav className={`flex-1 ${sidebarOpen ? 'p-4' : 'p-2'}`}>
@@ -126,41 +130,37 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					))}
 				</ul>
 
-				{(isMobile || sidebarOpen) && (
-					<>
-						<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
-						<div className="mb-2">
-							<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
-								{t("navigation.jobs").toUpperCase()}
-							</h3>
-							<ul className="space-y-1">
-								{jobItems.map((item) => (
-									<li key={item.path}>
-										<NavItemWithTooltip {...item} />
-									</li>
-								))}
-							</ul>
-						</div>
-					</>
-				)}
+				<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
+				<div className="mb-2">
+					{sidebarOpen && (
+						<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
+							{t("navigation.jobs").toUpperCase()}
+						</h3>
+					)}
+					<ul className="space-y-1">
+						{jobItems.map((item) => (
+							<li key={item.path}>
+								<NavItemWithTooltip {...item} />
+							</li>
+						))}
+					</ul>
+				</div>
 
-				{(isMobile || sidebarOpen) && (
-					<>
-						<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
-						<div className="mb-2">
-							<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
-								{t("navigation.management").toUpperCase()}
-							</h3>
-							<ul className="space-y-1">
-								{managementItems.map((item) => (
-									<li key={item.path}>
-										<NavItemWithTooltip {...item} />
-									</li>
-								))}
-							</ul>
-						</div>
-					</>
-				)}
+				<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
+				<div className="mb-2">
+					{sidebarOpen && (
+						<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
+							{t("navigation.management").toUpperCase()}
+						</h3>
+					)}
+					<ul className="space-y-1">
+						{managementItems.map((item) => (
+							<li key={item.path}>
+								<NavItemWithTooltip {...item} />
+							</li>
+						))}
+					</ul>
+				</div>
 
 				<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
 				<button
@@ -168,7 +168,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					className="flex w-full items-center px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 dark:hover:bg-slate-700 dark:text-red-400 transition-colors duration-200"
 				>
 					<LogOut size={20} />
-					{(isMobile || sidebarOpen) && <span className="ml-3 text-sm font-medium">{t("auth.signOut")}</span>}
+					{sidebarOpen && <span className="ml-3 text-sm font-medium">{t("auth.signOut")}</span>}
 				</button>
 			</nav>
 		</>

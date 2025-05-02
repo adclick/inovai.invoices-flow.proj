@@ -58,7 +58,9 @@
     "portuguese": "Portuguese",
 		"spanish": "Spanish",
     "nameMinLength": "Name must be at least 2 characters",
-    "validEmail": "Please enter a valid email address"
+    "validEmail": "Please enter a valid email address",
+    "invalidAccess": "Invalid Access",
+    "returnToHomepage": "Return to Homepage"
   },
   "auth": {
     "signIn": "Sign In",
@@ -227,7 +229,15 @@
     "confirmJobUpdate": "Confirm Job Update",
     "confirmUpdateMessage": "Please review the changes before confirming the update.",
     "messageToProviderLabel": "Message to Provider",
-		"uploadedDocuments": "Uploaded Documents"
+		"uploadedDocuments": "Uploaded Documents",
+    "uploadLinkInvalid": "Invalid Upload Link",
+    "uploadLinkInvalidDescription": "This upload link is no longer valid. This could be due to one of the following reasons:",
+    "jobNoLongerAccepting": "The job is no longer accepting uploads",
+    "urlIncorrect": "The URL is incorrect or has been modified",
+    "linkExpired": "The link has expired",
+    "uploadComplete": "Upload Complete",
+    "thankYouForSubmission": "Thank you for your submission!",
+    "youMayCloseWindow": "You may now close this window."
   },
   "clients": {
     "title": "Clients",

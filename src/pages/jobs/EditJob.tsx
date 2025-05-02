@@ -482,9 +482,9 @@ const EditJob: React.FC = () => {
   const statusMap: Record<string, string> = {
     'draft': t('jobs.draft'),
     'active': t('jobs.active'),
-    'pending_invoice': t('jobs.pending_invoice'),
-    'pending_validation': t('jobs.pending_validation'),
-    'pending_payment': t('jobs.pending_payment'),
+    'pending_invoice': t('jobs.pendingInvoice'),
+    'pending_validation': t('jobs.pendingValidation'),
+    'pending_payment': t('jobs.pendingPayment'),
     'paid': t('jobs.paid'),
   };
   

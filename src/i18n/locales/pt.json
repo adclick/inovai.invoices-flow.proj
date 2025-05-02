@@ -58,7 +58,9 @@
     "portuguese": "Português",
 		"spanish": "Espanhol",
     "nameMinLength": "O nome deve ter pelo menos 2 caracteres",
-    "validEmail": "Por favor, introduza um endereço de email válido"
+    "validEmail": "Por favor, introduza um endereço de email válido",
+    "invalidAccess": "Acesso Inválido",
+    "returnToHomepage": "Voltar à Página Inicial"
   },
   "auth": {
     "signIn": "Iniciar Sessão",
@@ -227,7 +229,15 @@
     "confirmJobUpdate": "Confirmar Atualização do Trabalho",
     "confirmUpdateMessage": "Por favor, reveja as alterações antes de confirmar a atualização.",
     "messageToProviderLabel": "Mensagem para o Fornecedor",
-		"uploadedDocuments": "Documentos Carregados"
+		"uploadedDocuments": "Documentos Carregados",
+    "uploadLinkInvalid": "Ligação de Upload Inválida",
+    "uploadLinkInvalidDescription": "Esta ligação de upload já não é válida. Isto pode dever-se a uma das seguintes razões:",
+    "jobNoLongerAccepting": "O trabalho já não está a aceitar uploads",
+    "urlIncorrect": "O URL está incorreto ou foi modificado",
+    "linkExpired": "A ligação expirou",
+    "uploadComplete": "Upload Concluído",
+    "thankYouForSubmission": "Obrigado pela sua submissão!",
+    "youMayCloseWindow": "Pode agora fechar esta janela."
   },
   "clients": {
     "title": "Clientes",

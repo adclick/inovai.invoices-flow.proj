@@ -1,0 +1,50 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## General Considerations
+
+Ensure that the code is well-structured, organized, and follows best practices so that any React web developer can easily understand and update it.
+
+Guidelines:
+  - The codebase is also editable manually, outside of Lovable, so before making any updates or changes via AI, carefully review the existing code
+	-	Use clear and consistent component structures (functional components with proper separation of concerns).
+	-	Follow React best practices, including state management and effect handling.
+	-	Add meaningful comments where necessary, especially for complex logic or non-obvious decisions.
+	-	Ensure code readability by using descriptive variable and function names.
+	-	Maintain a modular approach, keeping components reusable and scalable.
+	-	Follow a consistent coding style, including indentation, formatting, and file organization.
+	- When generating new code, ensure that existing functionality remains intact. Preserve all current features, maintain compatibility with the existing structure, and avoid introducing breaking changes. Validate that modifications integrate seamlessly without disrupting the current workflow.
+
+Constraints:
+	-	Do not introduce unnecessary complexity.
+	-	Ensure that the code remains efficient and performant.
+	-	Keep comments concise and relevant—avoid over-commenting obvious code.
+
+Translations:
+	- To ensure our application supports internationalization (i18n) correctly, all user-facing strings must use the translation system (react-i18next) instead of hardcoded text.
+	-	All strings must be referenced from the translation files located at "i18n/locales/en.json" (English) and "i18n/locales/pt.json" (Portuguese – Portugal / pt-PT)
+	-	Portuguese translations must follow pt-PT (Portuguese from Portugal) conventions — not pt-BR.
+	- When adding a new string, create a new key in both en.json and pt.json, ensure proper and context-aware translations for both languages, and use the translation function (e.g., t('some.key')) in code instead of hardcoded strings.
+	- Avoid using hardcoded strings like	"Submit" or tags like this <button>Cancel</button>
+
+Once completed, validate that the updated code remains fully functional and easy to maintain.
+
+## Supabase onAuthStateChange considerations
+ Whenever you need to add some logic under supabase.auth.onAuthStateChange, make sure to consider Supabase docs regarding this: https://supabase.com/docs/reference/javascript/auth-onauthstatechange
+
+Specially the warning about not using an async function as its callback:
+
+Important: A callback can be an async function and it runs synchronously during the processing of the changes causing the event. You can easily create a dead-lock by using await on a call to another method of the Supabase library.
+- Avoid using async functions as callbacks.
+- Limit the number of await calls in async callbacks.
+- Do not use other Supabase functions in the callback function. If you must, dispatch the functions once the callback has finished executing. Use this as a quick way to achieve this:
+```js
+supabase.auth.onAuthStateChange((event, session) => {
+  setTimeout(async () => {
+    // await on other Supabase function here
+    // this runs right after the callback has finished
+  }, 0)
+})
+```
