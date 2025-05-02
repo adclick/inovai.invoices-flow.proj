@@ -29,12 +29,10 @@ The primary goal of InvoiceFlow is to simplify and centralize the invoice submis
 *   **Email Notifications**: Automated email alerts for status updates
 *   **Invoice Uploads**: Public expirable pages for providers to upload invoices
 *   **Access Control**: Login-only access without a public registration option
-*   **Predefined Admin Structure**: Super Admin manages initial user onboarding
 
 ### **Authentication & User Management**
 
-*   **Restricted Access**: The platform does not allow public registration. Admins and Finance are users created and managed by the **Super Admin.**
-*   **Role-Based Permissions**: Each user is assigned a predefined role (Manager orFinance), which determines their access rights.
+*   **Restricted Access**: The platform does not allow public registration.
 
 ### **Access Control & Data Protection**
 
@@ -42,8 +40,7 @@ The primary goal of InvoiceFlow is to simplify and centralize the invoice submis
 
 **Session Management**: Automatic session expiration and secure authentication tokens prevent unauthorized access.
 
-*   **Admins**: Full control over providers, managers, jobs, schedules, and custom fields
-*   **Finance**: Can only update job status from "pending\_finance" to "closed"
+*   **Admins**: Full control over clients, campaigns, providers, managers and jobs
 
 ### **Notification & Audit Logs**
 

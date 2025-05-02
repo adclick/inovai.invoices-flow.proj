@@ -157,6 +157,7 @@
   },
   "jobs": {
     "title": "Jobs",
+    "titleSingular": "Job",
     "createNew": "Create New Job",
     "editJob": "Edit Job",
     "updateJob": "Update Job",

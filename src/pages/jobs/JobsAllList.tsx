@@ -274,6 +274,7 @@ const JobsAllList: React.FC = () => {
 										<TableHead>{t("jobs.campaign")}</TableHead>
 										<TableHead>{t("jobs.manager")}</TableHead>
 										<TableHead>{t("jobs.provider")}</TableHead>
+										<TableHead>{t("jobs.months")}</TableHead>
 										<TableHead>{t("jobs.value")}</TableHead>
 										<TableHead>{t("jobs.status")}</TableHead>
 										<TableHead>{t("jobs.documents")}</TableHead>
@@ -288,6 +289,7 @@ const JobsAllList: React.FC = () => {
 											<TableCell>{job.manager_name || t("jobs.unknownManager")}</TableCell>
 											<TableCell>{job.provider_name || t("jobs.unknownProvider")}</TableCell>
 											<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
+											<TableCell>{job.months.map(month => t(`common.${month}`)).join(", ")}</TableCell>
 											<TableCell>{getStatusBadge(job.status)}</TableCell>
 											<TableCell className="w-2">
 												{job.documents && job.documents.length > 0 ? (

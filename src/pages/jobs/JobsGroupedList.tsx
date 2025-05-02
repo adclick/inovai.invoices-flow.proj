@@ -139,7 +139,7 @@ const JobsGroupedList = () => {
 		return (data || []).reduce((acc: GroupedJobs, job) => {
 			// Get the client_id from the derived property
 			const clientId = job.client_id || 'unknown';
-			
+
 			// Initialize client if not exists
 			if (!acc[clientId]) {
 				acc[clientId] = {
@@ -299,7 +299,7 @@ const JobsGroupedList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.titleGrouped")}</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
 					</div>
 					<div className="flex justify-center items-center h-64">
 						<p className="text-slate-500 dark:text-slate-400">{t("jobs.loadingJobs")}</p>
@@ -314,7 +314,7 @@ const JobsGroupedList = () => {
 			<DashboardLayout>
 				<div className="p-6">
 					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.titleGrouped")}</h1>
+						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
 					</div>
 					<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
 						<p className="text-red-600 dark:text-red-400">{t("jobs.errorLoadingJobs")}: {(error as Error).message}</p>
@@ -328,7 +328,7 @@ const JobsGroupedList = () => {
 		<DashboardLayout>
 			<div className="p-6">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.titleGrouped")}</h1>
+					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
 					<Button onClick={() => navigate("/jobs/create")} className="shrink-0">
 						<PlusCircle className="mr-2 h-4 w-4" />
 						{t("jobs.createNew")}
@@ -349,9 +349,9 @@ const JobsGroupedList = () => {
 						<div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-hidden">
 							<div className="bg-slate-50 dark:bg-slate-800/50 p-3 border-b border-slate-200 dark:border-slate-700">
 								<div className="flex justify-between items-center">
-									<h3 className="font-medium text-slate-900 dark:text-slate-200">{t("jobs.clients")}</h3>
+									<h3 className="font-medium text-slate-900 dark:text-slate-200">{t("clients.title")}</h3>
 									<div className="text-sm text-slate-600 dark:text-slate-400">
-										{t("jobs.total")}: {data.length} {data.length !== 1 ? t("jobs.plural") : t("jobs.singular")}
+										{t("jobs.total")}: {data.length} {data.length !== 1 ? t("jobs.plural") : t("jobs.titleSingular")}
 									</div>
 								</div>
 							</div>
@@ -374,7 +374,7 @@ const JobsGroupedList = () => {
 												{groupedJobs[clientId].clientName}
 											</div>
 											<div className="text-sm text-slate-500 dark:text-slate-400">
-												{Object.keys(groupedJobs[clientId].campaigns).length} {t("jobs.campaigns")}
+												{Object.keys(groupedJobs[clientId].campaigns).length} {t("campaigns.title")}
 											</div>
 										</CollapsibleTrigger>
 										<CollapsibleContent>
@@ -402,7 +402,7 @@ const JobsGroupedList = () => {
 																	</span>
 																</div>
 																<div className="text-sm text-slate-500 dark:text-slate-400">
-																	{campaignData.jobs.length} {campaignData.jobs.length !== 1 ? t("jobs.plural") : t("jobs.singular")}
+																	{campaignData.jobs.length} {campaignData.jobs.length !== 1 ? t("jobs.plural") : t("jobs.titleSingular")}
 																</div>
 															</CollapsibleTrigger>
 
@@ -412,6 +412,7 @@ const JobsGroupedList = () => {
 																		<TableRow>
 																			<TableHead>{t("jobs.manager")}</TableHead>
 																			<TableHead>{t("jobs.provider")}</TableHead>
+																			<TableHead>{t("jobs.months")}</TableHead>
 																			<TableHead>{t("jobs.value")}</TableHead>
 																			<TableHead>{t("jobs.status")}</TableHead>
 																			<TableHead>{t("jobs.invoice")}</TableHead>
@@ -427,13 +428,14 @@ const JobsGroupedList = () => {
 																			>
 																				<TableCell>{job.manager_name}</TableCell>
 																				<TableCell>{job.provider_name}</TableCell>
+																				<TableCell>{job.months.map(month => t(`common.${month}`)).join(", ")}</TableCell>
 																				<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 																				<TableCell>{getStatusBadge(job.status)}</TableCell>
 																				<TableCell className="w-2">
 																					{job.documents && job.documents.length > 0 ? (
 																						<Link to={job.documents[0]} onClick={e => e.stopPropagation()} target="_blank">
 																							<Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30">
-																								{t("jobs.viewDocument")}
+																								{job.documents[0]}
 																							</Badge>
 																						</Link>
 																					) : (
