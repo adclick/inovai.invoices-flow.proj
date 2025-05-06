@@ -30,16 +30,16 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
-// Define the schema for job creation form
+// Define the schema for job creation form with proper enums for currency and status
 const formSchema = z.object({
   client_id: z.string().min(1, { message: "Please select a client." }),
   campaign_id: z.string().min(1, { message: "Please select a campaign." }),
   provider_id: z.string().min(1, { message: "Please select a provider." }),
   manager_id: z.string().min(1, { message: "Please select a manager." }),
   value: z.number({ required_error: "Value is required." }).min(0, { message: "Value must be at least 0." }),
-  currency: z.string().min(1, { message: "Please select a currency." }),
-  status: z.string().min(1, { message: "Please select a status." }),
-  due_date: z.string().optional(), // Changed from Date to string to match the job type
+  currency: z.enum(["euro", "usd", "gbp"]).default("euro"),
+  status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"]).default("draft"),
+  due_date: z.string().optional(),
   months: z.array(z.string()).min(1, { message: "Please select at least one month." }),
   public_notes: z.string().optional(),
   private_notes: z.string().optional(),
@@ -164,15 +164,15 @@ const CreateJob: React.FC = () => {
   // Function to handle form submission
   const onSubmit = async (values: JobFormValues) => {
     try {
-      // Prepare the job data for insertion
+      // Prepare the job data for insertion with proper type casting
       const jobData = {
         campaign_id: values.campaign_id,
         provider_id: values.provider_id,
         manager_id: values.manager_id,
         value: Number(values.value),
-        currency: values.currency,
-        status: values.status,
-        months: values.months,
+        currency: values.currency as "euro" | "usd" | "gbp",
+        status: values.status as "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid",
+        months: values.months as ("january" | "february" | "march" | "april" | "may" | "june" | "july" | "august" | "september" | "october" | "november" | "december")[],
         due_date: values.due_date || null,
         public_notes: values.public_notes || null,
         private_notes: values.private_notes || null,
@@ -203,6 +203,22 @@ const CreateJob: React.FC = () => {
     }
   };
 
+  // Define months for selection
+  const monthOptions = [
+    { value: "january", label: t("common.january") },
+    { value: "february", label: t("common.february") },
+    { value: "march", label: t("common.march") },
+    { value: "april", label: t("common.april") },
+    { value: "may", label: t("common.may") },
+    { value: "june", label: t("common.june") },
+    { value: "july", label: t("common.july") },
+    { value: "august", label: t("common.august") },
+    { value: "september", label: t("common.september") },
+    { value: "october", label: t("common.october") },
+    { value: "november", label: t("common.november") },
+    { value: "december", label: t("common.december") }
+  ];
+
   // Define steps for the multi-step form
   const steps = [
     {
@@ -212,12 +228,12 @@ const CreateJob: React.FC = () => {
         <DetailsForm
           form={form}
           clients={clients || []}
-          campaigns={[]}
+          campaigns={campaignOptions}
           providers={providers || []}
           isProvidersLoading={isProvidersLoading}
           managers={managers || []}
           isManagersLoading={isManagersLoading}
-          months={[]}
+          months={monthOptions}
           currencyOptions={[
             { value: "euro", label: t("common.euro") },
             { value: "usd", label: t("common.usd") },

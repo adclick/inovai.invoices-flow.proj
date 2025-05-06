@@ -37,7 +37,7 @@ const jobSchema = z.object({
 	provider_id: z.string().min(1, "jobs.selectProvider"),
 	manager_id: z.string().min(1, "jobs.selectManager"),
 	value: z.coerce.number().min(0, "jobs.valueRequired"),
-	currency: z.string().min(1, "jobs.selectCurrency"),
+	currency: z.enum(["euro", "usd", "gbp"]).min(1, "jobs.selectCurrency"),
 	status: z.string().min(1, "jobs.selectStatus"),
 	paid: z.boolean().default(false),
 	manager_ok: z.boolean().default(false),
@@ -51,7 +51,7 @@ const jobSchema = z.object({
 type JobFormValues = z.infer<typeof jobSchema>;
 
 interface DetailsFormProps {
-	form: ReturnType<typeof useForm<JobFormValues>>;
+	form: ReturnType<typeof useForm<any>>;
 	campaigns: any[];
 	providers: any[];
 	managers: any[];
@@ -62,13 +62,16 @@ interface DetailsFormProps {
 	selectedClientId: string;
 	onClientChange: (clientId: string) => void;
 	selectedCampaign: string;
-	setSelectedCampaign: React.Dispatch<React.SetStateAction<string>>;
+	setSelectedCampaign: (value: string) => void;
 	updateJobMutation: ReturnType<
 		typeof useMutation<Job, unknown, JobFormValues, unknown>
 	>;
 	t: (key: string) => string;
 	onCancel: () => void;
 	formSubmitHandler: (data: JobFormValues) => void;
+	isClientsLoading?: boolean;
+	isProvidersLoading?: boolean;
+	isManagersLoading?: boolean;
 }
 
 const DetailsForm: React.FC<DetailsFormProps> = ({
@@ -88,6 +91,9 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 	formSubmitHandler,
 	t,
 	onCancel,
+	isClientsLoading = false,
+	isProvidersLoading = false,
+	isManagersLoading = false,
 }) => {
 	// Filter campaigns by selected client
 	const filteredCampaigns = selectedClientId 
@@ -108,14 +114,15 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 							{/* Client Selection */}
 							<FormField
 								control={form.control}
-								name="campaign_id" // Using campaign_id as a proxy since client_id isn't in the form schema
-								render={() => (
+								name="client_id"
+								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{t("jobs.client")}</FormLabel>
 										<Select
 											value={selectedClientId}
 											onValueChange={(value) => {
 												onClientChange(value);
+												field.onChange(value);
 											}}
 										>
 											<FormControl>
@@ -162,10 +169,10 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{filteredCampaigns && filteredCampaigns.length > 0 ? (
-													filteredCampaigns.map((campaign) => (
-														<SelectItem key={campaign.id} value={campaign.id}>
-															{campaign.name}
+												{campaigns && campaigns.length > 0 ? (
+													campaigns.map((campaign) => (
+														<SelectItem key={campaign.value} value={campaign.value}>
+															{campaign.label}
 														</SelectItem>
 													))
 												) : (
@@ -281,6 +288,58 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 								)}
 							/>
 						</div>
+
+						{/* Currency Selection */}
+						<FormField
+							control={form.control}
+							name="currency"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>{t("jobs.currency")}</FormLabel>
+									<Select onValueChange={field.onChange} value={field.value}>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder={t("jobs.selectCurrency")} />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{currencyOptions.map((option) => (
+												<SelectItem key={option.value} value={option.value}>
+													{option.label}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						{/* Status Selection */}
+						<FormField
+							control={form.control}
+							name="status"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>{t("jobs.status")}</FormLabel>
+									<Select onValueChange={field.onChange} value={field.value}>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder={t("jobs.selectStatus")} />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{statusOptions.map((option) => (
+												<SelectItem key={option.value} value={option.value}>
+													{option.label}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
 						<FormField
 							control={form.control}
