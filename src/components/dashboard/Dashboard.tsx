@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
           status,
           created_at,
           campaign:campaign_id(name),
-          client:campaign_id(client:client_id(name)),
+          client:client_id(name),
           provider:provider_id(name),
           manager:manager_id(name)
         `)
@@ -175,7 +175,7 @@ const Dashboard: React.FC = () => {
 
         {/* Recent Activity and Campaigns */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <RecentActivity recentActivity={recentActivity} isLoading={isActivityLoading} />
+          <RecentActivity recentActivity={recentActivity || []} isLoading={isActivityLoading} />
           <ActiveCampaigns campaigns={activeCampaigns} isLoading={isCampaignsLoading} />
         </div>
       </div>
