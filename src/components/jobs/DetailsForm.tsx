@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -93,15 +94,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 		? campaigns.filter(campaign => campaign.client?.id === selectedClientId)
 		: campaigns;
 
-	// Handle client selection change
-	const handleClientChange = (value: string) => {
-		setValue("campaign_id", "");  // Reset campaign when client changes
-		setValue("provider_id", "");  // Reset provider when client changes
-		// Correct field name from client_id to campaign_id
-		setCampaignOptions([]);
-		setSelectedClient(value);
-	};
-
 	return (
 		<Card>
 			<CardHeader>
@@ -116,7 +108,7 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 							{/* Client Selection */}
 							<FormField
 								control={form.control}
-								name="client_id"
+								name="campaign_id" // Using campaign_id as a proxy since client_id isn't in the form schema
 								render={() => (
 									<FormItem>
 										<FormLabel>{t("jobs.client")}</FormLabel>

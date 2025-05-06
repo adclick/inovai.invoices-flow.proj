@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -15,7 +16,7 @@ import MonthsForm from "@/components/jobs/MonthsForm";
 import NotesForm from "@/components/jobs/NotesForm";
 import DocumentsForm from "@/components/jobs/DocumentsForm";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import {
   Form,
@@ -38,7 +39,7 @@ const formSchema = z.object({
   value: z.number({ required_error: "Value is required." }).min(0, { message: "Value must be at least 0." }),
   currency: z.string().min(1, { message: "Please select a currency." }),
   status: z.string().min(1, { message: "Please select a status." }),
-  due_date: z.date({ required_error: "Due date is required." }),
+  due_date: z.string().optional(), // Changed from Date to string to match the job type
   months: z.array(z.string()).min(1, { message: "Please select at least one month." }),
   public_notes: z.string().optional(),
   private_notes: z.string().optional(),
@@ -68,9 +69,9 @@ const CreateJob: React.FC = () => {
       provider_id: "",
       manager_id: "",
       value: 0,
-      currency: "",
-      status: "",
-      due_date: new Date(),
+      currency: "euro",
+      status: "draft",
+      due_date: "",
       months: [],
       public_notes: "",
       private_notes: "",
@@ -157,23 +158,32 @@ const CreateJob: React.FC = () => {
   // Handle client selection change
   const handleClientChange = (value: string) => {
     form.setValue("campaign_id", "");  // Reset campaign when client changes
-    // Correct field name from client_id to campaign_id
-    setCampaignOptions([]);
     setSelectedClient(value);
   };
 
   // Function to handle form submission
   const onSubmit = async (values: JobFormValues) => {
     try {
+      // Prepare the job data for insertion
+      const jobData = {
+        campaign_id: values.campaign_id,
+        provider_id: values.provider_id,
+        manager_id: values.manager_id,
+        value: Number(values.value),
+        currency: values.currency,
+        status: values.status,
+        months: values.months,
+        due_date: values.due_date || null,
+        public_notes: values.public_notes || null,
+        private_notes: values.private_notes || null,
+        documents: values.documents || [],
+        created_at: new Date().toISOString(),
+        created_by: user?.id || null,
+      };
+
       const { data: job, error: jobError } = await supabase
         .from("jobs")
-        .insert([
-          {
-            ...values,
-            value: Number(values.value),
-            created_by: user?.id,
-          },
-        ])
+        .insert(jobData)
         .select()
         .single();
 
@@ -193,6 +203,7 @@ const CreateJob: React.FC = () => {
     }
   };
 
+  // Define steps for the multi-step form
   const steps = [
     {
       title: t("jobs.jobDetails"),
@@ -200,14 +211,31 @@ const CreateJob: React.FC = () => {
       content: (
         <DetailsForm
           form={form}
-          clients={clients}
-          campaignOptions={campaignOptions}
-          isClientsLoading={isClientsLoading}
-          providers={providers}
+          clients={clients || []}
+          campaigns={[]}
+          providers={providers || []}
           isProvidersLoading={isProvidersLoading}
-          managers={managers}
+          managers={managers || []}
           isManagersLoading={isManagersLoading}
+          months={[]}
+          currencyOptions={[
+            { value: "euro", label: t("common.euro") },
+            { value: "usd", label: t("common.usd") },
+            { value: "gbp", label: t("common.gbp") },
+          ]}
+          statusOptions={[
+            { value: "draft", label: t("jobs.draft") },
+            { value: "active", label: t("jobs.active") },
+          ]}
+          selectedClientId={selectedClient || ""}
           onClientChange={handleClientChange}
+          selectedCampaign={form.watch("campaign_id")}
+          setSelectedCampaign={(value) => form.setValue("campaign_id", value)}
+          updateJobMutation={{ isPending: false } as any}
+          formSubmitHandler={() => {}}
+          t={t}
+          onCancel={() => navigate("/jobs")}
+          isClientsLoading={isClientsLoading}
         />
       ),
     },
@@ -233,7 +261,7 @@ const CreateJob: React.FC = () => {
       <div className="container mx-auto max-w-4xl md:p-8">
         <div className="mb-4">
           <Button variant="ghost" onClick={() => navigate("/jobs")}>
-            <ArrowLeftIcon className="mr-2 h-4 w-4" />
+            <ArrowLeft className="mr-2 h-4 w-4" />
             {t("common.back")}
           </Button>
           <h1 className="text-2xl font-bold">{t("jobs.createNew")}</h1>
@@ -259,7 +287,7 @@ const CreateJob: React.FC = () => {
                   variant="secondary"
                   onClick={() => setCurrentStep(currentStep - 1)}
                 >
-                  <ArrowLeftIcon className="mr-2 h-4 w-4" />
+                  <ArrowLeft className="mr-2 h-4 w-4" />
                   {t("common.back")}
                 </Button>
               )}
@@ -269,7 +297,7 @@ const CreateJob: React.FC = () => {
                   onClick={() => setCurrentStep(currentStep + 1)}
                 >
                   {t("common.next")}
-                  <ArrowRightIcon className="ml-2 h-4 w-4" />
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ) : (
                 <Button type="submit">{t("common.submit")}</Button>

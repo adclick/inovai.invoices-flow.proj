@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import { formatJobStatus } from "@/types/job";
 import { format } from "date-fns";
 
-interface ActivityItem {
+export interface ActivityItem {
   id: string;
   status: string;
   created_at: string;
