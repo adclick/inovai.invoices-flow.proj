@@ -8,6 +8,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { formatJobStatus } from "@/types/job";
 import { useTranslation } from "react-i18next";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 const Dashboard: React.FC = () => {
 	const { t } = useTranslation();
@@ -76,6 +78,52 @@ const Dashboard: React.FC = () => {
 		},
 		// Don't refetch on window focus to reduce API calls
 		refetchOnWindowFocus: false,
+	});
+
+	// Query to fetch recent activity
+	const { data: recentActivity } = useQuery({
+		queryKey: ["recent-activity"],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("jobs")
+				.select(`
+					id,
+					status,
+					created_at,
+					campaign:campaign_id(name),
+					client:campaign_id(client:client_id(name)),
+					provider:provider_id(name),
+					manager:manager_id(name)
+				`)
+				.order("created_at", { ascending: false })
+				.limit(5);
+
+			if (error) throw error;
+			return data;
+		},
+	});
+
+	// Query to fetch active campaigns
+	const { data: activeCampaigns } = useQuery({
+		queryKey: ["active-campaigns"],
+		queryFn: async () => {
+			const { data, error } = await supabase
+				.from("campaigns")
+				.select(`
+					id,
+					name,
+					client:client_id(name),
+					jobs:jobs!inner(
+						id,
+						status
+					)
+				`)
+				.eq("active", true)
+				.order("name");
+
+			if (error) throw error;
+			return data;
+		},
 	});
 
 	if (isLoading) {
@@ -182,13 +230,32 @@ const Dashboard: React.FC = () => {
 									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">{t("dashboard.latestInvoiceSubmissions")}</p>
 								</div>
 							</div>
-							<div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
-								<p>{t("dashboard.noRecentActivity")}</p>
+							<div className="space-y-4">
+								{recentActivity?.map((activity) => (
+									<div key={activity.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg">
+										<div className="flex items-center space-x-3">
+											<Badge variant={activity.status === "paid" ? "default" : "secondary"}>
+												{formatJobStatus(activity.status)}
+											</Badge>
+											<div>
+												<p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+													{activity.campaign?.name} - {activity.client?.client?.name}
+												</p>
+												<p className="text-xs text-slate-500 dark:text-slate-400">
+													{activity.provider?.name} • {format(new Date(activity.created_at), "MMM d, yyyy")}
+												</p>
+											</div>
+										</div>
+										<div className="text-right">
+											<p className="text-sm text-slate-600 dark:text-slate-400">{activity.manager?.name}</p>
+										</div>
+									</div>
+								))}
 							</div>
 						</div>
 					</div>
 
-					{/* Active Freelancers Section - Made responsive */}
+					{/* Active Campaigns Section - Made responsive */}
 					<div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
 						<div className="p-4 md:p-6">
 							<div className="flex items-center space-x-3 mb-4">
@@ -200,56 +267,37 @@ const Dashboard: React.FC = () => {
 									<p className="text-xs md:text-sm text-slate-600 dark:text-slate-400">{t("dashboard.campaignsOnGoing")}</p>
 								</div>
 							</div>
-							<div className="mt-6 text-center text-slate-600 dark:text-slate-400 py-8">
-								<p>{t("dashboard.notYetImplemented")}</p>
-							</div>
-						</div>
-					</div>
-				</div>
+							<div className="space-y-4">
+								{activeCampaigns?.map((campaign) => {
+									const jobStatuses = campaign.jobs.map(job => job.status);
+									const hasPendingJobs = jobStatuses.some(status => 
+										["pending_invoice", "pending_validation", "pending_payment"].includes(status)
+									);
+									const hasActiveJobs = jobStatuses.some(status => 
+										["draft", "active"].includes(status)
+									);
 
-				{/* Invoice Management Section - Made responsive */}
-				<div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-lg border border-slate-200/50 dark:border-slate-700 shadow-sm">
-					<div className="p-4 md:p-6">
-						<div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-							<div className="flex items-center space-x-3">
-								<div className="p-2 bg-primary/10 rounded-lg">
-									<FileText className="w-5 h-5 text-primary" />
-								</div>
-								<h2 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100">{t("dashboard.jobsManagement")}</h2>
-							</div>
-							<div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-								<div className="relative">
-									<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
-									<input
-										type="text"
-										placeholder={t("dashboard.searchInvoices")}
-										className="pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full sm:w-64"
-									/>
-								</div>
-								<Button variant="outline" size="icon" className="rounded-lg border-slate-200 dark:border-slate-700">
-									<Filter size={18} className="text-slate-600 dark:text-slate-400" />
-								</Button>
-							</div>
-						</div>
-						<div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
-							<button className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium whitespace-nowrap">{t("dashboard.new")}</button>
-							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">{t("dashboard.pendingInvoice")}</button>
-							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">{t("dashboard.pendingPayment")}</button>
-							<button className="px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-sm font-medium whitespace-nowrap transition-colors">{t("dashboard.paid")}</button>
-						</div>
-						<div className="text-sm text-slate-600 dark:text-slate-400 overflow-x-auto">
-							<div className="min-w-[600px]">
-								<div className="grid grid-cols-6 gap-4 px-4 py-2 font-medium border-b border-slate-200 dark:border-slate-700">
-									<div>{t("dashboard.client")}</div>
-									<div>{t("dashboard.campaign")}</div>
-									<div>{t("dashboard.manager")}</div>
-									<div>{t("dashboard.provider")}</div>
-									<div>{t("dashboard.value")}</div>
-									<div>{t("dashboard.status")}</div>
-								</div>
-								<div className="text-center py-8">
-									<p>{t("dashboard.notYetImplemented")}</p>
-								</div>
+									return (
+										<div key={campaign.id} className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg">
+											<div className="flex items-center justify-between mb-2">
+												<h3 className="text-sm font-medium text-slate-800 dark:text-slate-200">
+													{campaign.name}
+												</h3>
+												<Badge variant={hasPendingJobs ? "secondary" : hasActiveJobs ? "default" : "outline"}>
+													{hasPendingJobs ? t("dashboard.pending") : hasActiveJobs ? t("dashboard.active") : t("dashboard.completed")}
+												</Badge>
+											</div>
+											<p className="text-xs text-slate-500 dark:text-slate-400">
+												{campaign.client?.name}
+											</p>
+											<div className="mt-2 flex items-center space-x-2">
+												<span className="text-xs text-slate-500 dark:text-slate-400">
+													{campaign.jobs.length} {t("dashboard.jobs")}
+												</span>
+											</div>
+										</div>
+									);
+								})}
 							</div>
 						</div>
 					</div>

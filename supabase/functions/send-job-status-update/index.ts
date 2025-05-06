@@ -198,7 +198,7 @@ const emailTemplates = {
                   <p><strong>Notas Adicionales:</strong> ${context.publicNotes}</p>
                 </div>
 								${context.providerMessage ? `
-                <div class="important" style="background-color:#fff0f0; padding:15px; margin:15px 0; border-radius:5px; border-left:4px solid #f43f5e;">
+									<div class="important" style="background-color:#fff0f0; padding:15px; margin:15px 0; border-radius:5px; border-left:4px solid #f43f5e;">
                   <h3>Mensaje para el Proveedor:</h3>
                   <p>${context.providerMessage}</p>
                 </div>
@@ -270,8 +270,6 @@ serve(async (req) => {
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-		console.log(job);
 
     // Extract client info from the campaigns.clients relationship
     const clientName = job.campaigns?.clients?.name || "Unknown Client";
