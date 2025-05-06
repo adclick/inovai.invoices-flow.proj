@@ -1,10 +1,10 @@
-
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface Campaign {
   id: string;
@@ -25,6 +25,7 @@ interface ActiveCampaignsProps {
 
 const ActiveCampaigns: React.FC<ActiveCampaignsProps> = ({ campaigns, isLoading }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   
   return (
     <Card className="lg:col-span-4">
@@ -59,7 +60,11 @@ const ActiveCampaigns: React.FC<ActiveCampaignsProps> = ({ campaigns, isLoading 
               );
 
               return (
-                <div key={campaign.id} className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors">
+                <button
+                  key={campaign.id}
+                  onClick={() => navigate(`/campaigns/edit/${campaign.id}`)}
+                  className="w-full text-left p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
+                >
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-sm font-medium text-slate-800 dark:text-slate-200">
                       {campaign.name}
@@ -84,7 +89,7 @@ const ActiveCampaigns: React.FC<ActiveCampaignsProps> = ({ campaigns, isLoading 
                       ></div>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>

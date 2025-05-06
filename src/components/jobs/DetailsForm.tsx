@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -37,7 +36,7 @@ const jobSchema = z.object({
 	provider_id: z.string().min(1, "jobs.selectProvider"),
 	manager_id: z.string().min(1, "jobs.selectManager"),
 	value: z.coerce.number().min(0, "jobs.valueRequired"),
-	currency: z.enum(["euro", "usd", "gbp"]).min(1, "jobs.selectCurrency"),
+	currency: z.enum(["euro", "usd", "gbp"]),
 	status: z.string().min(1, "jobs.selectStatus"),
 	paid: z.boolean().default(false),
 	manager_ok: z.boolean().default(false),
@@ -169,10 +168,10 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{campaigns && campaigns.length > 0 ? (
-													campaigns.map((campaign) => (
-														<SelectItem key={campaign.value} value={campaign.value}>
-															{campaign.label}
+												{filteredCampaigns && filteredCampaigns.length > 0 ? (
+													filteredCampaigns.map((campaign) => (
+														<SelectItem key={campaign.id} value={campaign.id}>
+															{campaign.name}
 														</SelectItem>
 													))
 												) : (

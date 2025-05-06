@@ -1,23 +1,16 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useQuery } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
-
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import DetailsForm from "@/components/jobs/DetailsForm";
-import MonthsForm from "@/components/jobs/MonthsForm";
-import NotesForm from "@/components/jobs/NotesForm";
-import DocumentsForm from "@/components/jobs/DocumentsForm";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -26,63 +19,80 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
-// Define the schema for job creation form with proper enums for currency and status
-const formSchema = z.object({
-  client_id: z.string().min(1, { message: "Please select a client." }),
-  campaign_id: z.string().min(1, { message: "Please select a campaign." }),
-  provider_id: z.string().min(1, { message: "Please select a provider." }),
-  manager_id: z.string().min(1, { message: "Please select a manager." }),
-  value: z.number({ required_error: "Value is required." }).min(0, { message: "Value must be at least 0." }),
-  currency: z.enum(["euro", "usd", "gbp"]).default("euro"),
-  status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"]).default("draft"),
+// Schema for job form validation
+const jobSchema = z.object({
+  client_id: z.string().min(1, "Please select a client"),
+  campaign_id: z.string().min(1, "Please select a campaign"),
+  provider_id: z.string().min(1, "Please select a provider"),
+  manager_id: z.string().min(1, "Please select a manager"),
+  value: z.coerce.number().min(0, "Value must be at least 0"),
+  currency: z.string().min(1, "Please select a currency"),
+  status: z.string().min(1, "Please select a status"),
+  paid: z.boolean().default(false),
+  manager_ok: z.boolean().default(false),
+  months: z.array(z.string()).min(1, "Please select at least one month"),
   due_date: z.string().optional(),
-  months: z.array(z.string()).min(1, { message: "Please select at least one month." }),
   public_notes: z.string().optional(),
   private_notes: z.string().optional(),
-  notify_provider: z.boolean().default(false).optional(),
-  message_to_provider: z.string().optional(),
-  documents: z.array(z.string()).optional(),
 });
 
-type JobFormValues = z.infer<typeof formSchema>;
+type JobFormValues = z.infer<typeof jobSchema>;
 
-const CreateJob: React.FC = () => {
+const months = [
+  { value: "january", label: "January" },
+  { value: "february", label: "February" },
+  { value: "march", label: "March" },
+  { value: "april", label: "April" },
+  { value: "may", label: "May" },
+  { value: "june", label: "June" },
+  { value: "july", label: "July" },
+  { value: "august", label: "August" },
+  { value: "september", label: "September" },
+  { value: "october", label: "October" },
+  { value: "november", label: "November" },
+  { value: "december", label: "December" },
+];
+
+const currencyOptions = [
+  { value: "euro", label: "Euro (€)" },
+  { value: "usd", label: "US Dollar ($)" },
+  { value: "gbp", label: "British Pound (£)" },
+];
+
+const statusOptions = [
+  { value: "draft", label: "Draft" },
+  { value: "active", label: "Active" },
+  { value: "pending_invoice", label: "Pending Invoice" },
+  { value: "pending_payment", label: "Pending Payment" },
+  { value: "paid", label: "Paid" },
+];
+
+const CreateJob = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [selectedClient, setSelectedClient] = useState<string | null>(null);
-  const [campaignOptions, setCampaignOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
-  const [currentStep, setCurrentStep] = useState(0);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [selectedClient, setSelectedClient] = useState<string>("");
+  const [campaignOptions, setCampaignOptions] = useState<{ value: string; label: string }[]>([]);
 
-  // React Hook Form setup
-  const form = useForm<JobFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      client_id: "",
-      campaign_id: "",
-      provider_id: "",
-      manager_id: "",
-      value: 0,
-      currency: "euro",
-      status: "draft",
-      due_date: "",
-      months: [],
-      public_notes: "",
-      private_notes: "",
-      notify_provider: false,
-      message_to_provider: "",
-      documents: [],
-    },
-  });
-
-  // Fetch clients for the client select dropdown
-  const { data: clients, isLoading: isClientsLoading } = useQuery({
+  // Fetch clients for the dropdown
+  const { data: clients } = useQuery({
     queryKey: ["clients"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -96,8 +106,27 @@ const CreateJob: React.FC = () => {
     },
   });
 
-  // Fetch providers for the provider select dropdown
-  const { data: providers, isLoading: isProvidersLoading } = useQuery({
+  // Fetch campaigns based on selected client
+  const { data: campaigns } = useQuery({
+    queryKey: ["campaigns", selectedClient],
+    queryFn: async () => {
+      if (!selectedClient) return [];
+      
+      const { data, error } = await supabase
+        .from("campaigns")
+        .select("id, name")
+        .eq("client_id", selectedClient)
+        .eq("active", true)
+        .order("name");
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!selectedClient,
+  });
+
+  // Fetch providers for the dropdown
+  const { data: providers } = useQuery({
     queryKey: ["providers"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -105,222 +134,432 @@ const CreateJob: React.FC = () => {
         .select("id, name")
         .eq("active", true)
         .order("name");
-
+      
       if (error) throw error;
       return data;
     },
   });
 
-  // Fetch managers for the manager select dropdown
-  const { data: managers, isLoading: isManagersLoading } = useQuery({
+  // Fetch managers for the dropdown
+  const { data: managers } = useQuery({
     queryKey: ["managers"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("managers")
-        .select("id, name, email")
+        .select("id, name")
         .eq("active", true)
         .order("name");
-
+      
       if (error) throw error;
       return data;
     },
   });
 
-  // Fetch campaigns based on the selected client
+  // Form setup
+  const form = useForm<JobFormValues>({
+    resolver: zodResolver(jobSchema),
+    defaultValues: {
+      client_id: "",
+      campaign_id: "",
+      provider_id: "",
+      manager_id: "",
+      value: 0,
+      currency: "euro",
+      status: "draft",
+      paid: false,
+      manager_ok: false,
+      months: [],
+      due_date: "",
+      public_notes: "",
+      private_notes: "",
+    },
+  });
+
+  // Update campaign options when client changes
   useEffect(() => {
-    if (selectedClient) {
-      const fetchCampaigns = async () => {
-        const { data, error } = await supabase
-          .from("campaigns")
-          .select("id, name")
-          .eq("client_id", selectedClient)
-          .eq("active", true)
-          .order("name");
-
-        if (error) {
-          console.error("Error fetching campaigns:", error);
-          return;
-        }
-
-        const options = data.map((campaign) => ({
-          value: campaign.id,
-          label: campaign.name,
-        }));
-        setCampaignOptions(options);
-      };
-
-      fetchCampaigns();
+    if (campaigns) {
+      const options = campaigns.map((campaign) => ({
+        value: campaign.id,
+        label: campaign.name,
+      }));
+      setCampaignOptions(options);
     } else {
       setCampaignOptions([]);
     }
-  }, [selectedClient]);
+  }, [campaigns]);
 
-  // Handle client selection change
-  const handleClientChange = (value: string) => {
-    form.setValue("campaign_id", "");  // Reset campaign when client changes
-    setSelectedClient(value);
-  };
-
-  // Function to handle form submission
-  const onSubmit = async (values: JobFormValues) => {
-    try {
-      // Prepare the job data for insertion with proper type casting
-      const jobData = {
-        campaign_id: values.campaign_id,
-        provider_id: values.provider_id,
-        manager_id: values.manager_id,
-        value: Number(values.value),
-        currency: values.currency as "euro" | "usd" | "gbp",
-        status: values.status as "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid",
-        months: values.months as ("january" | "february" | "march" | "april" | "may" | "june" | "july" | "august" | "september" | "october" | "november" | "december")[],
-        due_date: values.due_date || null,
-        public_notes: values.public_notes || null,
-        private_notes: values.private_notes || null,
-        documents: values.documents || [],
-        created_at: new Date().toISOString(),
-        created_by: user?.id || null,
-      };
-
-      const { data: job, error: jobError } = await supabase
-        .from("jobs")
-        .insert(jobData)
-        .select()
-        .single();
-
-      if (jobError) {
-        console.error("Error creating job:", jobError);
-        toast.error(t("jobs.jobCreateError"));
-        return;
+  // Watch client_id changes
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "client_id") {
+        form.setValue("campaign_id", ""); // Reset campaign when client changes
+        setSelectedClient(value.client_id as string);
       }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
-      // Reset the form after successful submission
-      form.reset();
-      toast.success(t("jobs.jobCreated"));
+  // Create job mutation
+  const createJob = useMutation({
+    mutationFn: async (values: JobFormValues) => {
+      const { data, error } = await supabase
+        .from("jobs")
+        .insert({
+          campaign_id: values.campaign_id,
+          provider_id: values.provider_id,
+          manager_id: values.manager_id,
+          value: values.value,
+          currency: values.currency as any,
+          status: values.status as any,
+          paid: values.paid,
+          manager_ok: values.manager_ok,
+          months: values.months as any[],
+          due_date: values.due_date || null,
+          public_notes: values.public_notes || null,
+          private_notes: values.private_notes || null,
+        })
+        .select("id")
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobs"] });
+      toast({
+        title: t("jobs.jobCreated"),
+        description: t("jobs.jobCreatedDescription"),
+      });
       navigate("/jobs");
-    } catch (error) {
-      console.error("Unexpected error:", error);
-      toast.error(t("common.error"));
-    }
+    },
+    onError: (error) => {
+      console.error("Error creating job:", error);
+      toast({
+        title: t("common.error"),
+        description: t("jobs.jobCreateError"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Form submission handler
+  const onSubmit = (values: JobFormValues) => {
+    createJob.mutate(values);
   };
-
-  // Define months for selection
-  const monthOptions = [
-    { value: "january", label: t("common.january") },
-    { value: "february", label: t("common.february") },
-    { value: "march", label: t("common.march") },
-    { value: "april", label: t("common.april") },
-    { value: "may", label: t("common.may") },
-    { value: "june", label: t("common.june") },
-    { value: "july", label: t("common.july") },
-    { value: "august", label: t("common.august") },
-    { value: "september", label: t("common.september") },
-    { value: "october", label: t("common.october") },
-    { value: "november", label: t("common.november") },
-    { value: "december", label: t("common.december") }
-  ];
-
-  // Define steps for the multi-step form
-  const steps = [
-    {
-      title: t("jobs.jobDetails"),
-      description: t("jobs.updateJobDetails"),
-      content: (
-        <DetailsForm
-          form={form}
-          clients={clients || []}
-          campaigns={campaignOptions}
-          providers={providers || []}
-          isProvidersLoading={isProvidersLoading}
-          managers={managers || []}
-          isManagersLoading={isManagersLoading}
-          months={monthOptions}
-          currencyOptions={[
-            { value: "euro", label: t("common.euro") },
-            { value: "usd", label: t("common.usd") },
-            { value: "gbp", label: t("common.gbp") },
-          ]}
-          statusOptions={[
-            { value: "draft", label: t("jobs.draft") },
-            { value: "active", label: t("jobs.active") },
-          ]}
-          selectedClientId={selectedClient || ""}
-          onClientChange={handleClientChange}
-          selectedCampaign={form.watch("campaign_id")}
-          setSelectedCampaign={(value) => form.setValue("campaign_id", value)}
-          updateJobMutation={{ isPending: false } as any}
-          formSubmitHandler={() => {}}
-          t={t}
-          onCancel={() => navigate("/jobs")}
-          isClientsLoading={isClientsLoading}
-        />
-      ),
-    },
-    {
-      title: t("jobs.months"),
-      description: t("jobs.selectMonthsDescription"),
-      content: <MonthsForm form={form} />,
-    },
-    {
-      title: t("common.details"),
-      description: t("jobs.updateJobDetails"),
-      content: <NotesForm form={form} />,
-    },
-    {
-      title: t("jobs.documents"),
-      description: t("jobs.uploadDocuments"),
-      content: <DocumentsForm form={form} />,
-    },
-  ];
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto max-w-4xl md:p-8">
-        <div className="mb-4">
-          <Button variant="ghost" onClick={() => navigate("/jobs")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("common.back")}
-          </Button>
-          <h1 className="text-2xl font-bold">{t("jobs.createNew")}</h1>
+      <div className="p-6 max-w-5xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.createJob")}</h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">
+            {t("jobs.fillForm")}
+          </p>
         </div>
-        <Separator className="mb-4" />
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8"
-          >
-            <div className="space-y-4">
-              <h2 className="text-lg font-medium">{steps[currentStep].title}</h2>
-              <p className="text-sm text-muted-foreground">
-                {steps[currentStep].description}
-              </p>
-              {steps[currentStep].content}
-            </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("jobs.jobDetails")}</CardTitle>
+            <CardDescription>
+              {t("jobs.updateJobDetails")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Client Selection */}
+                  <FormField
+                    control={form.control}
+                    name="client_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.client")}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("jobs.selectClient")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {clients && clients.length > 0 ? (
+                              clients.map((client) => (
+                                <SelectItem key={client.id} value={client.id}>
+                                  {client.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value="no-clients" disabled>
+                                {t("clients.noClientsAvailable")}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <div className="flex justify-between">
-              {currentStep > 0 && (
-                <Button
-                  variant="secondary"
-                  onClick={() => setCurrentStep(currentStep - 1)}
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  {t("common.back")}
-                </Button>
-              )}
-              {currentStep < steps.length - 1 ? (
-                <Button
-                  type="button"
-                  onClick={() => setCurrentStep(currentStep + 1)}
-                >
-                  {t("common.next")}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              ) : (
-                <Button type="submit">{t("common.submit")}</Button>
-              )}
-            </div>
-          </form>
-        </Form>
+                  {/* Campaign Selection */}
+                  <FormField
+                    control={form.control}
+                    name="campaign_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.campaign")}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={!selectedClient}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={selectedClient ? t("jobs.selectCampaign") : t("jobs.selectClientFirst")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {campaignOptions.length > 0 ? (
+                              campaignOptions.map((campaign) => (
+                                <SelectItem key={campaign.value} value={campaign.value}>
+                                  {campaign.label}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value="no-campaigns" disabled>
+                                {selectedClient ? t("campaigns.noCampaignsAvailable") : t("jobs.selectClientFirst")}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Provider Selection */}
+                  <FormField
+                    control={form.control}
+                    name="provider_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.provider")}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("jobs.selectProvider")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {providers && providers.length > 0 ? (
+                              providers.map((provider) => (
+                                <SelectItem key={provider.id} value={provider.id}>
+                                  {provider.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value="no-providers" disabled>
+                                {t("providers.noProvidersAvailable")}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Manager Selection */}
+                  <FormField
+                    control={form.control}
+                    name="manager_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.manager")}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("jobs.selectManager")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {managers && managers.length > 0 ? (
+                              managers.map((manager) => (
+                                <SelectItem key={manager.id} value={manager.id}>
+                                  {manager.name}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value="no-managers" disabled>
+                                {t("managers.noManagersAvailable")}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Value */}
+                  <FormField
+                    control={form.control}
+                    name="value"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.value")}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="Enter value"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Due Date */}
+                  <FormField
+                    control={form.control}
+                    name="due_date"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.dueDate")}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="date"
+                            placeholder="Enter due date"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Months */}
+                <FormField
+                  control={form.control}
+                  name="months"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel>{t("jobs.months")}</FormLabel>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {t("jobs.selectMonths")}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                        {months.map((month) => (
+                          <FormField
+                            key={month.value}
+                            control={form.control}
+                            name="months"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={month.value}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(month.value)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value, month.value])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== month.value
+                                              )
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal cursor-pointer">
+                                    {month.label}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Notes */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="public_notes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.publicNotes")}</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Notes visible to all parties"
+                            className="resize-none"
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="private_notes"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("jobs.privateNotes")}</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Internal notes"
+                            className="resize-none"
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-4 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate("/jobs")}
+                  >
+                    {t("common.cancel")}
+                  </Button>
+                  <Button type="submit" disabled={createJob.isPending}>
+                    {createJob.isPending ? t("common.creating") : t("jobs.createJob")}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );

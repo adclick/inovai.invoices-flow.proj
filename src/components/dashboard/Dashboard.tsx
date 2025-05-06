@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -168,7 +167,7 @@ const Dashboard: React.FC = () => {
 
         {/* Overview Cards */}
         <StatsCards 
-          totalJobs={totalJobs}
+          activeJobs={stats?.active || 0}
           pendingActionJobs={pendingActionJobs}
           completedJobs={stats?.paid || 0}
           isLoading={isStatsLoading}

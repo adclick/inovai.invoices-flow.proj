@@ -182,6 +182,7 @@ const EditJob: React.FC = () => {
   const { data: campaigns } = useQuery({
     queryKey: ["campaigns", selectedClientId],
     queryFn: async () => {
+			console.log("selectedClientId", selectedClientId);
       // Base query
       let query = supabase
         .from("campaigns")

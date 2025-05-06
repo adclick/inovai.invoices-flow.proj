@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
 import { formatJobStatus } from "@/types/job";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 export interface ActivityItem {
   id: string;
@@ -34,6 +34,7 @@ interface RecentActivityProps {
 
 const RecentActivity: React.FC<RecentActivityProps> = ({ recentActivity, isLoading }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   
   return (
     <Card className="lg:col-span-8">
@@ -44,13 +45,6 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ recentActivity, isLoadi
             {t('common.viewAll')}
           </Button>
         </div>
-        <Tabs defaultValue="all" className="mt-2">
-          <TabsList className="grid w-full grid-cols-3 h-9">
-            <TabsTrigger value="all">{t('common.all')}</TabsTrigger>
-            <TabsTrigger value="pending">{t('dashboard.pending')}</TabsTrigger>
-            <TabsTrigger value="completed">{t('dashboard.completed')}</TabsTrigger>
-          </TabsList>
-        </Tabs>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -68,7 +62,11 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ recentActivity, isLoadi
         ) : (
           <div className="space-y-4">
             {recentActivity?.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors">
+              <div
+                key={activity.id}
+                onClick={() => navigate(`/jobs/edit/${activity.id}`)}
+                className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+              >
                 <div className="flex items-center space-x-3">
                   <Badge
                     variant={

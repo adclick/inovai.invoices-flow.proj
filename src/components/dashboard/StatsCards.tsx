@@ -1,4 +1,3 @@
-
 import React from "react";
 import { TrendingUp, CheckCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,14 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { useTranslation } from "react-i18next";
 
 interface StatsCardsProps {
-  totalJobs: number;
+  activeJobs: number;
   pendingActionJobs: number;
   completedJobs: number;
   isLoading: boolean;
 }
 
 const StatsCards: React.FC<StatsCardsProps> = ({ 
-  totalJobs, 
+  activeJobs, 
   pendingActionJobs, 
   completedJobs, 
   isLoading 
@@ -25,16 +24,15 @@ const StatsCards: React.FC<StatsCardsProps> = ({
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('dashboard.totalJobs')}</CardTitle>
+          <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">{t('dashboard.activeJobs')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-baseline justify-between">
             <div className="text-3xl font-bold">
-              {isLoading ? <Skeleton className="h-9 w-16" /> : totalJobs}
+              {isLoading ? <Skeleton className="h-9 w-16" /> : activeJobs}
             </div>
             <div className="bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs px-2 py-0.5 rounded-full font-medium flex items-center">
-              <TrendingUp className="h-3 w-3 mr-1" />
-              12%
+              Active
             </div>
           </div>
         </CardContent>
