@@ -41,7 +41,7 @@
     "may": "Maio",
     "june": "Junho",
     "july": "Julho",
-    "august": "Augosto",
+    "august": "Agosto",
     "september": "Setembro",
     "october": "Outubro",
     "november": "Novembro",
@@ -256,7 +256,9 @@
     "linkExpired": "A ligação expirou",
     "uploadComplete": "Upload Concluído",
     "thankYouForSubmission": "Obrigado pela sua submissão!",
-    "youMayCloseWindow": "Pode agora fechar esta janela."
+    "youMayCloseWindow": "Pode agora fechar esta janela.",
+    "dueDatePassed": "O prazo de submissão expirou",
+    "uploadLinkExpired": "Este link de upload expirou"
   },
   "clients": {
     "title": "Clientes",

@@ -28,6 +28,22 @@ const PublicUpload = () => {
 				});
 
 				if (error) throw error;
+				
+				// Add additional check for expired due date
+				if (data.valid && data.job?.due_date) {
+					const dueDate = new Date(data.job.due_date);
+					const now = new Date();
+					
+					if (dueDate < now) {
+						console.log("Job due date has expired:", dueDate);
+						return { 
+							valid: false, 
+							expired: true,
+							message: t("jobs.uploadLinkExpired") 
+						};
+					}
+				}
+				
 				return data;
 			} catch (error) {
 				console.error("Error validating token:", error);
@@ -74,10 +90,10 @@ const PublicUpload = () => {
 						<CardHeader>
 							<CardTitle className="flex items-center text-destructive">
 								<AlertTriangle className="mr-2 h-5 w-5" />
-								{t("common.invalidAccess")}
+								{data?.expired ? t("jobs.uploadLinkExpired") : t("jobs.uploadLinkInvalid")}
 							</CardTitle>
 							<CardDescription>
-								{t("jobs.uploadLinkInvalid")}
+								{t("jobs.uploadLinkInvalidDescription")}
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
@@ -85,7 +101,7 @@ const PublicUpload = () => {
 								{t("jobs.uploadLinkInvalidDescription")}
 							</p>
 							<ul className="list-disc pl-5 mt-2 text-slate-600 dark:text-slate-400">
-								<li>{t("jobs.jobNoLongerAccepting")}</li>
+								<li>{data?.expired ? t("jobs.dueDatePassed") : t("jobs.jobNoLongerAccepting")}</li>
 								<li>{t("jobs.urlIncorrect")}</li>
 								<li>{t("jobs.linkExpired")}</li>
 							</ul>

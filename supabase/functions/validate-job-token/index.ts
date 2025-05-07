@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -15,14 +14,13 @@ serve(async (req) => {
   }
 
   try {
+    const { jobId, token } = await req.json();
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
     const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
     
     // Use service role key to bypass RLS
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
-
-    // Parse the request body
-    const { jobId, token } = await req.json();
 
     if (!jobId || !token) {
       return new Response(
@@ -37,70 +35,60 @@ serve(async (req) => {
       );
     }
 
-    // Query the job with the given ID and token
-    const { data: job, error } = await supabase
+    // Add a check for expired due_date
+    const { data: job, error: jobError } = await supabase
       .from('jobs')
       .select(`
-        id, 
-        campaign_id, 
-        provider_id, 
-        manager_id, 
-        value, 
-        currency, 
-        status, 
-        paid, 
-        manager_ok, 
-        months, 
-        due_date, 
-        public_notes, 
-        private_notes, 
-        documents,
-        public_token,
-        campaigns (name),
-        providers (name)
+        id, status, public_token, due_date, 
+        campaigns (id, name),
+        providers (id, name),
+        clients (id, name)
       `)
       .eq('id', jobId)
       .eq('public_token', token)
       .eq('status', 'pending_invoice')
       .single();
 
-    if (error || !job) {
-      console.error('Error fetching job or job not found:', error);
+    if (jobError || !job) {
       return new Response(
-        JSON.stringify({ 
-          valid: false, 
-          error: 'Invalid or expired token' 
-        }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
+        JSON.stringify({ valid: false, error: 'Invalid job token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Return the job data if the token is valid
-    return new Response(
-      JSON.stringify({ 
-        valid: true, 
-        job 
-      }),
-      { 
-        status: 200, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    // Check if due date has passed
+    if (job.due_date && new Date(job.due_date) < new Date()) {
+      // Automatically update the job status
+      const { error: updateError } = await supabase
+        .from('jobs')
+        .update({ 
+          status: 'pending_validation',
+          public_token: null 
+        })
+        .eq('id', jobId);
+        
+      if (updateError) {
+        console.error("Error updating expired job:", updateError);
+      } else {
+        console.log(`Job ${jobId} marked as expired and token invalidated`);
       }
+
+      return new Response(
+        JSON.stringify({ valid: false, expired: true }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    return new Response(
+      JSON.stringify({ valid: true, job }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Unexpected error:', error);
+    console.error('Error validating token:', error);
     return new Response(
-      JSON.stringify({ 
-        valid: false, 
-        error: 'Server error' 
-      }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+      JSON.stringify({ valid: false, error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

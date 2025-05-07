@@ -256,7 +256,9 @@
     "linkExpired": "The link has expired",
     "uploadComplete": "Upload Complete",
     "thankYouForSubmission": "Thank you for your submission!",
-    "youMayCloseWindow": "You may now close this window."
+    "youMayCloseWindow": "You may now close this window.",
+    "dueDatePassed": "The submission deadline has passed",
+    "uploadLinkExpired": "This upload link has expired"
   },
   "clients": {
     "title": "Clients",

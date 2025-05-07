@@ -323,6 +323,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      update_expired_jobs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       validate_invitation_token: {
         Args: { token_value: string }
         Returns: {
