@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -7,11 +6,10 @@ import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatJobStatus, Job } from "@/types/job";
+import { Job } from "@/types/job";
 import DetailsForm from "@/components/jobs/DetailsForm";
 import DocumentsTab from "@/components/jobs/DocumentsTab";
 import StatusSection from "@/components/jobs/StatusSection";
@@ -24,13 +22,14 @@ import {
 	DialogClose
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import EditPageLayout from "@/components/common/EditPageLayout";
 
 const jobSchema = z.object({
   campaign_id: z.string().min(1, "jobs.selectCampaign"),
   provider_id: z.string().min(1, "jobs.selectProvider"),
   manager_id: z.string().min(1, "jobs.selectManager"),
   value: z.coerce.number().min(0, "jobs.valueRequired"),
-  currency: z.string().min(1, "jobs.selectCurrency"),
+  currency: z.enum(["euro", "usd"], { errorMap: (issue, ctx) => ({ message: ctx.defaultError.replace("Invalid enum value.", "jobs.selectCurrency") }) }),
   status: z.string().min(1, "jobs.selectStatus"),
   paid: z.boolean().default(false),
   manager_ok: z.boolean().default(false),
@@ -246,12 +245,21 @@ const EditJob: React.FC = () => {
         setSelectedClientId(campaign.client.id);
       }
 
+      // Validate and set currency for the form
+      const jobCurrencyFromDb = job.currency as string; // Cast to string to handle any potential db values
+      let validatedFormCurrency: "euro" | "usd" = "euro"; // Default to euro
+      if (jobCurrencyFromDb === "euro" || jobCurrencyFromDb === "usd") {
+        validatedFormCurrency = jobCurrencyFromDb;
+      } else if (jobCurrencyFromDb) {
+        console.warn(`Unexpected currency '${jobCurrencyFromDb}' found for job ${job.id}, defaulting to 'euro'.`);
+      }
+
       form.reset({
         campaign_id: job.campaign_id,
         provider_id: job.provider_id,
         manager_id: job.manager_id,
         value: job.value,
-        currency: job.currency,
+        currency: validatedFormCurrency,
         status: job.status,
         paid: job.paid,
         manager_ok: job.manager_ok,
@@ -432,38 +440,43 @@ const EditJob: React.FC = () => {
 
   if (isLoadingJob) {
     return (
-      <DashboardLayout>
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
-              {t("jobs.editJob")}
-            </h1>
-          </div>
-          <div className="flex justify-center items-center h-64">
-            <p className="text-slate-500 dark:text-slate-400">{t("common.loading")}</p>
-          </div>
+      <EditPageLayout
+        title={t("jobs.editJob")}
+        description={t("jobs.updateJobDetails")}
+        isLoading={true}
+        loadingText={t("common.loadingJobData")}
+        errorText={t("common.errorLoadingJob")}
+        backPath="/jobs"
+        backButtonText={t("common.backToJobsList")}
+        contentClassName="p-0 sm:p-0 border-0"
+      >
+        <div className="flex justify-center items-center h-64">
+          <p className="text-slate-500 dark:text-slate-400">{t("common.loading")}</p>
         </div>
-      </DashboardLayout>
+      </EditPageLayout>
     );
   }
 
   if (!job) {
     return (
-      <DashboardLayout>
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
-              {t("jobs.editJob")}
-            </h1>
-          </div>
-          <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-            <p className="text-red-600 dark:text-red-400">{t("common.error")}</p>
-            <Button className="mt-4" onClick={() => navigate("/jobs")}>
-              {t("common.back")}
-            </Button>
-          </div>
+      <EditPageLayout
+        title={t("jobs.editJob")}
+        description={t("jobs.updateJobDetails")}
+        isLoading={false}
+        isError={true}
+        loadingText={t("common.loadingJobData")}
+        errorText={t("common.errorLoadingJob")}
+        backPath="/jobs"
+        backButtonText={t("common.backToJobsList")}
+        contentClassName="p-0 sm:p-0 border-0"
+      >
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+          <p className="text-red-600 dark:text-red-400">{t("common.error")}</p>
+          <Button className="mt-4" onClick={() => navigate("/jobs")}>
+            {t("common.back")}
+          </Button>
         </div>
-      </DashboardLayout>
+      </EditPageLayout>
     );
   }
 
@@ -490,93 +503,97 @@ const EditJob: React.FC = () => {
   };
   
   return (
-    <DashboardLayout>
-      <div className="p-6 max-w-5xl mx-auto">
-        <div className=" flex justify-between items-center">
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
-              {t("jobs.editJob")}
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">
-              {t("jobs.updateJobDetails")}
-            </p>
-          </div>
-          <Badge 
-            className={`${getStatusColor(job.status)} px-3 py-1 text-sm font-medium`}
-            variant="outline"
-          >
-            {statusMap[job.status]}
-          </Badge>
-        </div>
+    <EditPageLayout
+      title={t("jobs.editJob")}
+      description={job ? `${t("jobs.editingJobId", { id: job.id })} (${job.campaign_name || t("jobs.unknownCampaign")})` : t("jobs.updateJobDetails")}
+      isLoading={isLoadingJob}
+      isError={false}
+      loadingText={t("common.loadingJobData")}
+      errorText={t("common.errorLoadingJob")}
+      backPath="/jobs"
+      backButtonText={t("common.backToJobsList")}
+      contentClassName="p-0 sm:p-0 border-0"
+    >
+      <div className="px-6 pt-6 flex justify-between items-center">
+        <Badge 
+          className={`${getStatusColor(job.status)} px-3 py-1 text-sm font-medium`}
+          variant="outline"
+        >
+          {statusMap[job.status] || job.status}
+        </Badge>
+      </div>
 
+      <div className="px-6 mt-4">
         <StatusSection
           status={form.watch("status")}
           onChange={(value) => form.setValue("status", value as any)}
           disabled={updateJobMutation.isPending}
           t={t}
         />
-
-        <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="details">{t("jobs.jobDetails")}</TabsTrigger>
-            <TabsTrigger value="documents">{t("jobs.documents")}</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="details" aria-label={t("jobs.detailsTabContent")}>
-            <DetailsForm
-              form={form}
-              campaigns={campaigns || []}
-              providers={providers || []}
-              managers={managers || []}
-              months={monthsList.map((m) => ({ value: m, label: t(`common.${m}`) }))}
-              currencyOptions={[
-                { value: "euro", label: t("common.euro") },
-                { value: "usd", label: t("common.usd") },
-              ]}
-              statusOptions={[
-                { value: "draft", label: t("jobs.draft") },
-                { value: "active", label: t("jobs.active") },
-                { value: "pending_invoice", label: t("jobs.pendingInvoice") },
-                { value: "pending_validation", label: t("jobs.pendingValidation") },
-                { value: "pending_payment", label: t("jobs.pendingPayment") },
-                { value: "paid", label: t("jobs.paid") },
-              ]}
-              clients={clients || []}
-              selectedClientId={selectedClientId}
-              onClientChange={handleClientChange}
-              selectedCampaign={selectedCampaign}
-              setSelectedCampaign={setSelectedCampaign}
-              updateJobMutation={updateJobMutation}
-              onCancel={() => navigate("/jobs")}
-              formSubmitHandler={handleFormSubmit}
-              t={t}
-            />
-          </TabsContent>
-
-          {id && (
-            <DocumentsTab
-              jobId={id}
-              documents={documents}
-              onDocumentsUpdated={handleDocumentsUpdated}
-              currentTab={currentTab}
-              setCurrentTab={setCurrentTab}
-              t={t}
-            />
-          )}
-        </Tabs>
-
-        <ConfirmUpdateModal
-          isOpen={isConfirmOpen}
-          onOpenChange={setIsConfirmOpen}
-          onConfirm={handleConfirmSave}
-          onCancel={handleConfirmCancel}
-          pendingFormData={pendingFormData}
-          providerMessage={providerMessageForModal}
-          onProviderMessageChange={setProviderMessageForModal}
-          t={t}
-        />
       </div>
-    </DashboardLayout>
+
+      <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-4 mt-4">
+        <div className="px-6 border-b border-slate-200 dark:border-slate-700">
+          <TabsList className="grid w-full grid-cols-2 bg-transparent p-0">
+            <TabsTrigger value="details" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none -mb-px">{t("jobs.jobDetails")}</TabsTrigger>
+            <TabsTrigger value="documents" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none -mb-px">{t("jobs.documents")}</TabsTrigger>
+          </TabsList>
+        </div>
+
+        <TabsContent value="details" aria-label={t("jobs.detailsTabContent")} className="px-6 py-4">
+          <DetailsForm
+            form={form}
+            campaigns={campaigns || []}
+            providers={providers || []}
+            managers={managers || []}
+            months={monthsList.map((m) => ({ value: m, label: t(`common.${m}`) }))}
+            currencyOptions={[
+              { value: "euro", label: t("common.euro") },
+              { value: "usd", label: t("common.usd") },
+            ]}
+            statusOptions={[
+              { value: "draft", label: t("jobs.draft") },
+              { value: "active", label: t("jobs.active") },
+              { value: "pending_invoice", label: t("jobs.pendingInvoice") },
+              { value: "pending_validation", label: t("jobs.pendingValidation") },
+              { value: "pending_payment", label: t("jobs.pendingPayment") },
+              { value: "paid", label: t("jobs.paid") },
+            ]}
+            clients={clients || []}
+            selectedClientId={selectedClientId}
+            onClientChange={handleClientChange}
+            selectedCampaign={selectedCampaign}
+            setSelectedCampaign={setSelectedCampaign}
+            updateJobMutation={updateJobMutation}
+            onCancel={() => navigate("/jobs")}
+            formSubmitHandler={handleFormSubmit}
+            t={t}
+          />
+        </TabsContent>
+
+        {id && (
+          <DocumentsTab
+            jobId={id}
+            documents={documents}
+            onDocumentsUpdated={handleDocumentsUpdated}
+            currentTab={currentTab}
+            setCurrentTab={setCurrentTab}
+            t={t}
+          />
+        )}
+      </Tabs>
+
+      <ConfirmUpdateModal
+        isOpen={isConfirmOpen}
+        onOpenChange={setIsConfirmOpen}
+        onConfirm={handleConfirmSave}
+        onCancel={handleConfirmCancel}
+        pendingFormData={pendingFormData}
+        providerMessage={providerMessageForModal}
+        onProviderMessageChange={setProviderMessageForModal}
+        t={t}
+      />
+    </EditPageLayout>
   );
 };
 

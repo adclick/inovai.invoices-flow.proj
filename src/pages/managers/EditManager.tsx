@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,8 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,28 +14,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Switch,
-} from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import EditPageLayout from "@/components/common/EditPageLayout";
+import FormActions from "@/components/common/FormActions";
+import ActiveSwitchField from "@/components/common/ActiveSwitchField";
 
-// Define form validation schema
-const managerFormSchema = z.object({
-  name: z.string().min(1, "Manager name is required").max(100, "Manager name must be less than 100 characters"),
-  email: z.string().email("Invalid email address").min(1, "Email is required"),
-  active: z.boolean().default(true),
-});
+// Zod schema type will be inferred by the component
+let managerFormSchema: z.ZodObject<any>; 
 
 type ManagerFormValues = z.infer<typeof managerFormSchema>;
 
 const EditManager = () => {
   const { t } = useTranslation();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Define form validation schema inside the component
+  managerFormSchema = z.object({
+    name: z.string().min(1, t("managers.managerName") + " " + t("common.isRequired")).max(100, t("managers.managerName") + " " + t("common.maxLength", { count: 100 })),
+    email: z.string().email(t("common.validEmail")).min(1, t("common.email") + " " + t("common.isRequired")),
+    active: z.boolean().default(true),
+  });
 
   // Initialize form
   const form = useForm<ManagerFormValues>({
@@ -63,6 +62,7 @@ const EditManager = () => {
         .single();
 
       if (error) {
+        console.error("Error fetching manager:", error.message);
         throw new Error(error.message);
       }
       return data;
@@ -95,9 +95,11 @@ const EditManager = () => {
           updated_at: new Date().toISOString(),
         })
         .eq("id", id)
-        .select();
+        .select()
+        .single();
 
       if (error) {
+        console.error("Error updating manager:", error.message);
         throw new Error(error.message);
       }
       return data;
@@ -111,7 +113,8 @@ const EditManager = () => {
       });
       navigate("/managers");
     },
-    onError: () => {
+    onError: (error: Error) => {
+      console.error("Mutation error:", error.message);
       toast({
         title: t("common.error"),
         description: t("managers.managerUpdateError"),
@@ -125,120 +128,65 @@ const EditManager = () => {
     updateManagerMutation.mutate(values);
   };
 
-  if (isLoading) {
-    return (
-      <DashboardLayout>
-        <div className="p-6">
-          <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate("/managers")}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t("managers.backToManagers")}
-            </Button>
-          </div>
-          <div className="flex justify-center items-center h-64">
-            <p>{t("managers.loadingManagerData")}</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  if (isError || !manager) {
-    return (
-      <DashboardLayout>
-        <div className="p-6">
-          <div className="mb-6">
-            <Button variant="ghost" onClick={() => navigate("/managers")}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t("managers.backToManagers")}
-            </Button>
-          </div>
-          <div className="flex justify-center items-center h-64">
-            <p className="text-red-500">{t("managers.errorLoadingManagerData")}</p>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
   return (
-    <DashboardLayout>
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("managers.editManager")}</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            {t("managers.updateManagerInfo")}
-          </p>
-        </div>
+    <EditPageLayout
+      title={t("managers.editManager")}
+      description={t("managers.updateManagerInfo")}
+      isLoading={isLoading}
+      isError={isError || (!isLoading && !manager)}
+      loadingText={t("managers.loadingManagerData")}
+      errorText={t("managers.errorLoadingManagerData")}
+      backPath="/managers"
+      backButtonText={t("managers.backToManagers")}
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("managers.managerName")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("managers.enterManagerName")} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("managers.managerName")}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t("managers.enterManagerName")} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("common.email")}</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder={t("managers.enterManagerEmail")} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("managers.email")}</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder={t("managers.enterManagerEmail")} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <ActiveSwitchField
+            control={form.control}
+            name="active"
+            label={t("managers.activeManager")}
+            description={t("managers.markAsActive")}
+          />
 
-              <FormField
-                control={form.control}
-                name="active"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-sm">{t("managers.activeManager")}</FormLabel>
-                      <div className="text-sm text-muted-foreground">
-                        {t("managers.markAsActive")}
-                      </div>
-                    </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={() => navigate("/managers")}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  {t("managers.backToManagers")}
-                </Button>
-                <div className="flex justify-end space-x-4">
-                  <Button type="button" variant="outline" onClick={() => navigate("/managers")}>
-                    {t("common.cancel")}
-                  </Button>
-                  <Button type="submit" disabled={updateManagerMutation.isPending}>
-                    {updateManagerMutation.isPending ? t("common.saving") : t("common.save")}
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </Form>
-        </div>
-      </div>
-    </DashboardLayout>
+          <FormActions
+            onCancel={() => navigate("/managers")}
+            isSaving={updateManagerMutation.isPending}
+            backButton={{
+              text: t("managers.backToManagers"),
+              onClick: () => navigate("/managers"),
+            }}
+          />
+        </form>
+      </Form>
+    </EditPageLayout>
   );
 };
 

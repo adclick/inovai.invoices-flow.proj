@@ -5,10 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Checkbox } from "@/components/ui/checkbox"; // Not used
 import { useToast } from "@/hooks/use-toast";
 import {
 	Form,
@@ -25,16 +23,18 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { useTranslation } from "react-i18next";
+import EditPageLayout from "@/components/common/EditPageLayout";
+import FormActions from "@/components/common/FormActions";
+import ActiveSwitchField from "@/components/common/ActiveSwitchField";
 
-type CampaignFormValues = {
-	name: string;
-	client_id: string;
-	duration: number;
+// Zod schema type will be inferred by the component
+let campaignSchema: z.ZodObject<any>; 
+
+type CampaignFormValues = z.infer<typeof campaignSchema> & {
+	duration: number; // ensure duration is number, zod coerces
 	estimated_cost?: number;
 	revenue?: number;
-	active: boolean;
 };
 
 const EditCampaign = () => {
@@ -45,8 +45,8 @@ const EditCampaign = () => {
 	const queryClient = useQueryClient();
 
 	// Schema for campaign form validation
-	const campaignSchema = z.object({
-		name: z.string().min(2, t("campaigns.nameError")).max(100, t("campaigns.nameError")),
+	campaignSchema = z.object({
+		name: z.string().min(2, t("campaigns.nameError")).max(100, t("campaigns.nameErrorMax", { count: 100 })),
 		client_id: z.string().min(1, t("campaigns.clientError")),
 		duration: z.coerce.number().min(1, t("campaigns.durationError")),
 		estimated_cost: z.coerce.number().optional(),
@@ -55,7 +55,7 @@ const EditCampaign = () => {
 	});
 
 	// Fetch campaign details
-	const { data: campaign, isLoading: isLoadingCampaign } = useQuery({
+	const { data: campaign, isLoading: isLoadingCampaign, isError } = useQuery({
 		queryKey: ["campaign", id],
 		queryFn: async () => {
 			if (!id) throw new Error("Campaign ID is required");
@@ -66,7 +66,10 @@ const EditCampaign = () => {
 				.eq("id", id)
 				.single();
 
-			if (error) throw error;
+			if (error) {
+        console.error("Error fetching campaign:", error.message);
+        throw error;
+      }
 			return data;
 		},
 		enabled: !!id,
@@ -79,9 +82,13 @@ const EditCampaign = () => {
 			const { data, error } = await supabase
 				.from("clients")
 				.select("id, name")
+        .eq("active", true) // Typically, only active clients should be selectable
 				.order("name");
 
-			if (error) throw error;
+			if (error) {
+        console.error("Error fetching clients:", error.message);
+        throw error;
+      }
 			return data;
 		},
 	});
@@ -120,12 +127,15 @@ const EditCampaign = () => {
 
 			const { data, error } = await supabase
 				.from("campaigns")
-				.update(values)
+				.update(values) // values already match CampaignFormValues structure
 				.eq("id", id)
 				.select("id")
 				.single();
 
-			if (error) throw error;
+			if (error) {
+        console.error("Error updating campaign:", error.message);
+        throw error;
+      }
 			return data;
 		},
 		onSuccess: () => {
@@ -137,8 +147,8 @@ const EditCampaign = () => {
 			});
 			navigate("/campaigns");
 		},
-		onError: (error) => {
-			console.error("Error updating campaign:", error);
+		onError: (error: Error) => {
+			console.error("Mutation error:", error.message);
 			toast({
 				title: t("common.error"),
 				description: t("campaigns.campaignUpdateError"),
@@ -152,146 +162,94 @@ const EditCampaign = () => {
 		updateCampaign.mutate(values);
 	};
 
-	if (isLoadingCampaign) {
-		return (
-			<DashboardLayout>
-				<div className="p-6">
-					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.editCampaign")}</h1>
-					</div>
-					<div className="flex justify-center items-center h-64">
-						<p className="text-slate-500 dark:text-slate-400">{t("campaigns.loadingCampaignDetails")}</p>
-					</div>
-				</div>
-			</DashboardLayout>
-		);
-	}
-
-	if (!campaign) {
-		return (
-			<DashboardLayout>
-				<div className="p-6">
-					<div className="flex justify-between items-center mb-6">
-						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.editCampaign")}</h1>
-					</div>
-					<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-						<p className="text-red-600 dark:text-red-400">{t("campaigns.campaignNotFound")}</p>
-						<Button
-							className="mt-4"
-							onClick={() => navigate("/campaigns")}
-						>
-							{t("campaigns.backToCampaigns")}
-						</Button>
-					</div>
-				</div>
-			</DashboardLayout>
-		);
-	}
-
 	return (
-		<DashboardLayout>
-			<div className="p-6 max-w-4xl mx-auto">
-				<div className="mb-6">
-					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("campaigns.editCampaign")}</h1>
-					<p className="text-slate-500 dark:text-slate-400 mt-1">
-						{t("campaigns.updateCampaignDescription")}
-					</p>
-				</div>
+    <EditPageLayout
+      title={t("campaigns.editCampaign")}
+      description={t("campaigns.updateCampaignDescription")}
+      isLoading={isLoadingCampaign}
+      isError={isError || (!isLoadingCampaign && !campaign)}
+      loadingText={t("campaigns.loadingCampaignDetails")}
+      errorText={t("campaigns.campaignNotFound")}
+      backPath="/campaigns"
+      backButtonText={t("campaigns.backToCampaigns")}
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("common.name")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("campaigns.enterCampaignName")} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-				<div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-							<FormField
-								control={form.control}
-								name="name"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("common.name")}</FormLabel>
-										<FormControl>
-											<Input placeholder={t("campaigns.enterCampaignName")} {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+          <FormField
+            control={form.control}
+            name="client_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("campaigns.client")}</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={isLoadingClients}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("campaigns.selectClient")} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {isLoadingClients ? (
+                      <SelectItem value="loading" disabled>
+                        {t("campaigns.loadingClients")}
+                      </SelectItem>
+                    ) : clients && clients.length > 0 ? (
+                      clients.map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.name}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-clients" disabled>
+                        {t("campaigns.noClientsAvailable")}
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-							<FormField
-								control={form.control}
-								name="client_id"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{t("campaigns.client")}</FormLabel>
-										<Select
-											onValueChange={field.onChange}
-											value={field.value}
-										>
-											<FormControl>
-												<SelectTrigger>
-													<SelectValue placeholder={t("campaigns.selectClient")} />
-												</SelectTrigger>
-											</FormControl>
-											<SelectContent>
-												{isLoadingClients ? (
-													<SelectItem value="loading" disabled>
-														{t("campaigns.loadingClients")}
-													</SelectItem>
-												) : clients && clients.length > 0 ? (
-													clients.map((client) => (
-														<SelectItem key={client.id} value={client.id}>
-															{client.name}
-														</SelectItem>
-													))
-												) : (
-													<SelectItem value="no-clients" disabled>
-														{t("campaigns.noClientsAvailable")}
-													</SelectItem>
-												)}
-											</SelectContent>
-										</Select>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+          {/* TODO: Add fields for duration, estimated_cost, revenue if they need to be editable */}
+          {/* For now, keeping them out of the form as they were not in the original form's visible fields */}
 
-							<FormField
-								control={form.control}
-								name="active"
-								render={({ field }) => (
-									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-										<div className="space-y-0.5">
-											<FormLabel className="text-sm">{t("common.active")}</FormLabel>
-											<div className="text-sm text-muted-foreground">
-												{t("campaigns.activeDescription")}
-											</div>
-										</div>
-										<FormControl>
-											<Switch
-												checked={field.value}
-												onCheckedChange={field.onChange}
-											/>
-										</FormControl>
-									</FormItem>
-								)}
-							/>
+          <ActiveSwitchField
+            control={form.control}
+            name="active"
+            description={t("campaigns.activeDescription")}
+          />
 
-							<div className="flex justify-end space-x-4 pt-4">
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() => navigate("/campaigns")}
-								>
-									{t("common.cancel")}
-								</Button>
-								<Button type="submit" disabled={updateCampaign.isPending}>
-									{updateCampaign.isPending ? t("common.saving") : t("common.save")}
-								</Button>
-							</div>
-						</form>
-					</Form>
-				</div>
-			</div>
-		</DashboardLayout>
-	);
+          <FormActions
+            onCancel={() => navigate("/campaigns")}
+            isSaving={updateCampaign.isPending}
+            saveText={t("common.save")}
+            backButton={{
+              text: t("campaigns.backToCampaigns"), // Added back button to actions
+              onClick: () => navigate("/campaigns"),
+            }}
+          />
+        </form>
+      </Form>
+    </EditPageLayout>
+  );
 };
 
 export default EditCampaign;
