@@ -64,7 +64,10 @@
     "filter": "Filtrar",
     "all": "Todos",
     "viewAll": "Ver Todos",
-    "pending": "Pendente"
+    "pending": "Pendente",
+    "manager": "Gestor",
+    "noDeadline": "Sem prazo definido",
+    "paid": "Pago"
   },
   "auth": {
     "signIn": "Iniciar Sessão",
@@ -391,6 +394,31 @@
       "invalidJob": "Informações de trabalho inválidas",
       "expiredLink": "Esta ligação de confirmação de pagamento expirou",
       "submit": "Confirmar Pagamento"
+    },
+    "paymentConfirmPage": {
+      "invalidAccessDescription": "Esta ligação de confirmação de pagamento é inválida ou expirou.",
+      "invalidAccessReasonsTitle": "A ligação que acedeu não é válida. Isto pode dever-se a:",
+      "reasonAlreadyConfirmed": "O pagamento já foi confirmado",
+      "reasonUrlIncorrect": "O URL está incorreto",
+      "reasonLinkExpired": "A ligação expirou",
+      "confirmedStatusTitle": "Pagamento Confirmado",
+      "confirmedStatusDescription": "O pagamento foi confirmado com sucesso.",
+      "thankYouMessage": "Obrigado por confirmar este pagamento. Todas as partes relevantes foram notificadas.",
+      "paymentRecordedMessage": "O pagamento de {{formattedValue}} para {{clientName}} - {{campaignName}} foi registado.",
+      "brandName": "InvoicesFlow",
+      "pageDescription": "Por favor, confirme o pagamento para {{clientName}} - {{campaignName}}",
+      "clientLabel": "CLIENTE",
+      "campaignLabel": "CAMPANHA",
+      "providerLabel": "FORNECEDOR",
+      "managerLabel": "GESTOR",
+      "amountLabel": "MONTANTE",
+      "invoiceLabel": "Fatura",
+      "dueDateLabel": "DATA LIMITE",
+      "confirmationBoxMessage": "Ao clicar no botão abaixo, confirma que o pagamento de {{formattedValue}} foi processado e será marcado como \"{{paidStatus}}\" no sistema.",
+      "processingButton": "A processar...",
+      "defaultFormattedValue": "0 €",
+      "toastSuccess": "Pagamento confirmado com sucesso!",
+      "toastErrorFailed": "Falha ao confirmar o pagamento"
     }
   },
   "notifications": {

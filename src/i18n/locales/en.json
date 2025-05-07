@@ -64,7 +64,10 @@
     "filter": "Filter",
     "all": "All",
     "viewAll": "View All",
-    "pending": "Pending"
+    "pending": "Pending",
+    "manager": "Manager",
+    "noDeadline": "No deadline",
+    "paid": "Paid"
   },
   "auth": {
     "signIn": "Sign In",
@@ -392,6 +395,31 @@
       "expiredLink": "This payment confirmation link has expired",
       "submit": "Confirm Payment"
     }
+  },
+  "paymentConfirmPage": {
+    "invalidAccessDescription": "This payment confirmation link is invalid or has expired.",
+    "invalidAccessReasonsTitle": "The link you've accessed is not valid. This could be because:",
+    "reasonAlreadyConfirmed": "The payment has already been confirmed",
+    "reasonUrlIncorrect": "The URL is incorrect",
+    "reasonLinkExpired": "The link has expired",
+    "confirmedStatusTitle": "Payment Confirmed",
+    "confirmedStatusDescription": "The payment has been successfully confirmed.",
+    "thankYouMessage": "Thank you for confirming this payment. All relevant parties have been notified.",
+    "paymentRecordedMessage": "Payment of {{formattedValue}} for {{clientName}} - {{campaignName}} has been recorded.",
+    "brandName": "InvoicesFlow",
+    "pageDescription": "Please confirm payment for {{clientName}} - {{campaignName}}",
+    "clientLabel": "CLIENT",
+    "campaignLabel": "CAMPAIGN",
+    "providerLabel": "PROVIDER",
+    "managerLabel": "MANAGER",
+    "amountLabel": "AMOUNT",
+    "invoiceLabel": "Invoice",
+    "dueDateLabel": "DUE DATE",
+    "confirmationBoxMessage": "By clicking the button below, you confirm that payment of {{formattedValue}} has been processed and will be marked as \"{{paidStatus}}\" in the system.",
+    "processingButton": "Processing...",
+    "defaultFormattedValue": "$0",
+    "toastSuccess": "Payment confirmed successfully!",
+    "toastErrorFailed": "Failed to confirm payment"
   },
   "notifications": {
     "newJob": "New job created",

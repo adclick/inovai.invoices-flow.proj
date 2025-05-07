@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
@@ -18,6 +17,7 @@ const LanguageSelector: React.FC = () => {
   const languages = [
     { code: "en", name: t("profile.english") },
     { code: "pt", name: t("profile.portuguese") },
+    { code: "es", name: t("common.spanish") },
   ];
 
   return (
