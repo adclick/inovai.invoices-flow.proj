@@ -54,7 +54,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 		return location.pathname === path;
 	};
 
-	const NavItemWithTooltip = ({ path, icon: Icon, label }: { path: string, icon: LucideIcon, label: string }) => {
+	const NavItemWithTooltip = ({ path, icon: Icon, label, isSidebarExpanded }: { path: string, icon: LucideIcon, label: string, isSidebarExpanded: boolean }) => {
 		const iconSize = 20;
 		const isActive = isActiveRoute(path);
 
@@ -75,13 +75,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						>
 							<div className="flex items-center">
 								<Icon size={iconSize} className="flex-shrink-0" />
-								{sidebarOpen && (
+								{isSidebarExpanded && (
 									<span className="ml-3 text-sm">{label}</span>
 								)}
 							</div>
 						</button>
 					</TooltipTrigger>
-					{!sidebarOpen && !isMobile && (
+					{!isSidebarExpanded && !isMobile && (
 						<TooltipContent side="right" align="center">
 							{label}
 						</TooltipContent>
@@ -109,30 +109,30 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 		{ path: "/settings", icon: Settings, label: t("navigation.settings") },
 	];
 
-	const SidebarContent = () => (
+	const SidebarContent = ({ expanded }: { expanded: boolean }) => (
 		<>
 			<div className="flex items-center justify-between h-16 px-4 border-b border-slate-200/20 dark:border-slate-700">
 				<div className={`flex items-center`}>
 					<div className="p-2 rounded-full bg-white/10 dark:bg-primary/20 mr-2">
 						<div className="text-white dark:text-primary/90 font-bold text-lg">IF</div>
 					</div>
-					{sidebarOpen && (
+					{expanded && (
 						<span className="text-lg font-semibold text-white dark:text-white">InvoicesFlow</span>
 					)}
 				</div>
 			</div>
-			<nav className={`flex-1 ${sidebarOpen ? 'p-4' : 'p-2'}`}>
+			<nav className={`flex-1 ${expanded ? 'p-4' : 'p-2'}`}>
 				<ul className="space-y-1">
 					{navItems.map((item) => (
 						<li key={item.path}>
-							<NavItemWithTooltip {...item} />
+							<NavItemWithTooltip {...item} isSidebarExpanded={expanded} />
 						</li>
 					))}
 				</ul>
 
 				<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
 				<div className="mb-2">
-					{sidebarOpen && (
+					{expanded && (
 						<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
 							{t("navigation.jobs").toUpperCase()}
 						</h3>
@@ -140,7 +140,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					<ul className="space-y-1">
 						{jobItems.map((item) => (
 							<li key={item.path}>
-								<NavItemWithTooltip {...item} />
+								<NavItemWithTooltip {...item} isSidebarExpanded={expanded} />
 							</li>
 						))}
 					</ul>
@@ -148,7 +148,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 				<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
 				<div className="mb-2">
-					{sidebarOpen && (
+					{expanded && (
 						<h3 className="text-xs font-semibold text-white/60 dark:text-slate-400 px-3 mb-2">
 							{t("navigation.management").toUpperCase()}
 						</h3>
@@ -156,7 +156,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					<ul className="space-y-1">
 						{managementItems.map((item) => (
 							<li key={item.path}>
-								<NavItemWithTooltip {...item} />
+								<NavItemWithTooltip {...item} isSidebarExpanded={expanded} />
 							</li>
 						))}
 					</ul>
@@ -168,7 +168,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 					className="flex w-full items-center px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 dark:hover:bg-slate-700 dark:text-red-400 transition-colors duration-200"
 				>
 					<LogOut size={20} />
-					{sidebarOpen && <span className="ml-3 text-sm font-medium">{t("auth.signOut")}</span>}
+					{expanded && <span className="ml-3 text-sm font-medium">{t("auth.signOut")}</span>}
 				</button>
 			</nav>
 		</>
@@ -180,12 +180,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 				className={`gradient-bg dark:bg-none dark:bg-slate-800 border-r border-slate-200/20 dark:border-slate-700 transition-all duration-300 ease-in-out backdrop-blur-sm
                    ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10 hidden lg:block`}
 			>
-				<SidebarContent />
+				<SidebarContent expanded={sidebarOpen} />
 			</div>
 
 			<Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
 				<SheetContent side="left" className="p-0 w-[240px] gradient-bg dark:bg-slate-800">
-					<SidebarContent />
+					<SidebarContent expanded={true} />
 				</SheetContent>
 			</Sheet>
 
