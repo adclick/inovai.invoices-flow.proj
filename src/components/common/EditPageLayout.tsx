@@ -33,7 +33,7 @@ const EditPageLayout: React.FC<EditPageLayoutProps> = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const effectiveLoadingText = loadingText || t('common.loading');
+  const effectiveLoadingText = t('common.loading');
   const effectiveErrorText = errorText || t('common.error');
   const effectiveBackButtonText = backButtonText || t('common.back');
 

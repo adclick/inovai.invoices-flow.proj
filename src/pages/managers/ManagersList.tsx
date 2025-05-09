@@ -110,7 +110,7 @@ const ManagersList = () => {
             </Button>
           </div>
           <div className="flex justify-center items-center h-64">
-            <p>{t("managers.loadingManagers")}</p>
+            <p>{t("common.loading")}</p>
           </div>
         </div>
       </DashboardLayout>

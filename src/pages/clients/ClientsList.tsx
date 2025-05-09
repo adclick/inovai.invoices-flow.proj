@@ -111,7 +111,7 @@ const ClientsList = () => {
 						</Button>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p>{t("clients.loadingClients")}</p>
+						<p>{t("common.loading")}</p>
 					</div>
 				</div>
 			</DashboardLayout>

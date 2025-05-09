@@ -195,7 +195,7 @@ const JobsAllList: React.FC = () => {
 						<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
 					</div>
 					<div className="flex justify-center items-center h-64">
-						<p className="text-slate-500 dark:text-slate-400">{t("jobs.loadingJobs")}</p>
+						<p className="text-slate-500 dark:text-slate-400">{t("common.loading")}</p>
 					</div>
 				</div>
 			</DashboardLayout>
