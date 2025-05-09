@@ -30,11 +30,11 @@ import { BaseEntityFormProps } from "../common/EntityModal";
 
 interface ProviderFormProps extends BaseEntityFormProps {}
 
-const ProviderForm: React.FC<ProviderFormProps> = ({ 
-  onClose, 
-  onSuccess, 
-  id, 
-  mode 
+const ProviderForm: React.FC<ProviderFormProps> = ({
+  onClose,
+  onSuccess,
+  id,
+  mode,
 }) => {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -45,9 +45,7 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
   const providerSchema = z.object({
     name: z.string().min(1, t("providers.nameRequired")),
     email: z.string().email(t("common.invalidEmail")),
-    language: z.enum(["en", "pt", "es"], {
-      errorMap: () => ({ message: t("providers.languageRequired") }),
-    }),
+    language: z.enum(["pt", "en", "es"]).default("pt"),
     country: z.string().optional(),
     iban: z.string().optional(),
     active: z.boolean().default(true),
@@ -106,9 +104,19 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
   // Create provider mutation
   const createMutation = useMutation({
     mutationFn: async (values: ProviderFormValues) => {
+      // Ensure required fields are not undefined
+      const safeValues = {
+        name: values.name,
+        email: values.email,
+        language: values.language,
+        country: values.country || null,
+        iban: values.iban || null,
+        active: values.active,
+      };
+      
       const { data, error } = await supabase
         .from("providers")
-        .insert(values)
+        .insert(safeValues)
         .select();
 
       if (error) {
@@ -140,12 +148,20 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
     mutationFn: async (values: ProviderFormValues) => {
       if (!id) throw new Error("Provider ID is required for update");
 
+      // Ensure required fields are not undefined
+      const safeValues = {
+        name: values.name,
+        email: values.email,
+        language: values.language,
+        country: values.country || null,
+        iban: values.iban || null,
+        active: values.active,
+        updated_at: new Date().toISOString(),
+      };
+
       const { data, error } = await supabase
         .from("providers")
-        .update({
-          ...values,
-          updated_at: new Date().toISOString(),
-        })
+        .update(safeValues)
         .eq("id", id)
         .select();
 
@@ -206,10 +222,10 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
             <FormItem>
               <FormLabel>{t("common.email")}</FormLabel>
               <FormControl>
-                <Input 
-                  type="email" 
-                  placeholder={t("common.enterEmail")} 
-                  {...field} 
+                <Input
+                  type="email"
+                  placeholder={t("common.enterEmail")}
+                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -222,10 +238,11 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
           name="language"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("providers.language")}</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
+              <FormLabel>{t("providers.preferredLanguage")}</FormLabel>
+              <Select
+                onValueChange={field.onChange}
                 defaultValue={field.value}
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -250,7 +267,11 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
             <FormItem>
               <FormLabel>{t("providers.country")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("providers.enterCountry")} {...field} />
+                <Input
+                  placeholder={t("providers.enterCountry")}
+                  {...field}
+                  value={field.value || ""}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -264,7 +285,11 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
             <FormItem>
               <FormLabel>{t("providers.iban")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("providers.enterIBAN")} {...field} />
+                <Input
+                  placeholder={t("providers.enterIban")}
+                  {...field}
+                  value={field.value || ""}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -280,24 +305,17 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
         )}
 
         <div className="flex justify-end space-x-2">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={onClose}
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button 
-            type="submit" 
-            disabled={isPending}
-          >
-            {isPending 
-              ? isEditMode 
-                ? t("common.updating") 
-                : t("common.creating") 
-              : isEditMode 
-                ? t("common.update") 
-                : t("common.create")}
+          <Button type="submit" disabled={isPending}>
+            {isPending
+              ? isEditMode
+                ? t("common.updating")
+                : t("common.creating")
+              : isEditMode
+              ? t("common.update")
+              : t("common.create")}
           </Button>
         </div>
       </form>

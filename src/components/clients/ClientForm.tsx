@@ -21,52 +21,50 @@ import { Button } from "@/components/ui/button";
 import ActiveSwitchField from "@/components/common/ActiveSwitchField";
 import { BaseEntityFormProps } from "../common/EntityModal";
 
-interface ManagerFormProps extends BaseEntityFormProps {}
+interface ClientFormProps extends BaseEntityFormProps {}
 
-const ManagerForm: React.FC<ManagerFormProps> = ({ 
-  onClose, 
-  onSuccess, 
-  id, 
-  mode 
+const ClientForm: React.FC<ClientFormProps> = ({
+  onClose,
+  onSuccess,
+  id,
+  mode,
 }) => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const isEditMode = mode === 'edit';
 
-  // Schema for manager form validation
-  const managerSchema = z.object({
-    name: z.string().min(1, t("managers.nameRequired")),
-    email: z.string().email(t("common.invalidEmail")),
+  // Schema for client form validation
+  const clientSchema = z.object({
+    name: z.string().min(1, t("clients.nameRequired")),
     active: z.boolean().default(true),
   });
 
-  type ManagerFormValues = z.infer<typeof managerSchema>;
+  type ClientFormValues = z.infer<typeof clientSchema>;
 
   // Form setup
-  const form = useForm<ManagerFormValues>({
-    resolver: zodResolver(managerSchema),
+  const form = useForm<ClientFormValues>({
+    resolver: zodResolver(clientSchema),
     defaultValues: {
       name: "",
-      email: "",
       active: true,
     },
   });
 
-  // Fetch manager data if in edit mode
-  const { data: manager, isLoading } = useQuery({
-    queryKey: ["manager", id],
+  // Fetch client data if in edit mode
+  const { data: client, isLoading } = useQuery({
+    queryKey: ["client", id],
     queryFn: async () => {
-      if (!id) throw new Error("Manager ID is required for edit mode");
+      if (!id) throw new Error("Client ID is required for edit mode");
 
       const { data, error } = await supabase
-        .from("managers")
+        .from("clients")
         .select("*")
         .eq("id", id)
         .single();
 
       if (error) {
-        console.error("Error fetching manager:", error.message);
+        console.error("Error fetching client:", error.message);
         throw error;
       }
       return data;
@@ -74,42 +72,40 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
     enabled: isEditMode && Boolean(id),
   });
 
-  // Update form values when manager data is loaded
+  // Update form values when client data is loaded
   useEffect(() => {
-    if (manager) {
+    if (client) {
       form.reset({
-        name: manager.name,
-        email: manager.email,
-        active: manager.active,
+        name: client.name,
+        active: client.active,
       });
     }
-  }, [manager, form]);
+  }, [client, form]);
 
-  // Create manager mutation
+  // Create client mutation
   const createMutation = useMutation({
-    mutationFn: async (values: ManagerFormValues) => {
-      // Make sure email and name are not undefined
+    mutationFn: async (values: ClientFormValues) => {
+      // Ensure name is not undefined
       const safeValues = {
         name: values.name,
-        email: values.email,
-        active: values.active
+        active: values.active,
       };
       
       const { data, error } = await supabase
-        .from("managers")
+        .from("clients")
         .insert(safeValues)
         .select();
 
       if (error) {
-        console.error("Error creating manager:", error.message);
+        console.error("Error creating client:", error.message);
         throw error;
       }
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["managers"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       toast({
-        title: t("managers.created"),
+        title: t("clients.created"),
       });
       form.reset();
       if (onSuccess) onSuccess();
@@ -124,36 +120,35 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
     },
   });
 
-  // Update manager mutation
+  // Update client mutation
   const updateMutation = useMutation({
-    mutationFn: async (values: ManagerFormValues) => {
-      if (!id) throw new Error("Manager ID is required for update");
+    mutationFn: async (values: ClientFormValues) => {
+      if (!id) throw new Error("Client ID is required for update");
 
-      // Make sure email and name are not undefined
+      // Ensure name is not undefined
       const safeValues = {
         name: values.name,
-        email: values.email,
         active: values.active,
         updated_at: new Date().toISOString(),
       };
 
       const { data, error } = await supabase
-        .from("managers")
+        .from("clients")
         .update(safeValues)
         .eq("id", id)
         .select();
 
       if (error) {
-        console.error("Error updating manager:", error.message);
+        console.error("Error updating client:", error.message);
         throw error;
       }
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["managers"] });
-      queryClient.invalidateQueries({ queryKey: ["manager", id] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
+      queryClient.invalidateQueries({ queryKey: ["client", id] });
       toast({
-        title: t("managers.updated"),
+        title: t("clients.updated"),
       });
       if (onSuccess) onSuccess();
       onClose();
@@ -172,7 +167,7 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
   const isPending = mutation.isPending || isLoading;
 
   // Form submission handler
-  const onSubmit = (values: ManagerFormValues) => {
+  const onSubmit = (values: ClientFormValues) => {
     mutation.mutate(values);
   };
 
@@ -184,27 +179,9 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("managers.name")}</FormLabel>
+              <FormLabel>{t("clients.clientName")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("managers.enterName")} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("common.email")}</FormLabel>
-              <FormControl>
-                <Input 
-                  type="email" 
-                  placeholder={t("common.enterEmail")} 
-                  {...field} 
-                />
+                <Input placeholder={t("clients.enterName")} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -215,29 +192,22 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
           <ActiveSwitchField
             control={form.control}
             name="active"
-            description={t("managers.activeDescription")}
+            description={t("clients.activeDescription")}
           />
         )}
 
         <div className="flex justify-end space-x-2">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={onClose}
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button 
-            type="submit" 
-            disabled={isPending}
-          >
-            {isPending 
-              ? isEditMode 
-                ? t("common.updating") 
-                : t("common.creating") 
-              : isEditMode 
-                ? t("common.update") 
-                : t("common.create")}
+          <Button type="submit" disabled={isPending}>
+            {isPending
+              ? isEditMode
+                ? t("common.updating")
+                : t("common.creating")
+              : isEditMode
+              ? t("common.update")
+              : t("common.create")}
           </Button>
         </div>
       </form>
@@ -245,4 +215,4 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
   );
 };
 
-export default ManagerForm;
+export default ClientForm;

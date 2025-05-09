@@ -10,7 +10,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import ClientsList from "./pages/clients/ClientsList";
+// import ClientsList from "./pages/clients/ClientsList"; // Commenting out the old version
+import ClientsListWithModal from "./pages/clients/ClientsListWithModal"; // Using our new version instead
 import CreateClient from "./pages/clients/CreateClient";
 import EditClient from "./pages/clients/EditClient";
 import CampaignsList from "./pages/campaigns/CampaignsList";
@@ -53,7 +54,7 @@ const App = () => (
 
 								<Route element={<ProtectedRoute />}>
 									<Route path="/dashboard" element={<Dashboard />} />
-									<Route path="/clients" element={<ClientsList />} />
+									<Route path="/clients" element={<ClientsListWithModal />} />
 									<Route path="/clients/create" element={<CreateClient />} />
 									<Route path="/clients/edit/:id" element={<EditClient />} />
 									<Route path="/campaigns" element={<CampaignsList />} />
