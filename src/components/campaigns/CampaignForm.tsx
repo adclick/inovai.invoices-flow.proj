@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import ActiveSwitchField from "../common/ActiveSwitchField";
 
 // Form schema with validation
@@ -94,6 +93,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
       form.reset({
         name: data.name,
         client_id: data.client_id,
+        // Handle the case where description doesn't exist in the database schema
         description: data.description || "",
         duration: data.duration,
         estimated_cost: data.estimated_cost || 0,
@@ -109,9 +109,12 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   // Create campaign mutation
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
+      // Extract description from values before sending to Supabase
+      const { description, ...dbValues } = values;
+      
       const { data, error } = await supabase
         .from("campaigns")
-        .insert([values])
+        .insert([dbValues])
         .select()
         .single();
       
@@ -140,9 +143,12 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   // Update campaign mutation
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
+      // Extract description from values before sending to Supabase
+      const { description, ...dbValues } = values;
+      
       const { data, error } = await supabase
         .from("campaigns")
-        .update(values)
+        .update(dbValues)
         .eq("id", id)
         .select()
         .single();
@@ -321,13 +327,17 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
         />
 
         {/* Active status */}
-        <ActiveSwitchField 
-          form={form} 
-          isLoading={isLoading}
-          name="active" 
-          label={t("common.status")}
-          activeText={t("common.active")}
-          inactiveText={t("common.inactive")}
+        <FormField
+          control={form.control}
+          name="active"
+          render={({ field }) => (
+            <ActiveSwitchField 
+              control={form.control}
+              name="active" 
+              label={t("common.status")}
+              description={field.value ? t("common.active") : t("common.inactive")}
+            />
+          )}
         />
 
         {/* Form actions */}
