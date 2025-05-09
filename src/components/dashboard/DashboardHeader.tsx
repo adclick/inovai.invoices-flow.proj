@@ -1,6 +1,6 @@
 import React from "react";
 import { format } from "date-fns";
-import { Filter, Plus, Search } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -20,8 +20,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title }) => {
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{format(new Date(), "EEEE, MMMM d, yyyy")}</p>
       </div>
       <div className="flex items-center space-x-2">
-        <Button size="sm" onClick={() => navigate("/jobs/create")}>
-          <Plus className="mr-1 h-4 w-4" />
+        <Button onClick={() => navigate("/jobs/create")}>
+					<PlusCircle className="mr-2 h-4 w-4" />
           {t('jobs.createNew')}
         </Button>
       </div>

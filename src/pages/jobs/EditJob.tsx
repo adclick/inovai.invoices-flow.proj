@@ -505,7 +505,7 @@ const EditJob: React.FC = () => {
   return (
     <EditPageLayout
       title={t("jobs.editJob")}
-      description={job ? `${t("jobs.editingJobId", { id: job.id })} (${job.campaign_name || t("jobs.unknownCampaign")})` : t("jobs.updateJobDetails")}
+      description={job ? `(${job.campaign_name || t("jobs.unknownCampaign")})` : t("jobs.updateJobDetails")}
       isLoading={isLoadingJob}
       isError={false}
       loadingText={t("common.loadingJobData")}

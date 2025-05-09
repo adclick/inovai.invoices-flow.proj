@@ -477,33 +477,33 @@ serve(async (req) => {
 
     // Add a section that checks for and handles expired jobs
     // This can be a backup in case the cron job fails
-    try {
-      // Check if there are any expired jobs that still have public tokens
-      const { data: expiredJobs, error: expiredJobsError } = await supabase
-        .from('jobs')
-        .select('id')
-        .eq('status', 'pending_invoice')
-        .lt('due_date', new Date().toISOString())
-        .not('public_token', 'is', null)
-        .limit(10); // Limit to 10 to avoid processing too many at once
+    // try {
+    //   // Check if there are any expired jobs that still have public tokens
+    //   const { data: expiredJobs, error: expiredJobsError } = await supabase
+    //     .from('jobs')
+    //     .select('id')
+    //     .eq('status', 'pending_invoice')
+    //     .lt('due_date', new Date().toISOString())
+    //     .not('public_token', 'is', null)
+    //     .limit(10); // Limit to 10 to avoid processing too many at once
         
-      if (expiredJobsError) {
-        console.error('Error checking for expired jobs:', expiredJobsError);
-      } else if (expiredJobs && expiredJobs.length > 0) {
-        console.log(`Found ${expiredJobs.length} expired jobs that need updating`);
+    //   if (expiredJobsError) {
+    //     console.error('Error checking for expired jobs:', expiredJobsError);
+    //   } else if (expiredJobs && expiredJobs.length > 0) {
+    //     console.log(`Found ${expiredJobs.length} expired jobs that need updating`);
         
-        // Call the update_expired_jobs function directly as a backup mechanism
-        const { error: updateError } = await supabase.rpc('update_expired_jobs');
+    //     // Call the update_expired_jobs function directly as a backup mechanism
+    //     const { error: updateError } = await supabase.rpc('update_expired_jobs');
         
-        if (updateError) {
-          console.error('Error updating expired jobs:', updateError);
-        } else {
-          console.log('Successfully updated expired jobs via edge function');
-        }
-      }
-    } catch (error) {
-      console.error('Unexpected error in expired jobs check:', error);
-    }
+    //     if (updateError) {
+    //       console.error('Error updating expired jobs:', updateError);
+    //     } else {
+    //       console.log('Successfully updated expired jobs via edge function');
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.error('Unexpected error in expired jobs check:', error);
+    // }
 
     return new Response(
       JSON.stringify({ 

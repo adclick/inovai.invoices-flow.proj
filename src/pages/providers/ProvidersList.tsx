@@ -1,37 +1,37 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2 } from "lucide-react";
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
+import {
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious
 } from "@/components/ui/pagination";
 import { useTranslation } from "react-i18next";
 
@@ -187,7 +187,7 @@ const ProvidersList = () => {
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("providers.title")}</h1>
           <Button onClick={() => navigate("/providers/create")} className="shrink-0">
             <PlusCircle className="mr-2 h-4 w-4" />
-            {t("providers.newProvider")}
+            {t("providers.createNew")}
           </Button>
         </div>
 
@@ -197,7 +197,7 @@ const ProvidersList = () => {
             <p className="text-slate-500 dark:text-slate-400 mb-4">{t("providers.getStarted")}</p>
             <Button onClick={() => navigate("/providers/create")}>
               <PlusCircle className="mr-2 h-4 w-4" />
-              {t("providers.createProvider")}
+              {t("providers.createNew")}
             </Button>
           </div>
         ) : (

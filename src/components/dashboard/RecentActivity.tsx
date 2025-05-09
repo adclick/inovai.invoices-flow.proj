@@ -41,7 +41,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ recentActivity, isLoadi
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle>{t('dashboard.recentActivity')}</CardTitle>
-          <Button variant="ghost" size="sm" className="text-sm">
+          <Button variant="ghost" size="sm" className="text-sm" onClick={() => navigate('/jobs')}>
             {t('common.viewAll')}
           </Button>
         </div>

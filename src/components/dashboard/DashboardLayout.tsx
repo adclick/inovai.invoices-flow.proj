@@ -222,7 +222,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 								</span>
 							</div>
 							<div className="hidden md:block">
-								<div className="text-sm font-medium text-slate-900 dark:text-white truncate max-w-[150px]">{user?.email}</div>
+								<div className="text-sm font-medium text-slate-900 dark:text-white">{user?.email}</div>
 							</div>
 						</div>
 					</div>

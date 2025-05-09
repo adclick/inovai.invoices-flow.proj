@@ -234,7 +234,7 @@ const JobsAllList: React.FC = () => {
 						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("jobs.getStarted")}</p>
 						<Button onClick={() => navigate("/jobs/create")}>
 							<PlusCircle className="mr-2 h-4 w-4" />
-							{t("jobs.createJob")}
+							{t("jobs.createNew")}
 						</Button>
 					</div>
 				) : (
@@ -277,7 +277,7 @@ const JobsAllList: React.FC = () => {
 										<TableHead>{t("jobs.months")}</TableHead>
 										<TableHead>{t("jobs.value")}</TableHead>
 										<TableHead>{t("jobs.status")}</TableHead>
-										<TableHead>{t("jobs.documents")}</TableHead>
+										<TableHead>{t("jobs.invoice")}</TableHead>
 										<TableHead className="text-right">{t("jobs.actions")}</TableHead>
 									</TableRow>
 								</TableHeader>

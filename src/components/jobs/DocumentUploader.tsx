@@ -176,7 +176,7 @@ export const DocumentUploader: React.FC<DocumentUploaderProps> = ({
 	return (
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
-				<h3 className="text-lg font-medium">{t("jobs.documents")}</h3>
+				<h3 className="text-lg font-medium">{t("jobs.uploadedDocuments")}</h3>
 				<Button
 					onClick={openFileDialog}
 					variant="outline"
