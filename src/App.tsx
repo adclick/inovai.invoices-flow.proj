@@ -26,7 +26,8 @@ import EditManager from "./pages/managers/EditManager";
 import ProvidersListWithModal from "./pages/providers/ProvidersListWithModal"; // Using our new version instead
 import CreateProvider from "./pages/providers/CreateProvider";
 import EditProvider from "./pages/providers/EditProvider";
-import JobsRouter from "./pages/jobs/JobsRouter";
+// import JobsRouter from "./pages/jobs/JobsRouter"; // Commenting out the old version
+import JobsListWithModal from "./pages/jobs/JobsListWithModal"; // Using our new version instead
 import CreateJob from "./pages/jobs/CreateJob";
 import EditJob from "./pages/jobs/EditJob";
 import Settings from "./pages/settings/Settings";
@@ -67,7 +68,7 @@ const App = () => (
 									<Route path="/providers" element={<ProvidersListWithModal />} />
 									<Route path="/providers/create" element={<CreateProvider />} />
 									<Route path="/providers/edit/:id" element={<EditProvider />} />
-									<Route path="/jobs/*" element={<JobsRouter />} />
+									<Route path="/jobs/*" element={<JobsListWithModal />} />
 									<Route path="/jobs/create" element={<CreateJob />} />
 									<Route path="/jobs/edit/:id" element={<EditJob />} />
 									<Route path="/settings" element={<Settings />} />

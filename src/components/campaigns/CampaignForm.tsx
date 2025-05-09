@@ -93,8 +93,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
       form.reset({
         name: data.name,
         client_id: data.client_id,
-        // Handle the case where description doesn't exist in the database schema
-        description: data.description || "",
+        description: "", // Initialize with empty string as it's not in the database
         duration: data.duration,
         estimated_cost: data.estimated_cost || 0,
         revenue: data.revenue || 0,
@@ -110,11 +109,12 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       // Extract description from values before sending to Supabase
+      // as it doesn't exist in the database schema
       const { description, ...dbValues } = values;
       
       const { data, error } = await supabase
         .from("campaigns")
-        .insert([dbValues])
+        .insert(dbValues)
         .select()
         .single();
       
@@ -144,6 +144,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       // Extract description from values before sending to Supabase
+      // as it doesn't exist in the database schema
       const { description, ...dbValues } = values;
       
       const { data, error } = await supabase
