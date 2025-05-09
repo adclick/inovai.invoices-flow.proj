@@ -20,7 +20,8 @@ import EditCampaign from "./pages/campaigns/EditCampaign";
 import ManagersListWithModal from "./pages/managers/ManagersListWithModal"; // Using our new version instead
 import CreateManager from "./pages/managers/CreateManager";
 import EditManager from "./pages/managers/EditManager";
-import ProvidersList from "./pages/providers/ProvidersList";
+// import ProvidersList from "./pages/providers/ProvidersList"; // Commenting out the old version
+import ProvidersListWithModal from "./pages/providers/ProvidersListWithModal"; // Using our new version instead
 import CreateProvider from "./pages/providers/CreateProvider";
 import EditProvider from "./pages/providers/EditProvider";
 import JobsRouter from "./pages/jobs/JobsRouter";
@@ -61,7 +62,7 @@ const App = () => (
 									<Route path="/managers" element={<ManagersListWithModal />} />
 									<Route path="/managers/create" element={<CreateManager />} />
 									<Route path="/managers/edit/:id" element={<EditManager />} />
-									<Route path="/providers" element={<ProvidersList />} />
+									<Route path="/providers" element={<ProvidersListWithModal />} />
 									<Route path="/providers/create" element={<CreateProvider />} />
 									<Route path="/providers/edit/:id" element={<EditProvider />} />
 									<Route path="/jobs/*" element={<JobsRouter />} />

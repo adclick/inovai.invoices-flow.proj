@@ -18,12 +18,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import ActiveSwitchField from "@/components/common/ActiveSwitchField";
 import { BaseEntityFormProps } from "../common/EntityModal";
 
-interface ManagerFormProps extends BaseEntityFormProps {}
+interface ProviderFormProps extends BaseEntityFormProps {}
 
-const ManagerForm: React.FC<ManagerFormProps> = ({ 
+const ProviderForm: React.FC<ProviderFormProps> = ({ 
   onClose, 
   onSuccess, 
   id, 
@@ -34,39 +41,47 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
   const queryClient = useQueryClient();
   const isEditMode = mode === 'edit';
 
-  // Schema for manager form validation
-  const managerSchema = z.object({
-    name: z.string().min(1, t("managers.nameRequired")),
+  // Schema for provider form validation
+  const providerSchema = z.object({
+    name: z.string().min(1, t("providers.nameRequired")),
     email: z.string().email(t("common.invalidEmail")),
+    language: z.enum(["en", "pt", "es"], {
+      errorMap: () => ({ message: t("providers.languageRequired") }),
+    }),
+    country: z.string().optional(),
+    iban: z.string().optional(),
     active: z.boolean().default(true),
   });
 
-  type ManagerFormValues = z.infer<typeof managerSchema>;
+  type ProviderFormValues = z.infer<typeof providerSchema>;
 
   // Form setup
-  const form = useForm<ManagerFormValues>({
-    resolver: zodResolver(managerSchema),
+  const form = useForm<ProviderFormValues>({
+    resolver: zodResolver(providerSchema),
     defaultValues: {
       name: "",
       email: "",
+      language: "pt",
+      country: "",
+      iban: "",
       active: true,
     },
   });
 
-  // Fetch manager data if in edit mode
-  const { data: manager, isLoading } = useQuery({
-    queryKey: ["manager", id],
+  // Fetch provider data if in edit mode
+  const { data: provider, isLoading } = useQuery({
+    queryKey: ["provider", id],
     queryFn: async () => {
-      if (!id) throw new Error("Manager ID is required for edit mode");
+      if (!id) throw new Error("Provider ID is required for edit mode");
 
       const { data, error } = await supabase
-        .from("managers")
+        .from("providers")
         .select("*")
         .eq("id", id)
         .single();
 
       if (error) {
-        console.error("Error fetching manager:", error.message);
+        console.error("Error fetching provider:", error.message);
         throw error;
       }
       return data;
@@ -74,35 +89,38 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
     enabled: isEditMode && Boolean(id),
   });
 
-  // Update form values when manager data is loaded
+  // Update form values when provider data is loaded
   useEffect(() => {
-    if (manager) {
+    if (provider) {
       form.reset({
-        name: manager.name,
-        email: manager.email,
-        active: manager.active,
+        name: provider.name,
+        email: provider.email,
+        language: provider.language,
+        country: provider.country || "",
+        iban: provider.iban || "",
+        active: provider.active,
       });
     }
-  }, [manager, form]);
+  }, [provider, form]);
 
-  // Create manager mutation
+  // Create provider mutation
   const createMutation = useMutation({
-    mutationFn: async (values: ManagerFormValues) => {
+    mutationFn: async (values: ProviderFormValues) => {
       const { data, error } = await supabase
-        .from("managers")
-        .insert(values) // Fix: Pass the values object directly, not as an array
+        .from("providers")
+        .insert(values)
         .select();
 
       if (error) {
-        console.error("Error creating manager:", error.message);
+        console.error("Error creating provider:", error.message);
         throw error;
       }
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["managers"] });
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
       toast({
-        title: t("managers.created"),
+        title: t("providers.created"),
       });
       form.reset();
       if (onSuccess) onSuccess();
@@ -117,13 +135,13 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
     },
   });
 
-  // Update manager mutation
+  // Update provider mutation
   const updateMutation = useMutation({
-    mutationFn: async (values: ManagerFormValues) => {
-      if (!id) throw new Error("Manager ID is required for update");
+    mutationFn: async (values: ProviderFormValues) => {
+      if (!id) throw new Error("Provider ID is required for update");
 
       const { data, error } = await supabase
-        .from("managers")
+        .from("providers")
         .update({
           ...values,
           updated_at: new Date().toISOString(),
@@ -132,16 +150,16 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
         .select();
 
       if (error) {
-        console.error("Error updating manager:", error.message);
+        console.error("Error updating provider:", error.message);
         throw error;
       }
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["managers"] });
-      queryClient.invalidateQueries({ queryKey: ["manager", id] });
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
+      queryClient.invalidateQueries({ queryKey: ["provider", id] });
       toast({
-        title: t("managers.updated"),
+        title: t("providers.updated"),
       });
       if (onSuccess) onSuccess();
       onClose();
@@ -160,7 +178,7 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
   const isPending = mutation.isPending || isLoading;
 
   // Form submission handler
-  const onSubmit = (values: ManagerFormValues) => {
+  const onSubmit = (values: ProviderFormValues) => {
     mutation.mutate(values);
   };
 
@@ -172,9 +190,9 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("managers.name")}</FormLabel>
+              <FormLabel>{t("providers.name")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("managers.enterName")} {...field} />
+                <Input placeholder={t("providers.enterName")} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -199,11 +217,65 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
           )}
         />
 
+        <FormField
+          control={form.control}
+          name="language"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("providers.language")}</FormLabel>
+              <Select 
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t("providers.selectLanguage")} />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="pt">{t("languages.portuguese")}</SelectItem>
+                  <SelectItem value="en">{t("languages.english")}</SelectItem>
+                  <SelectItem value="es">{t("languages.spanish")}</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="country"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("providers.country")}</FormLabel>
+              <FormControl>
+                <Input placeholder={t("providers.enterCountry")} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="iban"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("providers.iban")}</FormLabel>
+              <FormControl>
+                <Input placeholder={t("providers.enterIBAN")} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {isEditMode && (
           <ActiveSwitchField
             control={form.control}
             name="active"
-            description={t("managers.activeDescription")}
+            description={t("providers.activeDescription")}
           />
         )}
 
@@ -233,4 +305,4 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
   );
 };
 
-export default ManagerForm;
+export default ProviderForm;
