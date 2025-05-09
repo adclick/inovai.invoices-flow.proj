@@ -16,7 +16,8 @@ import EditClient from "./pages/clients/EditClient";
 import CampaignsList from "./pages/campaigns/CampaignsList";
 import CreateCampaign from "./pages/campaigns/CreateCampaign";
 import EditCampaign from "./pages/campaigns/EditCampaign";
-import ManagersList from "./pages/managers/ManagersList";
+// import ManagersList from "./pages/managers/ManagersList"; // Commenting out the old version
+import ManagersListWithModal from "./pages/managers/ManagersListWithModal"; // Using our new version instead
 import CreateManager from "./pages/managers/CreateManager";
 import EditManager from "./pages/managers/EditManager";
 import ProvidersList from "./pages/providers/ProvidersList";
@@ -57,7 +58,7 @@ const App = () => (
 									<Route path="/campaigns" element={<CampaignsList />} />
 									<Route path="/campaigns/create" element={<CreateCampaign />} />
 									<Route path="/campaigns/edit/:id" element={<EditCampaign />} />
-									<Route path="/managers" element={<ManagersList />} />
+									<Route path="/managers" element={<ManagersListWithModal />} />
 									<Route path="/managers/create" element={<CreateManager />} />
 									<Route path="/managers/edit/:id" element={<EditManager />} />
 									<Route path="/providers" element={<ProvidersList />} />
