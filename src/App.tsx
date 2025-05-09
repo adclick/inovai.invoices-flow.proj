@@ -14,7 +14,8 @@ import NotFound from "./pages/NotFound";
 import ClientsListWithModal from "./pages/clients/ClientsListWithModal"; // Using our new version instead
 import CreateClient from "./pages/clients/CreateClient";
 import EditClient from "./pages/clients/EditClient";
-import CampaignsList from "./pages/campaigns/CampaignsList";
+// import CampaignsList from "./pages/campaigns/CampaignsList"; // Commenting out the old version
+import CampaignsListWithModal from "./pages/campaigns/CampaignsListWithModal"; // Using our new version instead
 import CreateCampaign from "./pages/campaigns/CreateCampaign";
 import EditCampaign from "./pages/campaigns/EditCampaign";
 // import ManagersList from "./pages/managers/ManagersList"; // Commenting out the old version
@@ -57,7 +58,7 @@ const App = () => (
 									<Route path="/clients" element={<ClientsListWithModal />} />
 									<Route path="/clients/create" element={<CreateClient />} />
 									<Route path="/clients/edit/:id" element={<EditClient />} />
-									<Route path="/campaigns" element={<CampaignsList />} />
+									<Route path="/campaigns" element={<CampaignsListWithModal />} />
 									<Route path="/campaigns/create" element={<CreateCampaign />} />
 									<Route path="/campaigns/edit/:id" element={<EditCampaign />} />
 									<Route path="/managers" element={<ManagersListWithModal />} />
