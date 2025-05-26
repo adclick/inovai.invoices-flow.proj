@@ -35,8 +35,8 @@ const LanguageSelector: React.FC = () => {
             onClick={() => changeLanguage(language.code)}
             className={
               currentLanguage === language.code
-                ? "bg-primary text-white hover:bg-primary hover:text-white dark:bg-primary dark:text-white"
-                : ""
+                ? "cursor-pointer bg-primary text-white hover:bg-primary hover:text-white dark:bg-primary dark:text-white"
+                : "cursor-pointer "
             }
           >
             {language.name}

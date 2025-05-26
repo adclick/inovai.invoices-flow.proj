@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSidebar } from "@/contexts/SidebarContext";
 import { useTranslation } from "react-i18next";
 import {
-	LayoutDashboard, LogOut, UserCog, Sidebar as SidebarIcon, List,
-	Group, Handshake, Megaphone, Wrench, LucideIcon, Menu, X,
-	Settings, User
+	LayoutDashboard, LogOut, UserCog, Sidebar as SidebarIcon, List, Handshake, Megaphone, Wrench, LucideIcon, Menu, Settings, User,
+	Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ThemeToggle from "@/components/theme/ThemeToggle";
 import LanguageSelector from "@/components/language/LanguageSelector";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 interface DashboardLayoutProps {
 	children: React.ReactNode;
 }
 
-
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	const { user, signOut, checkHasRole } = useAuth();
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const { isSidebarPreferenceOpen, toggleSidebarPreference } = useSidebar();
 	const [isMobile, setIsMobile] = useState(false);
+	const [actualSidebarOpen, setActualSidebarOpen] = useState(isSidebarPreferenceOpen);
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 	const location = useLocation();
 	const { t } = useTranslation();
@@ -30,11 +30,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 	useEffect(() => {
 		const checkIfMobile = () => {
-			setIsMobile(window.innerWidth < 1024);
-			if (window.innerWidth < 1024) {
-				setSidebarOpen(false);
+			const mobile = window.innerWidth < 1024;
+			setIsMobile(mobile);
+			if (mobile) {
+				setActualSidebarOpen(false);
 			} else {
-				setSidebarOpen(true);
+				setActualSidebarOpen(isSidebarPreferenceOpen);
 			}
 		};
 
@@ -44,11 +45,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 		return () => {
 			window.removeEventListener('resize', checkIfMobile);
 		};
-	}, []);
+	}, [isSidebarPreferenceOpen]);
 
-	const toggleSidebar = () => {
-		setSidebarOpen(!sidebarOpen);
-	};
+	useEffect(() => {
+		if (!isMobile) {
+			setActualSidebarOpen(isSidebarPreferenceOpen);
+		}
+	}, [isSidebarPreferenceOpen, isMobile]);
 
 	const isActiveRoute = (path: string) => {
 		return location.pathname === path;
@@ -62,10 +65,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 			<TooltipProvider delayDuration={100}>
 				<Tooltip>
 					<TooltipTrigger asChild>
-						<button
+						<NavLink
+							to={path}
 							onClick={() => {
 								setMobileMenuOpen(false);
-								navigate(path);
 							}}
 							className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors duration-200 group
 								${isActive
@@ -79,7 +82,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 									<span className="ml-3 text-sm">{label}</span>
 								)}
 							</div>
-						</button>
+						</NavLink>
 					</TooltipTrigger>
 					{!isSidebarExpanded && !isMobile && (
 						<TooltipContent side="right" align="center">
@@ -96,8 +99,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	];
 
 	const jobItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
-		{ path: "/jobs/all", icon: List, label: t("navigation.allJobs") },
-		{ path: "/jobs/grouped", icon: Group, label: t("navigation.byGroup") },
+		{ path: "/jobs", icon: List, label: t("navigation.allJobs") },
 	];
 
 	const managementItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
@@ -105,6 +107,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 		{ path: "/managers", icon: UserCog, label: t("navigation.managers") },
 		{ path: "/clients", icon: Handshake, label: t("navigation.clients") },
 		{ path: "/campaigns", icon: Megaphone, label: t("navigation.campaigns") },
+		{ path: "/jobs-types", icon: Layers, label: t("navigation.jobTypes") },
 		{ path: "/profile", icon: User, label: t("navigation.profile") },
 		{ path: "/settings", icon: Settings, label: t("navigation.settings") },
 	];
@@ -112,14 +115,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	const SidebarContent = ({ expanded }: { expanded: boolean }) => (
 		<>
 			<div className="flex items-center justify-between h-16 px-4 border-b border-slate-200/20 dark:border-slate-700">
-				<div className={`flex items-center`}>
+				<NavLink to="/dashboard" className={`flex items-center`}>
 					<div className="p-2 rounded-full bg-white/10 dark:bg-primary/20 mr-2">
 						<div className="text-white dark:text-primary/90 font-bold text-lg">IF</div>
 					</div>
 					{expanded && (
-						<span className="text-lg font-semibold text-white dark:text-white">InvoicesFlow</span>
+							<span className="text-lg font-semibold text-white dark:text-white">InvoicesFlow</span>
 					)}
-				</div>
+				</NavLink>
 			</div>
 			<nav className={`flex-1 ${expanded ? 'p-4' : 'p-2'}`}>
 				<ul className="space-y-1">
@@ -163,13 +166,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 				</div>
 
 				<Separator className="my-4 bg-white/20 dark:bg-slate-700" />
-				<button
+				<NavLink
+					to="/logout"
 					onClick={signOut}
 					className="flex w-full items-center px-3 py-2 rounded-lg text-white/80 hover:bg-white/10 dark:hover:bg-slate-700 dark:text-red-400 transition-colors duration-200"
 				>
 					<LogOut size={20} />
 					{expanded && <span className="ml-3 text-sm font-medium">{t("auth.signOut")}</span>}
-				</button>
+				</NavLink>
 			</nav>
 		</>
 	);
@@ -178,9 +182,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 		<div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex">
 			<div
 				className={`gradient-bg dark:bg-none dark:bg-slate-800 border-r border-slate-200/20 dark:border-slate-700 transition-all duration-300 ease-in-out backdrop-blur-sm
-                   ${sidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10 hidden lg:block`}
+                   ${actualSidebarOpen ? 'w-64' : 'w-16'} fixed h-full z-10 hidden lg:block`}
 			>
-				<SidebarContent expanded={sidebarOpen} />
+				<SidebarContent expanded={actualSidebarOpen} />
 			</div>
 
 			<Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -189,7 +193,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 				</SheetContent>
 			</Sheet>
 
-			<div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-16'}`}>
+			<div className={`flex-1 transition-all duration-300 ${actualSidebarOpen ? 'lg:ml-64' : 'lg:ml-16'}`}>
 				<header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 h-16 flex items-center px-4 sticky top-0 z-10">
 					<div className="flex-1 flex items-center">
 						<div className="flex items-center">
@@ -205,7 +209,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 							<Button
 								variant="ghost"
 								size="icon"
-								onClick={toggleSidebar}
+								onClick={toggleSidebarPreference}
 								className="rounded-lg bg-white/10 hover:bg-white/10 dark:hover:bg-slate-700 dark:text-white hidden lg:flex"
 							>
 								<SidebarIcon size={18} />

@@ -64,7 +64,6 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ recentActivity, isLoadi
             {recentActivity?.map((activity) => (
               <div
                 key={activity.id}
-                onClick={() => navigate(`/jobs/edit/${activity.id}`)}
                 className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
               >
                 <div className="flex items-center space-x-3">

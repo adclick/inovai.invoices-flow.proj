@@ -31,7 +31,9 @@
     "yes": "Yes",
     "no": "No",
     "updating": "Updating...",
+		"updated": "Updated",
     "creating": "Creating...",
+		"created": "Created",
     "success": "Success",
     "failure": "Failure",
     "january": "January",
@@ -135,7 +137,8 @@
     "pending": "Pending",
     "jobs": "Jobs",
     "jobsOverview": "Jobs Overview",
-    "currentStatusDistribution": "Current status distribution"
+    "currentStatusDistribution": "Current status distribution",
+    "workingJobs": "Working Jobs"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -148,7 +151,8 @@
     "clients": "Clients",
     "campaigns": "Campaigns",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "jobTypes": "Job Types"
   },
   "profile": {
     "title": "User Profile",
@@ -258,7 +262,13 @@
     "thankYouForSubmission": "Thank you for your submission!",
     "youMayCloseWindow": "You may now close this window.",
     "dueDatePassed": "The submission deadline has passed",
-    "uploadLinkExpired": "This upload link has expired"
+    "uploadLinkExpired": "This upload link has expired",
+    "providerEmailSent": "Provider Email Sent",
+    "noJobsFound": "No jobs found",
+		"getStarted": "Get started by creating your first job.",
+		"selectClientFirst": "Please select a client first",
+		"jobType": "Job Type",
+		"selectJobType": "Please select a job type"
   },
   "clients": {
     "title": "Clients",
@@ -330,7 +340,22 @@
     "cancel": "Cancel",
     "createFirstManager": "Create your first manager",
     "deleteManager": "Delete Manager",
-    "deleteConfirmation": "Are you sure you want to delete {{name}}? This action cannot be undone."
+    "deleteConfirmation": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "noData": "No managers found. Click \"New Manager\" to add one.",
+    "name": "Name",
+    "managerDeletedDescription": "The manager has been successfully deleted.",
+    "managerDeleteError": "Error deleting manager. Please try again.",
+    "form": {
+      "createTitle": "Create New Manager",
+      "editTitle": "Edit Manager",
+      "namePlaceholder": "Enter manager's full name",
+      "emailPlaceholder": "Enter manager's email address",
+      "activeLabel": "Active Manager",
+      "successCreate": "Manager created successfully.",
+      "successUpdate": "Manager updated successfully.",
+      "errorCreate": "Could not create manager. Please try again.",
+      "errorUpdate": "Could not update manager. Please try again."
+    }
   },
   "providers": {
     "title": "Providers",
@@ -369,8 +394,21 @@
     "enterIban": "Enter IBAN (optional)",
     "providerNotFound": "Provider not found",
     "updateProvider": "Update Provider",
-    "deleteProvider": "Delete Provider"
+    "deleteProvider": "Delete Provider",
+    "language": "Language",
+    "createFirstProvider": "Create Your First Provider",
+    "loadingProviders": "Loading providers...",
+    "errorLoadingProviders": "Error loading providers. Please try again later."
   },
+	"jobTypes": {
+		"name": "Name",
+		"title": "Job Types",
+		"createNew": "Create New Job Type",
+		"editJobType": "Edit Job Type",
+		"editJobTypeDescription": "Edit the job type information",
+		"jobTypeDetails": "Job Type Details",
+		"jobTypeName": "Job Type Name"
+	},
   "publicPages": {
     "upload": {
       "title": "Upload Invoice",

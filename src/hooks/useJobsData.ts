@@ -39,6 +39,10 @@ export const useJobsData = () => {
         .from("managers")
         .select("id, name");
 
+			const { data: jobTypes } = await supabase
+				.from("job_type")
+				.select("id, name");
+
       // Create lookup tables for entity names
       const campaignMap = campaigns?.reduce((acc: Record<string, any>, campaign) => {
         acc[campaign.id] = {
@@ -64,7 +68,8 @@ export const useJobsData = () => {
         campaign_name: campaignMap[job.campaign_id]?.name || "Unknown Campaign",
         client_name: campaignMap[job.campaign_id]?.client_name || "Unknown Client",
         provider_name: providerMap[job.provider_id] || "Unknown Provider",
-        manager_name: managerMap[job.manager_id] || "Unknown Manager"
+        manager_name: managerMap[job.manager_id] || "Unknown Manager",
+				job_type_name: jobTypes?.find((jobType: any) => jobType.id === job.job_type_id)?.name || "Unknown Job Type"
       })) as Job[];
     },
   });

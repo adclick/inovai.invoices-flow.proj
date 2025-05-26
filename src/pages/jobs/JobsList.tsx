@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import {
@@ -12,7 +12,7 @@ import {
 	TableRow
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Edit, Trash2, FileText } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -44,6 +44,8 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
+import { useModalState } from "@/hooks/useModalState";
+import JobModal from "@/components/jobs/JobModal";
 
 const JobsAllList: React.FC = () => {
 	const { t } = useTranslation();
@@ -55,8 +57,16 @@ const JobsAllList: React.FC = () => {
 	const [paymentFilter, setPaymentFilter] = useState<string>("all");
 	const itemsPerPage = 10;
 	const { toast } = useToast();
-	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { openModal } = useModalState();
+
+  const handleCreateJob = () => {
+    openModal("job", "create");
+  };
+
+	const handleEditJob = (id: string) => {
+		openModal("job", "edit", id);
+	};
 
 	// Use the shared hook to fetch jobs data
 	const { data, isLoading, error } = useJobsData();
@@ -222,7 +232,7 @@ const JobsAllList: React.FC = () => {
 			<div className="p-6">
 				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
 					<h1 className="text-2xl font-semibold text-slate-900 dark:text-white">{t("jobs.title")}</h1>
-					<Button onClick={() => navigate("/jobs/create")} className="shrink-0">
+					<Button onClick={handleCreateJob} className="shrink-0">
 						<PlusCircle className="mr-2 h-4 w-4" />
 						{t("jobs.createNew")}
 					</Button>
@@ -232,7 +242,7 @@ const JobsAllList: React.FC = () => {
 					<div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-lg border border-slate-200 dark:border-slate-700 text-center">
 						<h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">{t("jobs.noJobsFound")}</h3>
 						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("jobs.getStarted")}</p>
-						<Button onClick={() => navigate("/jobs/create")}>
+						<Button onClick={handleCreateJob}>
 							<PlusCircle className="mr-2 h-4 w-4" />
 							{t("jobs.createNew")}
 						</Button>
@@ -270,32 +280,38 @@ const JobsAllList: React.FC = () => {
 							<Table>
 								<TableHeader>
 									<TableRow>
+										<TableHead>{t("jobs.status")}</TableHead>
+										<TableHead>{t("jobs.jobType")}</TableHead>
 										<TableHead>{t("jobs.client")}</TableHead>
 										<TableHead>{t("jobs.campaign")}</TableHead>
 										<TableHead>{t("jobs.manager")}</TableHead>
 										<TableHead>{t("jobs.provider")}</TableHead>
 										<TableHead>{t("jobs.months")}</TableHead>
 										<TableHead>{t("jobs.value")}</TableHead>
-										<TableHead>{t("jobs.status")}</TableHead>
+										<TableHead>{t("jobs.date")}</TableHead>
+										<TableHead>{t("jobs.providerEmailSent")}</TableHead>
 										<TableHead>{t("jobs.invoice")}</TableHead>
 										<TableHead className="text-right">{t("jobs.actions")}</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
 									{paginatedJobs.map((job) => (
-										<TableRow key={job.id} onClick={() => navigate(`/jobs/edit/${job.id}`)} className="cursor-pointer">
+										<TableRow key={job.id} onClick={() => handleEditJob(job.id)} className="cursor-pointer">
+											<TableCell>{getStatusBadge(job.status)}</TableCell>
+											<TableCell>{job.job_type_name || t("jobs.unknownJobType")}</TableCell>
 											<TableCell className="font-medium">{job.client_name || t("jobs.unknownClient")}</TableCell>
 											<TableCell>{job.campaign_name || t("jobs.unknownCampaign")}</TableCell>
 											<TableCell>{job.manager_name || t("jobs.unknownManager")}</TableCell>
 											<TableCell>{job.provider_name || t("jobs.unknownProvider")}</TableCell>
-											<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 											<TableCell>{job.months.map(month => t(`common.${month}`)).join(", ")}</TableCell>
-											<TableCell>{getStatusBadge(job.status)}</TableCell>
+											<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
+											<TableCell>{job.due_date ? new Date(job.due_date).toLocaleDateString() : t("jobs.unknownDate")}</TableCell>
+											<TableCell>{job.provider_email_sent ? new Date(job.provider_email_sent).toLocaleDateString() : <span className="text-slate-400 text-sm">-</span>}</TableCell>
 											<TableCell className="w-2">
 												{job.documents && job.documents.length > 0 ? (
 													<Link to={job.documents[0]} onClick={e => e.stopPropagation()} target="_blank">
 														<Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30">
-															{job.documents[0]}
+															Document
 														</Badge>
 													</Link>
 												) : (
@@ -324,7 +340,7 @@ const JobsAllList: React.FC = () => {
 						{renderPagination()}
 					</>
 				)}
-
+				<JobModal />
 				<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
 					<AlertDialogContent>
 						<AlertDialogHeader>

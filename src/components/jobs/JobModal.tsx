@@ -16,15 +16,10 @@ export const JobModal: React.FC = () => {
 
   const isCreateMode = modalState.mode === 'create';
   const title = isCreateMode ? t("jobs.createNew") : t("jobs.editJob");
-  const description = isCreateMode 
-    ? t("jobs.createDescription")
-    : t("jobs.updateDescription");
 
   return (
     <EntityModal
       title={title}
-      description={description}
-      size="lg"
     >
       <JobForm
         mode={modalState.mode || 'create'}

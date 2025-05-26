@@ -32,9 +32,11 @@ const ActiveCampaigns: React.FC<ActiveCampaignsProps> = ({ campaigns, isLoading 
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle>{t('dashboard.activeCampaigns')}</CardTitle>
-          <Button variant="ghost" size="sm" className="text-sm">
-            {t('common.viewAll')}
-          </Button>
+					<a href="/campaigns" className="text-sm">
+						<Button variant="ghost" size="sm" className="text-sm">
+							{t('common.viewAll')}
+						</Button>
+					</a>
         </div>
       </CardHeader>
       <CardContent>
@@ -62,7 +64,6 @@ const ActiveCampaigns: React.FC<ActiveCampaignsProps> = ({ campaigns, isLoading 
               return (
                 <button
                   key={campaign.id}
-                  onClick={() => navigate(`/campaigns/edit/${campaign.id}`)}
                   className="w-full text-left p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center justify-between mb-2">

@@ -24,7 +24,6 @@ export const ProviderModal: React.FC = () => {
     <EntityModal
       title={title}
       description={description}
-      size="md"
     >
       <ProviderForm
         mode={modalState.mode || 'create'}

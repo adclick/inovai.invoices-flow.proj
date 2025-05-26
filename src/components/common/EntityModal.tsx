@@ -34,7 +34,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
   description,
   children,
   className = "",
-  size = "lg"
+  size = "2xl"
 }) => {
   const { modalState, closeModal } = useModalState();
   const { t } = useTranslation();
@@ -49,19 +49,10 @@ export const EntityModal: React.FC<EntityModalProps> = ({
         <DialogHeader className="mb-4">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={closeModal}
-              className="h-8 w-8 rounded-full"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">{t("common.close")}</span>
-            </Button>
           </div>
           {description && <div className="text-sm text-muted-foreground mt-1">{description}</div>}
         </DialogHeader>
-        <div className="overflow-y-auto max-h-[calc(80vh-10rem)]">{children}</div>
+        <div className="overflow-y-auto max-h-[calc(80vh-10rem)] px-1">{children}</div>
       </DialogContent>
     </Dialog>
   );

@@ -24,7 +24,6 @@ export const ManagerModal: React.FC = () => {
     <EntityModal
       title={title}
       description={description}
-      size="md"
     >
       <ManagerForm
         mode={modalState.mode || 'create'}

@@ -24,7 +24,6 @@ export const ClientModal: React.FC = () => {
     <EntityModal
       title={title}
       description={description}
-      size="md"
     >
       <ClientForm
         mode={modalState.mode || 'create'}

@@ -31,7 +31,9 @@
     "yes": "Sim",
     "no": "Não",
     "updating": "A atualizar...",
+		"updated": "Atualizado",
     "creating": "A criar...",
+		"created": "Criado",
     "success": "Sucesso",
     "failure": "Falha",
     "january": "Janeiro",
@@ -135,7 +137,8 @@
     "pending": "Pendente",
     "jobs": "Trabalhos",
     "jobsOverview": "Visão Geral dos Trabalhos",
-    "currentStatusDistribution": "Distribuição atual por estado"
+    "currentStatusDistribution": "Distribuição atual por estado",
+    "workingJobs": "Trabalhos em Progresso"
   },
   "navigation": {
     "dashboard": "Painel",
@@ -148,7 +151,8 @@
     "clients": "Clientes",
     "campaigns": "Campanhas",
     "settings": "Definições",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "jobTypes": "Tipos de Trabalhos"
   },
   "profile": {
     "title": "Perfil de Utilizador",
@@ -258,7 +262,13 @@
     "thankYouForSubmission": "Obrigado pela sua submissão!",
     "youMayCloseWindow": "Pode agora fechar esta janela.",
     "dueDatePassed": "O prazo de submissão expirou",
-    "uploadLinkExpired": "Este link de upload expirou"
+    "uploadLinkExpired": "Este link de upload expirou",
+		"providerEmailSent": "Email Enviado ao Fornecedor",
+		"noJobsFound": "Nenhum trabalho encontrado",
+		"getStarted": "Comece por criar o seu primeiro trabalho.",
+		"selectClientFirst": "Por favor, selecione um cliente primeiro",
+		"jobType": "Tipo de Trabalho",
+		"selectJobType": "Por favor, selecione um tipo de trabalho"
   },
   "clients": {
     "title": "Clientes",
@@ -303,34 +313,29 @@
   },
   "managers": {
     "title": "Gestores",
-    "createNew": "Criar Novo Gestor",
-    "editManager": "Editar Gestor",
-    "managerDetails": "Detalhes do Gestor",
-    "managerName": "Nome do Gestor",
-    "email": "Endereço de Email",
-    "noManagers": "Nenhum gestor encontrado",
-    "managerCreated": "Gestor criado com sucesso",
-    "managerUpdated": "Gestor atualizado com sucesso",
-    "managerDeleted": "Gestor eliminado com sucesso",
-    "confirmDelete": "Tem a certeza que deseja eliminar este gestor?",
-    "backToManagers": "Voltar para Gestores",
+    "createNew": "Novo Gestor",
+    "noData": "Nenhum gestor encontrado. Clique em \"Novo Gestor\" para adicionar um.",
+    "name": "Nome",
     "loadingManagers": "A carregar gestores...",
-    "errorLoadingManagers": "Erro ao carregar gestores. Por favor, tente novamente mais tarde.",
-    "loadingManagerData": "A carregar dados do gestor...",
-    "errorLoadingManagerData": "Erro ao carregar dados do gestor. Por favor, tente novamente mais tarde.",
-    "updateManagerInfo": "Atualizar informações do gestor",
-    "enterManagerName": "Introduza o nome do gestor",
-    "enterManagerEmail": "Introduza o email do gestor",
-    "activeManager": "Gestor Ativo",
-    "markAsActive": "Marcar este gestor como ativo",
-    "saveChanges": "Guardar Alterações",
-    "saving": "A guardar...",
-    "deleting": "A eliminar...",
-    "delete": "Eliminar",
-    "cancel": "Cancelar",
-    "createFirstManager": "Crie o seu primeiro gestor",
+    "errorLoadingManagers": "Erro ao carregar gestores. Por favor, tente novamente.",
+    "createFirstManager": "Crie o Seu Primeiro Gestor",
+    "managerDeleted": "Gestor Eliminado",
+    "managerDeletedDescription": "O gestor foi eliminado com sucesso.",
+    "managerDeleteError": "Erro ao eliminar o gestor. Por favor, tente novamente.",
     "deleteManager": "Eliminar Gestor",
-    "deleteConfirmation": "Tem a certeza que deseja eliminar {{name}}? Esta ação não pode ser desfeita."
+    "deleteConfirmation": "Tem a certeza que quer eliminar {{name}}? Esta ação não pode ser desfeita.",
+    "deleting": "A eliminar...",
+    "form": {
+      "createTitle": "Criar Novo Gestor",
+      "editTitle": "Editar Gestor",
+      "namePlaceholder": "Introduza o nome completo do gestor",
+      "emailPlaceholder": "Introduza o email do gestor",
+      "activeLabel": "Gestor Ativo",
+      "successCreate": "Gestor criado com sucesso.",
+      "successUpdate": "Gestor atualizado com sucesso.",
+      "errorCreate": "Não foi possível criar o gestor. Por favor, tente novamente.",
+      "errorUpdate": "Não foi possível atualizar o gestor. Por favor, tente novamente."
+    }
   },
   "providers": {
     "title": "Fornecedores",
@@ -371,6 +376,15 @@
     "updateProvider": "Atualizar Fornecedor",
 		"deleteProvider": "Eliminar Fornecedor"
   },
+	"jobTypes": {
+		"name": "Nome",
+		"title": "Tipos de Trabalhos",
+		"createNew": "Criar Novo Tipo de Trabalho",
+		"editJobType": "Editar Tipo de Trabalho",
+		"editJobTypeDescription": "Editar as informações do tipo de trabalho",
+		"jobTypeDetails": "Detalhes do Tipo de Trabalho",
+		"jobTypeName": "Nome do Tipo de Trabalho"
+	},
   "publicPages": {
     "upload": {
       "title": "Carregar Fatura",

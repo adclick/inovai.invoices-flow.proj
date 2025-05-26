@@ -31,6 +31,8 @@
     "yes": "Sí",
     "no": "No",
     "updating": "Actualizando...",
+		"updated": "Actualizado",
+		"created": "Creado",
     "creating": "Creando...",
     "success": "Éxito",
     "failure": "Fallo",
@@ -135,7 +137,8 @@
     "pending": "Pendiente",
     "jobs": "Trabajos",
     "jobsOverview": "Resumen de trabajos",
-    "currentStatusDistribution": "Distribución actual de estados"
+    "currentStatusDistribution": "Distribución actual de estados",
+    "workingJobs": "Trabajos en progreso"
   },
   "navigation": {
     "dashboard": "Panel de control",
@@ -148,7 +151,8 @@
     "clients": "Clientes",
     "campaigns": "Campañas",
     "settings": "Configuración",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "jobTypes": "Tipos de trabajos"
   },
   "profile": {
     "title": "Perfil de usuario",
@@ -256,7 +260,14 @@
     "linkExpired": "El enlace ha caducado",
     "uploadComplete": "Subida completa",
     "thankYouForSubmission": "¡Gracias por tu envío!",
-    "youMayCloseWindow": "Ya puedes cerrar esta ventana."
+    "youMayCloseWindow": "Ya puedes cerrar esta ventana.",
+    "uploadLinkExpired": "Este enlace de subida ha caducado",
+    "providerEmailSent": "Email Enviado al Proveedor",
+    "noJobsFound": "No se encontraron trabajos",
+		"getStarted": "Comienza creando tu primer trabajo.",
+		"selectClientFirst": "Por favor, selecciona un cliente primero",
+		"jobType": "Tipo de trabajo",
+		"selectJobType": "Por favor, selecciona un tipo de trabajo"
   },
   "clients": {
     "title": "Clientes",
@@ -369,6 +380,15 @@
     "updateProvider": "Actualizar Proveedor",
     "deleteProvider": "Eliminar Proveedor"
   },
+	"jobTypes": {
+		"name": "Nombre",
+		"title": "Tipos de trabajos",
+		"createNew": "Crear nuevo tipo de trabajo",
+		"editJobType": "Editar tipo de trabajo",
+		"editJobTypeDescription": "Editar la información del tipo de trabajo",
+		"jobTypeDetails": "Detalles del tipo de trabajo",
+		"jobTypeName": "Nombre del tipo de trabajo"
+	},
   "publicPages": {
     "upload": {
       "title": "Subir Factura",

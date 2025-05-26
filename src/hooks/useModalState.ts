@@ -1,8 +1,7 @@
-
 import { useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
-export type EntityType = 'client' | 'campaign' | 'provider' | 'manager' | 'job';
+export type EntityType = 'client' | 'campaign' | 'provider' | 'manager' | 'job' | 'jobType';
 export type ModalMode = 'create' | 'edit' | 'view';
 
 export interface ModalState {
@@ -33,7 +32,7 @@ export function useModalState(): {
       const [modalMode, modalType] = parts;
       if (
         ['create', 'edit', 'view'].includes(modalMode) &&
-        ['client', 'campaign', 'provider', 'manager', 'job'].includes(modalType)
+        ['client', 'campaign', 'provider', 'manager', 'job', 'jobType'].includes(modalType)
       ) {
         mode = modalMode as ModalMode;
         type = modalType as EntityType;

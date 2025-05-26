@@ -175,7 +175,7 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
       queryClient.invalidateQueries({ queryKey: ["providers"] });
       queryClient.invalidateQueries({ queryKey: ["provider", id] });
       toast({
-        title: t("providers.updated"),
+        title: t("common.updated"),
       });
       if (onSuccess) onSuccess();
       onClose();
@@ -238,7 +238,7 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
           name="language"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("providers.preferredLanguage")}</FormLabel>
+              <FormLabel>{t("providers.language")}</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
@@ -246,13 +246,13 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={t("providers.selectLanguage")} />
+                    <SelectValue placeholder={t("providers.language")} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="pt">{t("languages.portuguese")}</SelectItem>
-                  <SelectItem value="en">{t("languages.english")}</SelectItem>
-                  <SelectItem value="es">{t("languages.spanish")}</SelectItem>
+                  <SelectItem value="pt">{t("common.portuguese")}</SelectItem>
+                  <SelectItem value="en">{t("common.english")}</SelectItem>
+                  <SelectItem value="es">{t("common.spanish")}</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -314,7 +314,7 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
                 ? t("common.updating")
                 : t("common.creating")
               : isEditMode
-              ? t("common.update")
+              ? t("common.save")
               : t("common.create")}
           </Button>
         </div>

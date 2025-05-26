@@ -236,7 +236,7 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
                 ? t("common.updating") 
                 : t("common.creating") 
               : isEditMode 
-                ? t("common.update") 
+                ? t("common.save") 
                 : t("common.create")}
           </Button>
         </div>

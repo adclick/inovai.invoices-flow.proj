@@ -22,6 +22,9 @@ export type Job = {
   manager_name?: string;
   client_name?: string; // We keep this for display purposes, derived from the campaign
   client_id?: string; // Adding this to support the current implementation in JobsGroupedList
+	provider_email_sent?: string | null;
+	job_type_id?: string | null;
+	job_type_name?: string | null;
 };
 
 // Helper function to format status labels for display

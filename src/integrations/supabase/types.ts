@@ -97,7 +97,8 @@ export type Database = {
           public_token: string | null
           status: Database["public"]["Enums"]["job_status"]
           updated_at: string
-          value: number
+          value: number,
+					job_type_id: string
         }
         Insert: {
           campaign_id: string
@@ -118,7 +119,8 @@ export type Database = {
           public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
-          value: number
+          value: number,
+					job_type_id: string
         }
         Update: {
           campaign_id?: string
@@ -139,7 +141,8 @@ export type Database = {
           public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
-          value?: number
+          value?: number,
+					job_type_id?: string
         }
         Relationships: [
           {
@@ -163,6 +166,13 @@ export type Database = {
             referencedRelation: "providers"
             referencedColumns: ["id"]
           },
+					{
+						foreignKeyName: "jobs_job_type_id_fkey"
+						columns: ["job_type_id"]
+						isOneToOne: false
+						referencedRelation: "job_type"
+						referencedColumns: ["id"]
+					}
         ]
       }
       managers: {
@@ -300,6 +310,24 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      job_type: {
+        Row: {
+          id: string
+          name: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          created_at?: string
         }
         Relationships: []
       }

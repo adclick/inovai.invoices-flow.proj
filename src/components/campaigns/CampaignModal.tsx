@@ -24,7 +24,6 @@ export const CampaignModal: React.FC = () => {
     <EntityModal
       title={title}
       description={description}
-      size="md"
     >
       <CampaignForm
         mode={modalState.mode || 'create'}
