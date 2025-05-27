@@ -28,7 +28,8 @@ serve(async (req) => {
         *,
         provider:providers(*),
         manager:managers(*),
-        campaign:campaigns(*)
+        campaign:campaigns(*),
+				job_type:job_types(*)
       `)
       .eq('status', 'active')
 			.is('provider_email_sent', null)

@@ -87,7 +87,6 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit((data) => {
-					console.log("data", data);
 					formSubmitHandler(data)
 				})}
 				className="space-y-6"

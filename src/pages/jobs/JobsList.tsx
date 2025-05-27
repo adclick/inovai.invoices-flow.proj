@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import {
@@ -49,10 +49,11 @@ import JobModal from "@/components/jobs/JobModal";
 
 const JobsAllList: React.FC = () => {
 	const { t } = useTranslation();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
-	const [searchTerm, setSearchTerm] = useState("");
+	const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
 	const [statusFilter, setStatusFilter] = useState<string>("all");
 	const [paymentFilter, setPaymentFilter] = useState<string>("all");
 	const itemsPerPage = 10;
@@ -60,9 +61,20 @@ const JobsAllList: React.FC = () => {
 	const queryClient = useQueryClient();
 	const { openModal } = useModalState();
 
-  const handleCreateJob = () => {
-    openModal("job", "create");
-  };
+	// Update URL when search term changes
+	useEffect(() => {
+		const newParams = new URLSearchParams(searchParams);
+		if (searchTerm) {
+			newParams.set("search", searchTerm);
+		} else {
+			newParams.delete("search");
+		}
+		setSearchParams(newParams);
+	}, [searchTerm, setSearchParams, searchParams]);
+
+	const handleCreateJob = () => {
+		openModal("job", "create");
+	};
 
 	const handleEditJob = (id: string) => {
 		openModal("job", "edit", id);
@@ -123,12 +135,14 @@ const JobsAllList: React.FC = () => {
 				job.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 				job.campaign_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 				job.provider_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				job.manager_name?.toLowerCase().includes(searchTerm.toLowerCase());
+				job.manager_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				job.invoice_reference?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				job.id.toLowerCase().includes(searchTerm.toLowerCase());
 
 			const matchesStatus = statusFilter === "all" || job.status === statusFilter;
 			const matchesPayment = paymentFilter === "all" ||
-				(paymentFilter === "paid" && job.paid) ||
-				(paymentFilter === "pending" && !job.paid);
+				(paymentFilter === "paid") ||
+				(paymentFilter === "pending");
 
 			return matchesSearch && matchesStatus && matchesPayment;
 		});
@@ -291,6 +305,7 @@ const JobsAllList: React.FC = () => {
 										<TableHead>{t("jobs.date")}</TableHead>
 										<TableHead>{t("jobs.providerEmailSent")}</TableHead>
 										<TableHead>{t("jobs.invoice")}</TableHead>
+										<TableHead>{t("jobs.reference")}</TableHead>
 										<TableHead className="text-right">{t("jobs.actions")}</TableHead>
 									</TableRow>
 								</TableHeader>
@@ -318,6 +333,7 @@ const JobsAllList: React.FC = () => {
 													<span className="text-slate-400 text-sm">-</span>
 												)}
 											</TableCell>
+											<TableCell>{job.invoice_reference || <span className="text-slate-400 text-sm">-</span>}</TableCell>
 											<TableCell className="text-right">
 												<div className="flex justify-end space-x-2">
 													<Link

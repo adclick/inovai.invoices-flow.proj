@@ -268,7 +268,8 @@
 		"getStarted": "Comece por criar o seu primeiro trabalho.",
 		"selectClientFirst": "Por favor, selecione um cliente primeiro",
 		"jobType": "Tipo de Trabalho",
-		"selectJobType": "Por favor, selecione um tipo de trabalho"
+		"selectJobType": "Por favor, selecione um tipo de trabalho",
+		"reference": "Referência"
   },
   "clients": {
     "title": "Clientes",

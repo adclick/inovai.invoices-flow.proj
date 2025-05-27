@@ -86,15 +86,11 @@ export type Database = {
           due_date: string | null
           id: string
           manager_id: string
-          manager_ok: boolean
           months: Database["public"]["Enums"]["month_type"][]
-          paid: boolean
-          payment_token: string | null
           private_notes: string | null
           provider_id: string
           provider_message: string | null
           public_notes: string | null
-          public_token: string | null
           status: Database["public"]["Enums"]["job_status"]
           updated_at: string
           value: number,
@@ -108,15 +104,11 @@ export type Database = {
           due_date?: string | null
           id?: string
           manager_id: string
-          manager_ok?: boolean
           months: Database["public"]["Enums"]["month_type"][]
-          paid?: boolean
-          payment_token?: string | null
           private_notes?: string | null
           provider_id: string
           provider_message?: string | null
           public_notes?: string | null
-          public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
           value: number,
@@ -130,15 +122,11 @@ export type Database = {
           due_date?: string | null
           id?: string
           manager_id?: string
-          manager_ok?: boolean
           months?: Database["public"]["Enums"]["month_type"][]
-          paid?: boolean
-          payment_token?: string | null
           private_notes?: string | null
           provider_id?: string
           provider_message?: string | null
           public_notes?: string | null
-          public_token?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
           value?: number,
@@ -313,7 +301,7 @@ export type Database = {
         }
         Relationships: []
       }
-      job_type: {
+      job_types: {
         Row: {
           id: string
           name: string

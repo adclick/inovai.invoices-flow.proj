@@ -268,7 +268,8 @@
 		"getStarted": "Get started by creating your first job.",
 		"selectClientFirst": "Please select a client first",
 		"jobType": "Job Type",
-		"selectJobType": "Please select a job type"
+		"selectJobType": "Please select a job type",
+		"reference": "Reference"
   },
   "clients": {
     "title": "Clients",

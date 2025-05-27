@@ -21,15 +21,11 @@ const jobSchema = z.object({
 	job_type_id: z.string().min(1, "jobs.selectJobType"),
 	value: z.coerce.number().min(0, "jobs.valueRequired"),
 	status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"]),
-	paid: z.boolean().default(false),
-	manager_ok: z.boolean().default(false),
 	months: z.array(z.enum([
 		"january", "february", "march", "april", "may", "june",
 		"july", "august", "september", "october", "november", "december"
 	])).min(1, "jobs.selectMonths"),
 	due_date: z.string().optional(),
-	public_notes: z.string().optional(),
-	private_notes: z.string().optional(),
 	provider_message: z.string().optional(),
 });
 
@@ -44,12 +40,8 @@ type SupabaseJobInsertPayload = {
 	job_type_id: string;
 	value: number;
 	status: "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid";
-	paid: boolean;
-	manager_ok: boolean;
 	months: Array<"january" | "february" | "march" | "april" | "may" | "june" | "july" | "august" | "september" | "october" | "november" | "december">;
 	due_date?: string;
-	public_notes?: string;
-	private_notes?: string;
 	provider_message?: string;
 	// Optional fields that Supabase might auto-fill or allow null
 	created_at?: string;
@@ -173,12 +165,8 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 			job_type_id: "",
 			value: 0,
 			status: "draft",
-			paid: false,
-			manager_ok: false,
 			months: [],
 			due_date: "",
-			public_notes: "",
-			private_notes: "",
 		},
 	});
 
@@ -229,7 +217,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 	const { data: jobTypes, isLoading: isJobTypesLoading } = useQuery({
 		queryKey: ["jobTypes"],
 		queryFn: async () => {
-			const { data, error } = await supabase.from("job_type").select("id, name");
+			const { data, error } = await supabase.from("job_types").select("id, name");
 
 			if (error) throw error;
 			return data;
@@ -318,7 +306,6 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 
 	// Form submission handler
 	const onSubmit = (values: FormValues) => {
-		console.log("values", values);
 		if (isEditMode && id) {
 			updateJobMutation.mutate(values);
 		} else {
@@ -364,12 +351,8 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 				job_type_id: data.job_type_id,
         value: data.value,
         status: data.status,
-        paid: data.paid,
-        manager_ok: data.manager_ok,
         months: data.months || [],
         due_date: data.due_date || "",
-        public_notes: data.public_notes || "",
-        private_notes: data.private_notes || "",
       });
       
       return data;

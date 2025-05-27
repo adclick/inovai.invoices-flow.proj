@@ -40,7 +40,7 @@ export const useJobsData = () => {
         .select("id, name");
 
 			const { data: jobTypes } = await supabase
-				.from("job_type")
+				.from("job_types")
 				.select("id, name");
 
       // Create lookup tables for entity names

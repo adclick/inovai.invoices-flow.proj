@@ -7,15 +7,11 @@ export type Job = {
   value: number;
   currency: "euro" | "usd" | "gbp";
   status: "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid";
-  paid: boolean;
-  manager_ok: boolean;
   months: string[];
   due_date?: string | null;
   public_notes?: string | null;
   private_notes?: string | null;
   documents?: string[] | null;
-  public_token?: string | null;
-  payment_token?: string | null;
   created_at: string;
   campaign_name?: string;
   provider_name?: string;
@@ -25,6 +21,7 @@ export type Job = {
 	provider_email_sent?: string | null;
 	job_type_id?: string | null;
 	job_type_name?: string | null;
+	invoice_reference?: string | null;
 };
 
 // Helper function to format status labels for display
