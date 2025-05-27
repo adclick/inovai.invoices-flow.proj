@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Database } from "@/integrations/supabase/types";
 
-type JobType = Database["public"]["Tables"]["job_type"]["Row"];
+type JobType = Database["public"]["Tables"]["job_types"]["Row"];
 
 interface JobTypeFormData {
   name: string;
@@ -49,7 +49,7 @@ const JobTypeModal: React.FC = () => {
     queryFn: async () => {
       if (!modalState.id) return null;
       const { data, error } = await supabase
-        .from("job_type")
+        .from("job_types")
         .select("*")
         .eq("id", modalState.id)
         .single();
@@ -71,7 +71,7 @@ const JobTypeModal: React.FC = () => {
 
   const createJobTypeMutation = useMutation({
     mutationFn: async (data: JobTypeFormData) => {
-      const { error } = await supabase.from("job_type").insert([data]);
+      const { error } = await supabase.from("job_types").insert([data]);
       if (error) throw error;
     },
     onSuccess: () => {
