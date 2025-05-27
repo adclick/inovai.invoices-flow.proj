@@ -27,7 +27,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Database } from "@/integrations/supabase/types";
 
-type JobType = Database["public"]["Tables"]["job_type"]["Row"];
+type JobType = Database["public"]["Tables"]["job_types"]["Row"];
 
 const JobsTypesList: React.FC = () => {
   const { t } = useTranslation();
@@ -42,7 +42,7 @@ const JobsTypesList: React.FC = () => {
     queryKey: ["jobTypes"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("job_type")
+        .from("job_types")
         .select("*")
         .order("name");
 
@@ -57,7 +57,7 @@ const JobsTypesList: React.FC = () => {
   const deleteJobTypeMutation = useMutation({
     mutationFn: async (jobTypeId: string) => {
       const { error } = await supabase
-        .from("job_type")
+        .from("job_types")
         .delete()
         .eq("id", jobTypeId);
 
