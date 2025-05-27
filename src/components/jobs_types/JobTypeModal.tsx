@@ -95,7 +95,7 @@ const JobTypeModal: React.FC = () => {
     mutationFn: async (data: JobTypeFormData) => {
       if (!modalState.id) throw new Error("No job type ID provided");
       const { error } = await supabase
-        .from("job_type")
+        .from("job_types")
         .update(data)
         .eq("id", modalState.id);
       if (error) throw error;

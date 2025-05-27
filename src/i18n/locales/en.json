@@ -408,7 +408,20 @@
 		"editJobType": "Edit Job Type",
 		"editJobTypeDescription": "Edit the job type information",
 		"jobTypeDetails": "Job Type Details",
-		"jobTypeName": "Job Type Name"
+		"jobTypeName": "Job Type Name",
+		"noData": "No job types found. Click \"New Job Type\" to add one.",
+		"createFirstJobType": "Create your first job type",
+		"createJobType": "Create Job Type",
+		"createJobTypeDescription": "Create a new job type",
+		"jobTypeCreated": "Job type created",
+		"jobTypeCreatedDescription": "The job type has been successfully created.",
+		"jobTypeUpdated": "Job type updated",
+		"jobTypeUpdatedDescription": "The job type has been successfully updated.",
+		"jobTypeDeleted": "Job type deleted",
+		"jobTypeDeletedDescription": "The job type has been successfully deleted.",
+		"jobTypeUpdateError": "Failed to update the job type. Please try again.",
+		"jobTypeDeleteError": "Failed to delete the job type. Please try again.",
+		"jobTypeCreateError": "Failed to create the job type. Please try again."
 	},
   "publicPages": {
     "upload": {

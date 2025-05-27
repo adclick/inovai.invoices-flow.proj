@@ -206,7 +206,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
                 ? t("common.updating")
                 : t("common.creating")
               : isEditMode
-              ? t("common.update")
+              ? t("common.save")
               : t("common.create")}
           </Button>
         </div>

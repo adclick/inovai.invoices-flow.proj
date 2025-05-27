@@ -388,7 +388,20 @@
 		"editJobType": "Editar tipo de trabajo",
 		"editJobTypeDescription": "Editar la información del tipo de trabajo",
 		"jobTypeDetails": "Detalles del tipo de trabajo",
-		"jobTypeName": "Nombre del tipo de trabajo"
+		"jobTypeName": "Nombre del tipo de trabajo",
+		"noData": "No se encontraron tipos de trabajos. Haz clic en \"Nuevo tipo de trabajo\" para añadir uno.",
+		"createFirstJobType": "Crea tu primer tipo de trabajo",
+		"createJobType": "Crear tipo de trabajo",
+		"createJobTypeDescription": "Crear un nuevo tipo de trabajo",
+		"jobTypeCreated": "Tipo de trabajo creado",
+		"jobTypeCreatedDescription": "El tipo de trabajo ha sido creado correctamente.",
+		"jobTypeUpdated": "Tipo de trabajo actualizado",
+		"jobTypeUpdatedDescription": "El tipo de trabajo ha sido actualizado correctamente.",
+		"jobTypeDeleted": "Tipo de trabajo eliminado",
+		"jobTypeDeletedDescription": "El tipo de trabajo ha sido eliminado correctamente.",
+		"jobTypeUpdateError": "Error al actualizar el tipo de trabajo. Por favor, inténtalo de nuevo.",
+		"jobTypeDeleteError": "Error al eliminar el tipo de trabajo. Por favor, inténtalo de nuevo.",
+		"jobTypeCreateError": "Error al crear el tipo de trabajo. Por favor, inténtalo de nuevo."
 	},
   "publicPages": {
     "upload": {
