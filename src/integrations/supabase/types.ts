@@ -80,16 +80,19 @@ export type Database = {
       job_types: {
         Row: {
           created_at: string
+					updated_at: string
           id: string
           name: string | null
         }
         Insert: {
           created_at?: string
+					updated_at: string
           id?: string
           name?: string | null
         }
         Update: {
           created_at?: string
+					updated_at: string
           id?: string
           name?: string | null
         }
