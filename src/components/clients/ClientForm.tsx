@@ -1,37 +1,24 @@
 
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import RequiredTextField from "@/components/common/form/RequiredTextField";
 import ActiveSwitchField from "@/components/common/ActiveSwitchField";
 import { BaseEntityFormProps } from "../common/EntityModal";
+import { useEntityMutation } from "@/hooks/useEntityMutation";
+import { useEntityQuery } from "@/hooks/useEntityQuery";
 
-interface ClientFormProps extends BaseEntityFormProps {}
-
-const ClientForm: React.FC<ClientFormProps> = ({
+const ClientForm: React.FC<BaseEntityFormProps> = ({
   onClose,
   onSuccess,
   id,
   mode,
 }) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const isEditMode = mode === 'edit';
 
   // Schema for client form validation
@@ -52,23 +39,10 @@ const ClientForm: React.FC<ClientFormProps> = ({
   });
 
   // Fetch client data if in edit mode
-  const { data: client, isLoading } = useQuery({
-    queryKey: ["client", id],
-    queryFn: async () => {
-      if (!id) throw new Error("Client ID is required for edit mode");
-
-      const { data, error } = await supabase
-        .from("clients")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching client:", error.message);
-        throw error;
-      }
-      return data;
-    },
+  const { data: client, isLoading } = useEntityQuery({
+    tableName: "clients",
+    entityName: "client",
+    id,
     enabled: isEditMode && Boolean(id),
   });
 
@@ -82,110 +56,35 @@ const ClientForm: React.FC<ClientFormProps> = ({
     }
   }, [client, form]);
 
-  // Create client mutation
-  const createMutation = useMutation({
-    mutationFn: async (values: ClientFormValues) => {
-      // Ensure name is not undefined
-      const safeValues = {
-        name: values.name,
-        active: values.active,
-      };
-      
-      const { data, error } = await supabase
-        .from("clients")
-        .insert(safeValues)
-        .select();
-
-      if (error) {
-        console.error("Error creating client:", error.message);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      toast({
-        title: t("clients.created"),
-      });
-      form.reset();
-      if (onSuccess) onSuccess();
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: t("common.error"),
-        description: String(error),
-        variant: "destructive",
-      });
-    },
+  // Mutations
+  const { createMutation, updateMutation } = useEntityMutation({
+    tableName: "clients",
+    entityName: "clients",
+    queryKey: "clients",
+    onSuccess,
+    onClose,
   });
 
-  // Update client mutation
-  const updateMutation = useMutation({
-    mutationFn: async (values: ClientFormValues) => {
-      if (!id) throw new Error("Client ID is required for update");
-
-      // Ensure name is not undefined
-      const safeValues = {
-        name: values.name,
-        active: values.active,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await supabase
-        .from("clients")
-        .update(safeValues)
-        .eq("id", id)
-        .select();
-
-      if (error) {
-        console.error("Error updating client:", error.message);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["clients"] });
-      queryClient.invalidateQueries({ queryKey: ["client", id] });
-      toast({
-        title: t("clients.updated"),
-      });
-      if (onSuccess) onSuccess();
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: t("common.error"),
-        description: String(error),
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Combined mutation for both create and update
   const mutation = isEditMode ? updateMutation : createMutation;
   const isPending = mutation.isPending || isLoading;
 
   // Form submission handler
   const onSubmit = (values: ClientFormValues) => {
-    mutation.mutate(values);
+    if (isEditMode && id) {
+      updateMutation.mutate({ id, values });
+    } else {
+      createMutation.mutate(values);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("clients.clientName")}</FormLabel>
-              <FormControl>
-                <Input placeholder={t("clients.enterName")} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("clients.clientName")}
+          placeholder={t("clients.enterName")}
         />
 
         {isEditMode && (

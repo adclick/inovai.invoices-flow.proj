@@ -1,44 +1,26 @@
 
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import RequiredTextField from "@/components/common/form/RequiredTextField";
+import OptionalSelectField from "@/components/common/form/OptionalSelectField";
 import ActiveSwitchField from "@/components/common/ActiveSwitchField";
 import { BaseEntityFormProps } from "../common/EntityModal";
+import { useEntityMutation } from "@/hooks/useEntityMutation";
+import { useEntityQuery } from "@/hooks/useEntityQuery";
+import { LANGUAGE_OPTIONS } from "@/utils/formConstants";
 
-interface ProviderFormProps extends BaseEntityFormProps {}
-
-const ProviderForm: React.FC<ProviderFormProps> = ({
+const ProviderForm: React.FC<BaseEntityFormProps> = ({
   onClose,
   onSuccess,
   id,
   mode,
 }) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const isEditMode = mode === 'edit';
 
   // Schema for provider form validation
@@ -67,23 +49,10 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
   });
 
   // Fetch provider data if in edit mode
-  const { data: provider, isLoading } = useQuery({
-    queryKey: ["provider", id],
-    queryFn: async () => {
-      if (!id) throw new Error("Provider ID is required for edit mode");
-
-      const { data, error } = await supabase
-        .from("providers")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching provider:", error.message);
-        throw error;
-      }
-      return data;
-    },
+  const { data: provider, isLoading } = useEntityQuery({
+    tableName: "providers",
+    entityName: "provider",
+    id,
     enabled: isEditMode && Boolean(id),
   });
 
@@ -101,199 +70,75 @@ const ProviderForm: React.FC<ProviderFormProps> = ({
     }
   }, [provider, form]);
 
-  // Create provider mutation
-  const createMutation = useMutation({
-    mutationFn: async (values: ProviderFormValues) => {
-      // Ensure required fields are not undefined
-      const safeValues = {
-        name: values.name,
-        email: values.email,
-        language: values.language,
-        country: values.country || null,
-        iban: values.iban || null,
-        active: values.active,
-      };
-      
-      const { data, error } = await supabase
-        .from("providers")
-        .insert(safeValues)
-        .select();
-
-      if (error) {
-        console.error("Error creating provider:", error.message);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["providers"] });
-      toast({
-        title: t("providers.created"),
-      });
-      form.reset();
-      if (onSuccess) onSuccess();
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: t("common.error"),
-        description: String(error),
-        variant: "destructive",
-      });
-    },
+  // Mutations
+  const { createMutation, updateMutation } = useEntityMutation({
+    tableName: "providers",
+    entityName: "providers",
+    queryKey: "providers",
+    onSuccess,
+    onClose,
   });
 
-  // Update provider mutation
-  const updateMutation = useMutation({
-    mutationFn: async (values: ProviderFormValues) => {
-      if (!id) throw new Error("Provider ID is required for update");
-
-      // Ensure required fields are not undefined
-      const safeValues = {
-        name: values.name,
-        email: values.email,
-        language: values.language,
-        country: values.country || null,
-        iban: values.iban || null,
-        active: values.active,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await supabase
-        .from("providers")
-        .update(safeValues)
-        .eq("id", id)
-        .select();
-
-      if (error) {
-        console.error("Error updating provider:", error.message);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["providers"] });
-      queryClient.invalidateQueries({ queryKey: ["provider", id] });
-      toast({
-        title: t("common.updated"),
-      });
-      if (onSuccess) onSuccess();
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: t("common.error"),
-        description: String(error),
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Combined mutation for both create and update
   const mutation = isEditMode ? updateMutation : createMutation;
   const isPending = mutation.isPending || isLoading;
 
   // Form submission handler
   const onSubmit = (values: ProviderFormValues) => {
-    mutation.mutate(values);
+    const safeValues = {
+      name: values.name,
+      email: values.email,
+      language: values.language,
+      country: values.country || null,
+      iban: values.iban || null,
+      active: values.active,
+    };
+
+    if (isEditMode && id) {
+      updateMutation.mutate({ id, values: safeValues });
+    } else {
+      createMutation.mutate(safeValues);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("providers.name")}</FormLabel>
-              <FormControl>
-                <Input placeholder={t("providers.enterName")} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("providers.name")}
+          placeholder={t("providers.enterName")}
         />
 
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("common.email")}</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder={t("common.enterEmail")}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("common.email")}
+          placeholder={t("common.enterEmail")}
+          type="email"
         />
 
-        <FormField
+        <OptionalSelectField
           control={form.control}
           name="language"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("providers.language")}</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-                value={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("providers.language")} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="pt">{t("common.portuguese")}</SelectItem>
-                  <SelectItem value="en">{t("common.english")}</SelectItem>
-                  <SelectItem value="es">{t("common.spanish")}</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("providers.language")}
+          placeholder={t("providers.language")}
+          options={LANGUAGE_OPTIONS}
+          t={t}
         />
 
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="country"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("providers.country")}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t("providers.enterCountry")}
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("providers.country")}
+          placeholder={t("providers.enterCountry")}
         />
 
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="iban"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("providers.iban")}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t("providers.enterIban")}
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("providers.iban")}
+          placeholder={t("providers.enterIban")}
         />
 
         {isEditMode && (

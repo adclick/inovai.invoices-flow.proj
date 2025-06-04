@@ -4,22 +4,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useTranslation } from "react-i18next";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { BaseEntityFormProps } from "../common/EntityModal";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import RequiredTextField from "@/components/common/form/RequiredTextField";
+import EntitySelectField from "@/components/common/form/EntitySelectField";
 import ActiveSwitchField from "../common/ActiveSwitchField";
+import { BaseEntityFormProps } from "../common/EntityModal";
+import { useEntityMutation } from "@/hooks/useEntityMutation";
+import { useEntityQuery, useEntitiesQuery } from "@/hooks/useEntityQuery";
 
 // Form schema with validation that matches the database schema
 const formSchema = z.object({
@@ -40,8 +33,6 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   onSuccess
 }) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const isEditMode = mode === "edit";
 
   // Setup form with default values
@@ -58,264 +49,132 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   });
 
   // Fetch clients for selection
-  const { data: clients, isLoading: clientsLoading } = useQuery({
-    queryKey: ["clients"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("clients")
-        .select("id, name")
-        .order("name");
-      
-      if (error) throw error;
-      return data;
-    },
+  const { data: clients, isLoading: clientsLoading } = useEntitiesQuery("clients", {
+    select: "id, name",
+    orderBy: "name",
   });
 
   // Fetch campaign data if in edit mode
-  const { isLoading } = useQuery({
-    queryKey: ["campaign", id],
-    queryFn: async () => {
-      if (!id) return null;
-      
-      const { data, error } = await supabase
-        .from("campaigns")
-        .select("*")
-        .eq("id", id)
-        .single();
-      
-      if (error) throw error;
-      
-      // Fill form with campaign data
-      form.reset({
-        name: data.name,
-        client_id: data.client_id,
-        duration: data.duration,
-        estimated_cost: data.estimated_cost || undefined,
-        revenue: data.revenue || undefined,
-        active: data.active,
-      });
-      
-      return data;
-    },
+  const { isLoading } = useEntityQuery({
+    tableName: "campaigns",
+    entityName: "campaign",
+    id,
     enabled: isEditMode && !!id,
+    select: "*",
   });
 
-  // Create campaign mutation
-  const createMutation = useMutation({
-    mutationFn: async (values: FormValues) => {
-      // Prepare data for Supabase insert
-      const insertData = {
-        name: values.name,
-        client_id: values.client_id,
-        duration: values.duration,
-        estimated_cost: values.estimated_cost || null,
-        revenue: values.revenue || null,
-        active: values.active,
+  // Load campaign data into form when fetched
+  React.useEffect(() => {
+    if (isEditMode && id) {
+      // This will be handled by the useEntityQuery hook
+      const loadCampaign = async () => {
+        try {
+          const { data } = await supabase
+            .from("campaigns")
+            .select("*")
+            .eq("id", id)
+            .single();
+          
+          if (data) {
+            form.reset({
+              name: data.name,
+              client_id: data.client_id,
+              duration: data.duration,
+              estimated_cost: data.estimated_cost || undefined,
+              revenue: data.revenue || undefined,
+              active: data.active,
+            });
+          }
+        } catch (error) {
+          console.error("Error loading campaign:", error);
+        }
       };
-      
-      const { data, error } = await supabase
-        .from("campaigns")
-        .insert(insertData)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
-      toast({
-        title: t("campaigns.campaignCreated"),
-        description: t("campaigns.campaignCreatedDescription"),
-      });
-      onSuccess?.();
-      onClose();
-    },
-    onError: (error) => {
-      console.error("Error creating campaign:", error);
-      toast({
-        title: t("common.error"),
-        description: t("campaigns.campaignCreateError"),
-        variant: "destructive",
-      });
-    },
+      loadCampaign();
+    }
+  }, [isEditMode, id, form]);
+
+  // Mutations
+  const { createMutation, updateMutation } = useEntityMutation({
+    tableName: "campaigns",
+    entityName: "campaigns",
+    queryKey: "campaigns",
+    onSuccess,
+    onClose,
   });
 
-  // Update campaign mutation
-  const updateMutation = useMutation({
-    mutationFn: async (values: FormValues) => {
-      if (!id) throw new Error("Campaign ID is required for update");
-      
-      // Prepare data for Supabase update
-      const updateData = {
-        name: values.name,
-        client_id: values.client_id,
-        duration: values.duration,
-        estimated_cost: values.estimated_cost || null,
-        revenue: values.revenue || null,
-        active: values.active,
-        updated_at: new Date().toISOString(),
-      };
-      
-      const { data, error } = await supabase
-        .from("campaigns")
-        .update(updateData)
-        .eq("id", id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
-      queryClient.invalidateQueries({ queryKey: ["campaign", id] });
-      toast({
-        title: t("campaigns.campaignUpdated"),
-        description: t("campaigns.campaignUpdatedDescription"),
-      });
-      onSuccess?.();
-      onClose();
-    },
-    onError: (error) => {
-      console.error("Error updating campaign:", error);
-      toast({
-        title: t("common.error"),
-        description: t("campaigns.campaignUpdateError"),
-        variant: "destructive",
-      });
-    },
-  });
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   // Form submission handler
   const onSubmit = (values: FormValues) => {
+    const submitData = {
+      name: values.name,
+      client_id: values.client_id,
+      duration: values.duration,
+      estimated_cost: values.estimated_cost || null,
+      revenue: values.revenue || null,
+      active: values.active,
+    };
+
     if (isEditMode && id) {
-      updateMutation.mutate(values);
+      updateMutation.mutate({ id, values: submitData });
     } else {
-      createMutation.mutate(values);
+      createMutation.mutate(submitData);
     }
   };
-
-  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Client selection */}
-        <FormField
+        <EntitySelectField
           control={form.control}
           name="client_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("campaigns.client")}</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
-                value={field.value}
-                disabled={clientsLoading || isLoading}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t("campaigns.selectClient")} />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {clients?.map((client) => (
-                    <SelectItem key={client.id} value={client.id}>
-                      {client.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("campaigns.client")}
+          placeholder={t("campaigns.selectClient")}
+          options={clients || []}
+          isLoading={clientsLoading}
+          emptyMessage={t("clients.noClientsAvailable")}
         />
 
-        {/* Campaign name */}
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("campaigns.campaignName")}</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder={t("campaigns.enterCampaignName")} 
-                  disabled={isLoading} 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("campaigns.campaignName")}
+          placeholder={t("campaigns.enterCampaignName")}
+          disabled={isLoading}
         />
 
-        {/* Duration */}
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="duration"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("campaigns.duration")}</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number"
-                  min="1"
-                  placeholder={t("campaigns.enterDuration")} 
-                  disabled={isLoading} 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("campaigns.duration")}
+          placeholder={t("campaigns.enterDuration")}
+          type="number"
+          min="1"
+          disabled={isLoading}
         />
 
-        {/* Estimated Cost */}
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="estimated_cost"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("campaigns.estimatedCost")}</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder={t("campaigns.enterEstimatedCost")} 
-                  disabled={isLoading} 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("campaigns.estimatedCost")}
+          placeholder={t("campaigns.enterEstimatedCost")}
+          type="number"
+          min="0"
+          step="0.01"
+          disabled={isLoading}
         />
 
-        {/* Revenue */}
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="revenue"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("campaigns.revenue")}</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder={t("campaigns.enterRevenue")} 
-                  disabled={isLoading} 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("campaigns.revenue")}
+          placeholder={t("campaigns.enterRevenue")}
+          type="number"
+          min="0"
+          step="0.01"
+          disabled={isLoading}
         />
 
-        {/* Active status */}
         <ActiveSwitchField 
           control={form.control}
           name="active" 
@@ -323,7 +182,6 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           description={t("campaigns.activeDescription")}
         />
 
-        {/* Form actions */}
         <div className="flex justify-end space-x-4 pt-4">
           <Button 
             type="button" 

@@ -1,37 +1,24 @@
 
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import RequiredTextField from "@/components/common/form/RequiredTextField";
 import ActiveSwitchField from "@/components/common/ActiveSwitchField";
 import { BaseEntityFormProps } from "../common/EntityModal";
+import { useEntityMutation } from "@/hooks/useEntityMutation";
+import { useEntityQuery } from "@/hooks/useEntityQuery";
 
-interface ManagerFormProps extends BaseEntityFormProps {}
-
-const ManagerForm: React.FC<ManagerFormProps> = ({ 
+const ManagerForm: React.FC<BaseEntityFormProps> = ({ 
   onClose, 
   onSuccess, 
   id, 
   mode 
 }) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
   const isEditMode = mode === 'edit';
 
   // Schema for manager form validation
@@ -54,23 +41,10 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
   });
 
   // Fetch manager data if in edit mode
-  const { data: manager, isLoading } = useQuery({
-    queryKey: ["manager", id],
-    queryFn: async () => {
-      if (!id) throw new Error("Manager ID is required for edit mode");
-
-      const { data, error } = await supabase
-        .from("managers")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching manager:", error.message);
-        throw error;
-      }
-      return data;
-    },
+  const { data: manager, isLoading } = useEntityQuery({
+    tableName: "managers",
+    entityName: "manager",
+    id,
     enabled: isEditMode && Boolean(id),
   });
 
@@ -85,130 +59,43 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
     }
   }, [manager, form]);
 
-  // Create manager mutation
-  const createMutation = useMutation({
-    mutationFn: async (values: ManagerFormValues) => {
-      // Make sure email and name are not undefined
-      const safeValues = {
-        name: values.name,
-        email: values.email,
-        active: values.active
-      };
-      
-      const { data, error } = await supabase
-        .from("managers")
-        .insert(safeValues)
-        .select();
-
-      if (error) {
-        console.error("Error creating manager:", error.message);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["managers"] });
-      toast({
-        title: t("managers.created"),
-      });
-      form.reset();
-      if (onSuccess) onSuccess();
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: t("common.error"),
-        description: String(error),
-        variant: "destructive",
-      });
-    },
+  // Mutations
+  const { createMutation, updateMutation } = useEntityMutation({
+    tableName: "managers",
+    entityName: "managers",
+    queryKey: "managers",
+    onSuccess,
+    onClose,
   });
 
-  // Update manager mutation
-  const updateMutation = useMutation({
-    mutationFn: async (values: ManagerFormValues) => {
-      if (!id) throw new Error("Manager ID is required for update");
-
-      // Make sure email and name are not undefined
-      const safeValues = {
-        name: values.name,
-        email: values.email,
-        active: values.active,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await supabase
-        .from("managers")
-        .update(safeValues)
-        .eq("id", id)
-        .select();
-
-      if (error) {
-        console.error("Error updating manager:", error.message);
-        throw error;
-      }
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["managers"] });
-      queryClient.invalidateQueries({ queryKey: ["manager", id] });
-      toast({
-        title: t("managers.updated"),
-      });
-      if (onSuccess) onSuccess();
-      onClose();
-    },
-    onError: (error) => {
-      toast({
-        title: t("common.error"),
-        description: String(error),
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Combined mutation for both create and update
   const mutation = isEditMode ? updateMutation : createMutation;
   const isPending = mutation.isPending || isLoading;
 
   // Form submission handler
   const onSubmit = (values: ManagerFormValues) => {
-    mutation.mutate(values);
+    if (isEditMode && id) {
+      updateMutation.mutate({ id, values });
+    } else {
+      createMutation.mutate(values);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("managers.name")}</FormLabel>
-              <FormControl>
-                <Input placeholder={t("managers.enterName")} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("managers.name")}
+          placeholder={t("managers.enterName")}
         />
 
-        <FormField
+        <RequiredTextField
           control={form.control}
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("common.email")}</FormLabel>
-              <FormControl>
-                <Input 
-                  type="email" 
-                  placeholder={t("common.enterEmail")} 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          label={t("common.email")}
+          placeholder={t("common.enterEmail")}
+          type="email"
         />
 
         {isEditMode && (
@@ -220,17 +107,10 @@ const ManagerForm: React.FC<ManagerFormProps> = ({
         )}
 
         <div className="flex justify-end space-x-2">
-          <Button 
-            type="button" 
-            variant="outline" 
-            onClick={onClose}
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             {t("common.cancel")}
           </Button>
-          <Button 
-            type="submit" 
-            disabled={isPending}
-          >
+          <Button type="submit" disabled={isPending}>
             {isPending 
               ? isEditMode 
                 ? t("common.updating") 
