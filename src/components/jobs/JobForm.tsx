@@ -12,24 +12,30 @@ import DetailsForm from "./DetailsForm";
 import { Job } from "@/types/job";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Button } from "../ui/button";
+import { Database } from "@/integrations/supabase/types";
 
-// Form schema with validation
+// Use proper Supabase enum types
+type JobStatus = Database["public"]["Enums"]["job_status"];
+type MonthType = Database["public"]["Enums"]["month_type"];
+
+// Form schema with proper validation using Supabase types
 const jobSchema = z.object({
 	campaign_id: z.string().min(1, "jobs.selectCampaign"),
 	provider_id: z.string().min(1, "jobs.selectProvider"),
 	manager_id: z.string().min(1, "jobs.selectManager"),
 	job_type_id: z.string().min(1, "jobs.selectJobType"),
 	value: z.coerce.number().min(0, "jobs.valueRequired"),
-	status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"]),
+	status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"] as const),
 	months: z.array(z.enum([
 		"january", "february", "march", "april", "may", "june",
 		"july", "august", "september", "october", "november", "december"
-	])).min(1, "jobs.selectMonths"),
+	] as const)).min(1, "jobs.selectMonths"),
 	due_date: z.string().optional(),
 	provider_message: z.string().optional(),
+	public_notes: z.string().optional(),
+	private_notes: z.string().optional(),
 });
 
-type FormValues = z.infer<typeof jobSchema>;
 type JobFormValues = z.infer<typeof jobSchema>;
 
 // Define the expected payload structure for Supabase insert
@@ -39,18 +45,15 @@ type SupabaseJobInsertPayload = {
 	manager_id: string;
 	job_type_id: string;
 	value: number;
-	status: "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid";
-	months: Array<"january" | "february" | "march" | "april" | "may" | "june" | "july" | "august" | "september" | "october" | "november" | "december">;
+	status: JobStatus;
+	months: MonthType[];
 	due_date?: string;
 	provider_message?: string;
-	// Optional fields that Supabase might auto-fill or allow null
-	created_at?: string;
-	id?: string;
-	currency?: "euro" | "usd" | "gbp"; // Kept as optional per Supabase type hint
-	documents?: string[];
+	public_notes?: string;
+	private_notes?: string;
 };
 
-// Move ConfirmUpdateModal outside of EditJob component
+// Move ConfirmUpdateModal outside of JobForm component
 interface ConfirmUpdateModalProps {
 	isOpen: boolean;
 	onOpenChange: (open: boolean) => void;
@@ -79,7 +82,6 @@ const ConfirmUpdateModal: React.FC<ConfirmUpdateModalProps> = ({
 				<DialogDescription>
 					{t("jobs.confirmUpdateMessage")}
 				</DialogDescription>
-
 			</DialogHeader>
 
 			{pendingFormData && pendingFormData.status === "pending_invoice" && (
@@ -101,10 +103,7 @@ const ConfirmUpdateModal: React.FC<ConfirmUpdateModalProps> = ({
 			)}
 
 			<DialogFooter className="flex justify-end space-x-2 mt-6">
-				<Button
-					variant="outline"
-					onClick={onCancel}
-				>
+				<Button variant="outline" onClick={onCancel}>
 					{t("common.cancel")}
 				</Button>
 				<Button onClick={onConfirm}>
@@ -156,7 +155,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 	};
 
 	// Setup form with default values
-	const form = useForm<FormValues>({
+	const form = useForm<JobFormValues>({
 		resolver: zodResolver(jobSchema),
 		defaultValues: {
 			campaign_id: "",
@@ -167,6 +166,8 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 			status: "draft",
 			months: [],
 			due_date: "",
+			public_notes: "",
+			private_notes: "",
 		},
 	});
 
@@ -239,13 +240,28 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 		},
 	});
 
-
-	// Update job mutation
+	// Update job mutation with proper typing
 	const updateJobMutation = useMutation({
-		mutationFn: async (values: FormValues) => {
+		mutationFn: async (values: JobFormValues) => {
+			if (!id) throw new Error("Job ID is required for update");
+			
+			const updatePayload: Partial<SupabaseJobInsertPayload> = {
+				campaign_id: values.campaign_id,
+				provider_id: values.provider_id,
+				manager_id: values.manager_id,
+				job_type_id: values.job_type_id,
+				value: values.value,
+				status: values.status as JobStatus,
+				months: values.months as MonthType[],
+				due_date: values.due_date || null,
+				provider_message: values.provider_message || null,
+				public_notes: values.public_notes || null,
+				private_notes: values.private_notes || null,
+			};
+
 			const { data, error } = await supabase
 				.from("jobs")
-				.update(values)
+				.update(updatePayload)
 				.eq("id", id)
 				.select()
 				.single();
@@ -253,7 +269,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 			if (error) throw error;
 			return data as Job;
 		},
-		onSuccess: async (data, values) => {
+		onSuccess: async () => {
 			queryClient.invalidateQueries({ queryKey: ["jobs"] });
 			queryClient.invalidateQueries({ queryKey: ["job", id] });
 			toast({
@@ -273,12 +289,26 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 		},
 	});
 
-	// Create job mutation
+	// Create job mutation with proper typing
 	const createJobMutation = useMutation({
-		mutationFn: async (values: FormValues) => {
+		mutationFn: async (values: JobFormValues) => {
+			const insertPayload: SupabaseJobInsertPayload = {
+				campaign_id: values.campaign_id,
+				provider_id: values.provider_id,
+				manager_id: values.manager_id,
+				job_type_id: values.job_type_id,
+				value: values.value,
+				status: values.status as JobStatus,
+				months: values.months as MonthType[],
+				due_date: values.due_date || undefined,
+				provider_message: values.provider_message || undefined,
+				public_notes: values.public_notes || undefined,
+				private_notes: values.private_notes || undefined,
+			};
+
 			const { data, error } = await supabase
 				.from("jobs")
-				.insert([values as SupabaseJobInsertPayload]) // Cast values to the explicit Supabase insert type
+				.insert([insertPayload])
 				.select()
 				.single();
 
@@ -305,7 +335,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 	});
 
 	// Form submission handler
-	const onSubmit = (values: FormValues) => {
+	const onSubmit = (values: JobFormValues) => {
 		if (isEditMode && id) {
 			updateJobMutation.mutate(values);
 		} else {
@@ -319,48 +349,49 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 		form.setValue("campaign_id", "");
 	};
 
-  // Fetch job data if in edit mode
-  useQuery({
+	// Fetch job data if in edit mode
+	useQuery({
 		queryKey: ["job", id],
-    queryFn: async () => {
+		queryFn: async () => {
 			if (!id) return null;
       
-      const { data, error } = await supabase
-        .from("jobs")
-        .select("*")
-        .eq("id", id)
-        .single();
+			const { data, error } = await supabase
+				.from("jobs")
+				.select("*")
+				.eq("id", id)
+				.single();
       
-      if (error) throw error;
+			if (error) throw error;
       
-      // Find client ID from campaign
-      if (campaigns) {
-        const campaign = campaigns.find(c => c.id === data.campaign_id);
-        if (campaign && campaign.client) {
-          setSelectedClientId(campaign.client.id);
-        }
-      }
+			// Find client ID from campaign
+			if (campaigns) {
+				const campaign = campaigns.find(c => c.id === data.campaign_id);
+				if (campaign && campaign.client) {
+					setSelectedClientId(campaign.client.id);
+				}
+			}
       
-      setSelectedCampaign(data.campaign_id);
+			setSelectedCampaign(data.campaign_id);
       
-      // Fill form with job data
-      form.reset({
-        campaign_id: data.campaign_id,
-        provider_id: data.provider_id,
-        manager_id: data.manager_id,
+			// Fill form with job data
+			form.reset({
+				campaign_id: data.campaign_id,
+				provider_id: data.provider_id,
+				manager_id: data.manager_id,
 				job_type_id: data.job_type_id,
-        value: data.value,
-        status: data.status,
-        months: data.months || [],
-        due_date: data.due_date || "",
-      });
+				value: data.value,
+				status: data.status,
+				months: data.months || [],
+				due_date: data.due_date || "",
+				public_notes: data.public_notes || "",
+				private_notes: data.private_notes || "",
+			});
       
-      return data;
-    },
-    enabled: isEditMode && !!id && !!campaigns,
-  });
+			return data;
+		},
+		enabled: isEditMode && !!id && !!campaigns,
+	});
 
-	
 	// Status options
 	const statusOptions = [
 		{ value: "draft", label: t("jobs.draft") },

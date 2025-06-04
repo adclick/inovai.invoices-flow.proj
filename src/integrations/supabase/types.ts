@@ -77,6 +77,24 @@ export type Database = {
         }
         Relationships: []
       }
+      job_types: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           campaign_id: string
@@ -85,16 +103,18 @@ export type Database = {
           documents: string[] | null
           due_date: string | null
           id: string
+          invoice_reference: string | null
+          job_type_id: string | null
           manager_id: string
           months: Database["public"]["Enums"]["month_type"][]
           private_notes: string | null
+          provider_email_sent: string | null
           provider_id: string
           provider_message: string | null
           public_notes: string | null
           status: Database["public"]["Enums"]["job_status"]
           updated_at: string
-          value: number,
-					job_type_id: string
+          value: number
         }
         Insert: {
           campaign_id: string
@@ -103,16 +123,18 @@ export type Database = {
           documents?: string[] | null
           due_date?: string | null
           id?: string
+          invoice_reference?: string | null
+          job_type_id?: string | null
           manager_id: string
           months: Database["public"]["Enums"]["month_type"][]
           private_notes?: string | null
+          provider_email_sent?: string | null
           provider_id: string
           provider_message?: string | null
           public_notes?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
-          value: number,
-					job_type_id: string
+          value: number
         }
         Update: {
           campaign_id?: string
@@ -121,16 +143,18 @@ export type Database = {
           documents?: string[] | null
           due_date?: string | null
           id?: string
+          invoice_reference?: string | null
+          job_type_id?: string | null
           manager_id?: string
           months?: Database["public"]["Enums"]["month_type"][]
           private_notes?: string | null
+          provider_email_sent?: string | null
           provider_id?: string
           provider_message?: string | null
           public_notes?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
-          value?: number,
-					job_type_id?: string
+          value?: number
         }
         Relationships: [
           {
@@ -138,6 +162,13 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_job_type_id_fkey"
+            columns: ["job_type_id"]
+            isOneToOne: false
+            referencedRelation: "job_types"
             referencedColumns: ["id"]
           },
           {
@@ -154,13 +185,6 @@ export type Database = {
             referencedRelation: "providers"
             referencedColumns: ["id"]
           },
-					{
-						foreignKeyName: "jobs_job_type_id_fkey"
-						columns: ["job_type_id"]
-						isOneToOne: false
-						referencedRelation: "job_type"
-						referencedColumns: ["id"]
-					}
         ]
       }
       managers: {
@@ -301,24 +325,6 @@ export type Database = {
         }
         Relationships: []
       }
-      job_types: {
-        Row: {
-          id: string
-          name: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          name: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string
-          created_at?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
@@ -338,19 +344,6 @@ export type Database = {
       is_finance: {
         Args: Record<PropertyKey, never>
         Returns: boolean
-      }
-      update_expired_jobs: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      validate_invitation_token: {
-        Args: { token_value: string }
-        Returns: {
-          is_valid: boolean
-          invitation_id: string
-          email: string
-          role: Database["public"]["Enums"]["app_role"]
-        }[]
       }
     }
     Enums: {

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -11,7 +11,6 @@ import { BaseEntityFormProps } from "../common/EntityModal";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,15 +18,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ActiveSwitchField from "../common/ActiveSwitchField";
 
-// Form schema with validation
+// Form schema with validation that matches the database schema
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   client_id: z.string().min(1, { message: "Client is required" }),
-  description: z.string().optional(),
   duration: z.coerce.number().min(1, { message: "Duration must be at least 1 month" }),
   estimated_cost: z.coerce.number().optional(),
   revenue: z.coerce.number().optional(),
@@ -53,10 +50,9 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
     defaultValues: {
       name: "",
       client_id: "",
-      description: "",
       duration: 1,
-      estimated_cost: 0,
-      revenue: 0,
+      estimated_cost: undefined,
+      revenue: undefined,
       active: true,
     },
   });
@@ -93,10 +89,9 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
       form.reset({
         name: data.name,
         client_id: data.client_id,
-        description: "", // Initialize with empty string as it's not in the database
         duration: data.duration,
-        estimated_cost: data.estimated_cost || 0,
-        revenue: data.revenue || 0,
+        estimated_cost: data.estimated_cost || undefined,
+        revenue: data.revenue || undefined,
         active: data.active,
       });
       
@@ -108,13 +103,19 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   // Create campaign mutation
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      // Extract description from values before sending to Supabase
-      // as it doesn't exist in the database schema
-      const { description, ...dbValues } = values;
+      // Prepare data for Supabase insert
+      const insertData = {
+        name: values.name,
+        client_id: values.client_id,
+        duration: values.duration,
+        estimated_cost: values.estimated_cost || null,
+        revenue: values.revenue || null,
+        active: values.active,
+      };
       
       const { data, error } = await supabase
         .from("campaigns")
-        .insert(dbValues)
+        .insert(insertData)
         .select()
         .single();
       
@@ -143,13 +144,22 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   // Update campaign mutation
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
-      // Extract description from values before sending to Supabase
-      // as it doesn't exist in the database schema
-      const { description, ...dbValues } = values;
+      if (!id) throw new Error("Campaign ID is required for update");
+      
+      // Prepare data for Supabase update
+      const updateData = {
+        name: values.name,
+        client_id: values.client_id,
+        duration: values.duration,
+        estimated_cost: values.estimated_cost || null,
+        revenue: values.revenue || null,
+        active: values.active,
+        updated_at: new Date().toISOString(),
+      };
       
       const { data, error } = await supabase
         .from("campaigns")
-        .update(dbValues)
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
@@ -200,7 +210,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
               <FormLabel>{t("campaigns.client")}</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
-                defaultValue={field.value}
+                value={field.value}
                 disabled={clientsLoading || isLoading}
               >
                 <FormControl>
@@ -240,19 +250,77 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           )}
         />
 
-
-        {/* Active status */}
+        {/* Duration */}
         <FormField
           control={form.control}
-          name="active"
+          name="duration"
           render={({ field }) => (
-            <ActiveSwitchField 
-              control={form.control}
-              name="active" 
-              label={t("common.status")}
-              description={field.value ? t("common.active") : t("common.inactive")}
-            />
+            <FormItem>
+              <FormLabel>{t("campaigns.duration")}</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number"
+                  min="1"
+                  placeholder={t("campaigns.enterDuration")} 
+                  disabled={isLoading} 
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
+        />
+
+        {/* Estimated Cost */}
+        <FormField
+          control={form.control}
+          name="estimated_cost"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("campaigns.estimatedCost")}</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder={t("campaigns.enterEstimatedCost")} 
+                  disabled={isLoading} 
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Revenue */}
+        <FormField
+          control={form.control}
+          name="revenue"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("campaigns.revenue")}</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder={t("campaigns.enterRevenue")} 
+                  disabled={isLoading} 
+                  {...field} 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Active status */}
+        <ActiveSwitchField 
+          control={form.control}
+          name="active" 
+          label={t("common.status")}
+          description={t("campaigns.activeDescription")}
         />
 
         {/* Form actions */}
