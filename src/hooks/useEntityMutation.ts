@@ -26,7 +26,7 @@ export const useEntityMutation = ({
   const createMutation = useMutation({
     mutationFn: async (values: any) => {
       const { data, error } = await supabase
-        .from(tableName)
+        .from(tableName as any)
         .insert(values)
         .select()
         .single();
@@ -62,7 +62,7 @@ export const useEntityMutation = ({
       };
 
       const { data, error } = await supabase
-        .from(tableName)
+        .from(tableName as any)
         .update(updateData)
         .eq("id", id)
         .select()

@@ -58,7 +58,7 @@ const ProviderForm: React.FC<BaseEntityFormProps> = ({
 
   // Update form values when provider data is loaded
   useEffect(() => {
-    if (provider) {
+    if (provider && typeof provider === 'object' && 'name' in provider) {
       form.reset({
         name: provider.name,
         email: provider.email,

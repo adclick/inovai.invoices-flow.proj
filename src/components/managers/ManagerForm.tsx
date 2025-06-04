@@ -50,7 +50,7 @@ const ManagerForm: React.FC<BaseEntityFormProps> = ({
 
   // Update form values when manager data is loaded
   useEffect(() => {
-    if (manager) {
+    if (manager && typeof manager === 'object' && 'name' in manager) {
       form.reset({
         name: manager.name,
         email: manager.email,

@@ -24,7 +24,7 @@ export const useEntityQuery = ({
   return useQuery({
     queryKey: id ? [entityName, id] : [tableName],
     queryFn: async () => {
-      let query = supabase.from(tableName).select(select);
+      let query = supabase.from(tableName as any).select(select);
 
       // Apply filters
       Object.entries(filters).forEach(([key, value]) => {
@@ -53,7 +53,7 @@ export const useEntityQuery = ({
   });
 };
 
-export const useEntitiesQuery = (tableName: string, options: Omit<UseEntityQueryProps, 'id' | 'entityName'> = {}) => {
+export const useEntitiesQuery = (tableName: string, options: Omit<UseEntityQueryProps, 'id' | 'entityName' | 'tableName'> = {}) => {
   return useEntityQuery({
     ...options,
     tableName,
