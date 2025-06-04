@@ -49,6 +49,7 @@
     "inactive": "Inactive",
     "status": "Status",
     "actions": "Actions",
+		"email": "Email",
     "edit": "Edit",
     "delete": "Delete",
     "cancel": "Cancel",

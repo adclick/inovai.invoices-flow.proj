@@ -136,7 +136,7 @@ const AuthForm: React.FC = () => {
 				)}
 
 				<div className="form-group">
-					<Label htmlFor="email" className="auth-label">{t("auth.email")}</Label>
+					<Label htmlFor="email" className="auth-label">{t("common.email")}</Label>
 					<div className="relative">
 						<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
 							<Mail size={16} />
