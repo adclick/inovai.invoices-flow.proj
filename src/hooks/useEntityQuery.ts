@@ -38,11 +38,16 @@ export const useEntityQuery = ({
 
       // Single item query
       if (id) {
-        query = query.eq("id", id).single();
+        const { data, error } = await query.eq("id", id).single();
+        if (error) {
+          console.error(`Error fetching ${entityName}:`, error.message);
+          throw error;
+        }
+        return data;
       }
 
+      // Multiple items query
       const { data, error } = await query;
-
       if (error) {
         console.error(`Error fetching ${entityName}:`, error.message);
         throw error;

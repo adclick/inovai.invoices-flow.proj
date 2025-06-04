@@ -49,10 +49,19 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   });
 
   // Fetch clients for selection
-  const { data: clients, isLoading: clientsLoading } = useEntitiesQuery("clients", {
+  const { data: clientsData, isLoading: clientsLoading } = useEntitiesQuery("clients", {
     select: "id, name",
     orderBy: "name",
   });
+
+  // Convert clients data to the expected format
+  const clients = React.useMemo(() => {
+    if (!clientsData || !Array.isArray(clientsData)) return [];
+    return clientsData.map((client: any) => ({
+      id: client.id,
+      name: client.name,
+    }));
+  }, [clientsData]);
 
   // Fetch campaign data if in edit mode
   const { isLoading } = useEntityQuery({
@@ -130,7 +139,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           name="client_id"
           label={t("campaigns.client")}
           placeholder={t("campaigns.selectClient")}
-          options={clients || []}
+          options={clients}
           isLoading={clientsLoading}
           emptyMessage={t("clients.noClientsAvailable")}
         />

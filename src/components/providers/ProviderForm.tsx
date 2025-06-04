@@ -58,14 +58,15 @@ const ProviderForm: React.FC<BaseEntityFormProps> = ({
 
   // Update form values when provider data is loaded
   useEffect(() => {
-    if (provider && typeof provider === 'object' && 'name' in provider) {
+    if (provider && typeof provider === 'object' && provider !== null && 'name' in provider) {
+      const providerData = provider as any;
       form.reset({
-        name: provider.name,
-        email: provider.email,
-        language: provider.language,
-        country: provider.country || "",
-        iban: provider.iban || "",
-        active: provider.active,
+        name: providerData.name as string,
+        email: providerData.email as string,
+        language: providerData.language as "pt" | "en" | "es",
+        country: (providerData.country as string) || "",
+        iban: (providerData.iban as string) || "",
+        active: providerData.active as boolean,
       });
     }
   }, [provider, form]);

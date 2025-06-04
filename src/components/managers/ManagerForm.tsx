@@ -50,11 +50,12 @@ const ManagerForm: React.FC<BaseEntityFormProps> = ({
 
   // Update form values when manager data is loaded
   useEffect(() => {
-    if (manager && typeof manager === 'object' && 'name' in manager) {
+    if (manager && typeof manager === 'object' && manager !== null && 'name' in manager) {
+      const managerData = manager as any;
       form.reset({
-        name: manager.name,
-        email: manager.email,
-        active: manager.active,
+        name: managerData.name as string,
+        email: managerData.email as string,
+        active: managerData.active as boolean,
       });
     }
   }, [manager, form]);

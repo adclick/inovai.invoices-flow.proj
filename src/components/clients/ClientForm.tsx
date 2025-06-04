@@ -48,10 +48,11 @@ const ClientForm: React.FC<BaseEntityFormProps> = ({
 
   // Update form values when client data is loaded
   useEffect(() => {
-    if (client && typeof client === 'object' && 'name' in client) {
+    if (client && typeof client === 'object' && client !== null && 'name' in client) {
+      const clientData = client as any;
       form.reset({
-        name: client.name,
-        active: client.active,
+        name: clientData.name as string,
+        active: clientData.active as boolean,
       });
     }
   }, [client, form]);
