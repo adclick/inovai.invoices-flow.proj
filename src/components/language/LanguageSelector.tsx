@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
@@ -17,15 +18,20 @@ const LanguageSelector: React.FC = () => {
   const languages = [
     { code: "en", name: t("profile.english") },
     { code: "pt", name: t("profile.portuguese") },
-    { code: "es", name: t("common.spanish") },
+    { code: "es", name: "Español" },
   ];
+
+  const getCurrentLanguageName = () => {
+    const currentLang = languages.find(lang => lang.code === currentLanguage);
+    return currentLang ? currentLang.name : "Language";
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full">
-          <Globe className="h-5 w-5" />
-          <span className="sr-only">{t("profile.language")}</span>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Globe className="h-4 w-4" />
+          <span className="hidden sm:inline">{getCurrentLanguageName()}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -33,11 +39,7 @@ const LanguageSelector: React.FC = () => {
           <DropdownMenuItem
             key={language.code}
             onClick={() => changeLanguage(language.code)}
-            className={
-              currentLanguage === language.code
-                ? "cursor-pointer bg-primary text-white hover:bg-primary hover:text-white dark:bg-primary dark:text-white"
-                : "cursor-pointer "
-            }
+            className={currentLanguage === language.code ? "bg-accent" : ""}
           >
             {language.name}
           </DropdownMenuItem>
