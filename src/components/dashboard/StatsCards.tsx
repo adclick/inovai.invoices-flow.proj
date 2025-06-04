@@ -1,3 +1,4 @@
+
 import React from "react";
 import { CheckCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,7 +33,7 @@ const StatsCards: React.FC<StatsCardsProps> = ({
               {isLoading ? <Skeleton className="h-9 w-16" /> : workingJobs}
             </div>
             <div className="bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs px-2 py-0.5 rounded-full font-medium flex items-center">
-              In Progress
+              {t('dashboard.inProgress')}
             </div>
           </div>
         </CardContent>

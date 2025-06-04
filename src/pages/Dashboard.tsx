@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -106,7 +107,7 @@ const Dashboard: React.FC = () => {
       return data?.map(item => ({
         ...item,
         client: {
-          name: "Unknown Client" // Fallback name
+          name: t("dashboard.unknownClient") // Use translated fallback name
         }
       })) || [];
     },

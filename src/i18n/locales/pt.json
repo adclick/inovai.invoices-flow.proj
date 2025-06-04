@@ -80,7 +80,8 @@
     "euro": "Euro (€)",
     "usd": "Dólar Americano ($)",
     "gbp": "Libra Esterlina (£)",
-    "document": "Documento"
+    "document": "Documento",
+    "viewAll": "Ver Todos"
   },
   "providers": {
     "title": "Fornecedores",
@@ -317,7 +318,15 @@
     "pendingPayment": "Pagamento Pendente",
     "paid": "Pago",
     "noRecentActivity": "Nenhuma atividade recente",
-    "noCampaigns": "Nenhuma campanha ativa"
+    "noCampaigns": "Nenhuma campanha ativa",
+    "currentStatusDistribution": "Distribuição Atual por Estado",
+    "jobsByStatus": "Trabalhos por Estado",
+    "needsAttention": "Requer Atenção",
+    "pending": "Pendente",
+    "completed": "Concluído",
+    "jobs": "Trabalhos",
+    "inProgress": "Em Progresso",
+    "unknownClient": "Cliente Desconhecido"
   },
   "profile": {
     "title": "Perfil",

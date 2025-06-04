@@ -80,7 +80,8 @@
     "euro": "Euro (€)",
     "usd": "US Dollar ($)",
     "gbp": "British Pound (£)",
-    "document": "Document"
+    "document": "Document",
+    "viewAll": "View All"
   },
   "providers": {
     "title": "Providers",
@@ -317,7 +318,15 @@
     "pendingPayment": "Pending Payment",
     "paid": "Paid",
     "noRecentActivity": "No recent activity",
-    "noCampaigns": "No active campaigns"
+    "noCampaigns": "No active campaigns",
+    "currentStatusDistribution": "Current Status Distribution",
+    "jobsByStatus": "Jobs by Status",
+    "needsAttention": "Needs Attention",
+    "pending": "Pending",
+    "completed": "Completed",
+    "jobs": "Jobs",
+    "inProgress": "In Progress",
+    "unknownClient": "Unknown Client"
   },
   "profile": {
     "title": "Profile",
