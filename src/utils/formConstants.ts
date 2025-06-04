@@ -41,7 +41,7 @@ export const CURRENCY_OPTIONS = [
   { value: "gbp", label: "common.gbp" },
 ];
 
-// Job form default values
+// Job form default values - fix the months type issue
 export const JOB_FORM_DEFAULTS = {
   campaign_id: "",
   provider_id: "",
@@ -49,7 +49,7 @@ export const JOB_FORM_DEFAULTS = {
   job_type_id: "",
   value: 0,
   status: "draft" as const,
-  months: [] as const,
+  months: [] as ("january" | "february" | "march" | "april" | "may" | "june" | "july" | "august" | "september" | "october" | "november" | "december")[],
   due_date: "",
   public_notes: "",
   private_notes: "",

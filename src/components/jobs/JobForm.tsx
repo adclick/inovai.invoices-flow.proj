@@ -20,6 +20,9 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 }) => {
   const { t } = useTranslation();
   
+  // Only allow create and edit modes for this form
+  const formMode = mode === "view" ? "edit" : mode;
+  
   // Fetch all required data
   const {
     clients,
@@ -42,13 +45,14 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
     isSubmitting,
   } = useJobFormLogic({
     id,
-    mode,
+    mode: formMode,
     onClose,
     onSuccess,
     campaigns,
   });
 
   const isLoading = dataLoading || isSubmitting;
+  const isReadOnly = mode === "view";
 
   return (
     <Form {...form}>
@@ -87,20 +91,22 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t("common.back")}
           </Button>
-          <div className="flex justify-end space-x-4">
-            <Button type="button" variant="outline" onClick={onClose}>
-              {t("common.cancel")}
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading
-                ? mode === "edit"
-                  ? t("common.updating")
-                  : t("common.creating")
-                : mode === "edit"
-                ? t("common.save")
-                : t("common.create")}
-            </Button>
-          </div>
+          {!isReadOnly && (
+            <div className="flex justify-end space-x-4">
+              <Button type="button" variant="outline" onClick={onClose}>
+                {t("common.cancel")}
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading
+                  ? formMode === "edit"
+                    ? t("common.updating")
+                    : t("common.creating")
+                  : formMode === "edit"
+                  ? t("common.save")
+                  : t("common.create")}
+              </Button>
+            </div>
+          )}
         </div>
       </form>
     </Form>
