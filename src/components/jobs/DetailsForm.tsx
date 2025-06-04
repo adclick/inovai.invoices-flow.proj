@@ -153,42 +153,33 @@ const DetailsForm: React.FC<DetailsFormProps> = ({
 					)}
 				/>
 
-				{/* Client Selection */}
-				<FormField
-					control={form.control}
-					name="client_id"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>{t("jobs.client")}</FormLabel>
-							<Select
-								value={selectedClientId}
-								onValueChange={(value) => {
-									onClientChange(value);
-									field.onChange(value);
-								}}
-							>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder={t("jobs.selectClient")} />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									{clients && clients.length > 0 ? (
-										clients.map((client) => (
-											<SelectItem key={client.id} value={client.id}>
-												{client.name}
-											</SelectItem>
-										))
-									) : (
-										<SelectItem value="no-clients" disabled>
-											{t("clients.noClientsAvailable")}
-										</SelectItem>
-									)}
-								</SelectContent>
-							</Select>
-						</FormItem>
-					)}
-				/>
+				{/* Client Selection - Not part of form schema, just for filtering campaigns */}
+				<div className="space-y-2">
+					<label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+						{t("jobs.client")}
+					</label>
+					<Select
+						value={selectedClientId}
+						onValueChange={onClientChange}
+					>
+						<SelectTrigger>
+							<SelectValue placeholder={t("jobs.selectClient")} />
+						</SelectTrigger>
+						<SelectContent>
+							{clients && clients.length > 0 ? (
+								clients.map((client) => (
+									<SelectItem key={client.id} value={client.id}>
+										{client.name}
+									</SelectItem>
+								))
+							) : (
+								<SelectItem value="no-clients" disabled>
+									{t("clients.noClientsAvailable")}
+								</SelectItem>
+							)}
+						</SelectContent>
+					</Select>
+				</div>
 
 				{/* Campaign Selection */}
 				<FormField
