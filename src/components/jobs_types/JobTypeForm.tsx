@@ -43,7 +43,7 @@ const JobTypeForm: React.FC<BaseEntityFormProps> = ({
 
   // Update form when job type data is loaded
   React.useEffect(() => {
-    if (jobType && isEdit) {
+    if (jobType && isEdit && typeof jobType === 'object' && 'name' in jobType) {
       form.reset({
         name: jobType.name || "",
       });
