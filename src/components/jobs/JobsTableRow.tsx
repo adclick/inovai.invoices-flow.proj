@@ -82,7 +82,7 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
   return (
     <TableRow>
       <TableCell>
-        <JobStatusBadge status={job.status} />
+        <JobStatusBadge status={job.status} t={t} />
       </TableCell>
       <TableCell>{job.job_type_name}</TableCell>
       <TableCell>{renderMultipleClients(job.client_names)}</TableCell>
