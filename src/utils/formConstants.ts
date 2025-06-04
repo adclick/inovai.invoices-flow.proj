@@ -41,6 +41,20 @@ export const CURRENCY_OPTIONS = [
   { value: "gbp", label: "common.gbp" },
 ];
 
+// Job form default values
+export const JOB_FORM_DEFAULTS = {
+  campaign_id: "",
+  provider_id: "",
+  manager_id: "",
+  job_type_id: "",
+  value: 0,
+  status: "draft" as const,
+  months: [] as const,
+  due_date: "",
+  public_notes: "",
+  private_notes: "",
+};
+
 // Form field types for reusability
 export type SelectOption = {
   value: string;
