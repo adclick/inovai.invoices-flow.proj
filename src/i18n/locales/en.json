@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "dashboard": "Dashboard",
@@ -6,11 +5,13 @@
     "clients": "Clients",
     "campaigns": "Campaigns",
     "jobs": "Jobs",
+    "allJobs": "All Jobs",
     "managers": "Managers",
     "jobTypes": "Job Types",
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "management": "Management"
   },
   "auth": {
     "signInToAccount": "Sign in to your account",
@@ -30,7 +31,8 @@
     "welcomeBack": "Welcome back!",
     "loginSuccess": "Successfully logged in",
     "accountCreated": "Account created successfully",
-    "emailConfirmation": "Please check your email to confirm your account"
+    "emailConfirmation": "Please check your email to confirm your account",
+    "signOut": "Sign Out"
   },
   "logoBox": {
     "subtitle": "Streamline your invoice management workflow",

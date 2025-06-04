@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "dashboard": "Painel",
@@ -6,11 +5,13 @@
     "clients": "Clientes",
     "campaigns": "Campanhas",
     "jobs": "Trabalhos",
+    "allJobs": "Todos os Trabalhos",
     "managers": "Gestores",
     "jobTypes": "Tipos de Trabalho",
     "profile": "Perfil",
     "settings": "Definições",
-    "logout": "Terminar Sessão"
+    "logout": "Terminar Sessão",
+    "management": "Gestão"
   },
   "auth": {
     "signInToAccount": "Iniciar sessão na sua conta",
@@ -30,7 +31,8 @@
     "welcomeBack": "Bem-vindo de volta!",
     "loginSuccess": "Sessão iniciada com sucesso",
     "accountCreated": "Conta criada com sucesso",
-    "emailConfirmation": "Verifique o seu email para confirmar a sua conta"
+    "emailConfirmation": "Verifique o seu email para confirmar a sua conta",
+    "signOut": "Terminar Sessão"
   },
   "logoBox": {
     "subtitle": "Simplifique o seu fluxo de gestão de facturas",

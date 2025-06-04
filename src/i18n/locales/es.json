@@ -1,4 +1,3 @@
-
 {
   "navigation": {
     "dashboard": "Panel",
@@ -6,11 +5,13 @@
     "clients": "Clientes",
     "campaigns": "Campañas",
     "jobs": "Trabajos",
+    "allJobs": "Todos los Trabajos",
     "managers": "Gestores",
     "jobTypes": "Tipos de Trabajo",
     "profile": "Perfil",
     "settings": "Configuración",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "management": "Gestión"
   },
   "auth": {
     "signInToAccount": "Iniciar sesión en tu cuenta",
@@ -30,7 +31,8 @@
     "welcomeBack": "¡Bienvenido de vuelta!",
     "loginSuccess": "Sesión iniciada con éxito",
     "accountCreated": "Cuenta creada con éxito",
-    "emailConfirmation": "Por favor revisa tu email para confirmar tu cuenta"
+    "emailConfirmation": "Por favor revisa tu email para confirmar tu cuenta",
+    "signOut": "Cerrar Sesión"
   },
   "logoBox": {
     "subtitle": "Optimiza tu flujo de gestión de facturas",
