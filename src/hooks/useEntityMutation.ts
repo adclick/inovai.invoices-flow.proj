@@ -10,6 +10,7 @@ interface UseEntityMutationProps {
   queryKey: string;
   onSuccess?: () => void;
   onClose?: () => void;
+  onError?: () => void;
 }
 
 export const useEntityMutation = ({
@@ -18,6 +19,7 @@ export const useEntityMutation = ({
   queryKey,
   onSuccess,
   onClose,
+  onError,
 }: UseEntityMutationProps) => {
   const { t } = useTranslation();
   const { toast } = useToast();
@@ -51,6 +53,7 @@ export const useEntityMutation = ({
         description: String(error),
         variant: "destructive",
       });
+      onError?.();
     },
   });
 
@@ -89,11 +92,36 @@ export const useEntityMutation = ({
         description: String(error),
         variant: "destructive",
       });
+      onError?.();
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from(tableName as any)
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        console.error(`Error deleting ${entityName}:`, error.message);
+        throw error;
+      }
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
+      onSuccess?.();
+    },
+    onError: (error) => {
+      console.error(`Error deleting ${entityName}:`, error);
+      onError?.();
     },
   });
 
   return {
     createMutation,
     updateMutation,
+    deleteMutation,
   };
 };
