@@ -6,9 +6,9 @@ import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import JobTypeModal from "@/components/jobs_types/JobTypeModal";
 import JobTypesTable from "@/components/jobs_types/JobTypesTable";
-import { JobsLoadingState } from "@/components/jobs/JobsLoadingState";
-import { JobsErrorState } from "@/components/jobs/JobsErrorState";
-import { JobsEmptyState } from "@/components/jobs/JobsEmptyState";
+import JobsLoadingState from "@/components/jobs/JobsLoadingState";
+import JobsErrorState from "@/components/jobs/JobsErrorState";
+import JobsEmptyState from "@/components/jobs/JobsEmptyState";
 import { useModalState } from "@/hooks/useModalState";
 import { useJobTypesData } from "@/hooks/useJobTypesData";
 import { useJobTypesListLogic } from "@/hooks/useJobTypesListLogic";
@@ -27,9 +27,9 @@ const JobsTypesList: React.FC = () => {
   const { openModal } = useModalState();
   
   // Data fetching
-  const { data: jobTypes, isLoading, isError } = useJobTypesData();
+  const { data: jobTypes, isLoading, isError, error } = useJobTypesData();
   
-  // List logic
+  // List logic - only pass data if it's an array
   const {
     searchTerm,
     statusFilter,
@@ -39,7 +39,7 @@ const JobsTypesList: React.FC = () => {
     handleSearchChange,
     handleStatusFilterChange,
     setCurrentPage,
-  } = useJobTypesListLogic(jobTypes);
+  } = useJobTypesListLogic(Array.isArray(jobTypes) ? jobTypes : []);
 
   // Deletion logic
   const {
@@ -63,7 +63,10 @@ const JobsTypesList: React.FC = () => {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <JobsLoadingState message={t("jobTypes.loadingJobTypes")} />
+        <JobsLoadingState 
+          title={t("jobTypes.title")}
+          loadingText={t("jobTypes.loadingJobTypes")} 
+        />
       </DashboardLayout>
     );
   }
@@ -71,7 +74,11 @@ const JobsTypesList: React.FC = () => {
   if (isError) {
     return (
       <DashboardLayout>
-        <JobsErrorState message={t("jobTypes.errorLoadingJobTypes")} />
+        <JobsErrorState 
+          title={t("jobTypes.title")}
+          errorMessage={t("jobTypes.errorLoadingJobTypes")}
+          error={error as Error}
+        />
       </DashboardLayout>
     );
   }
@@ -98,8 +105,8 @@ const JobsTypesList: React.FC = () => {
           <JobsEmptyState
             title={t("jobTypes.noData")}
             description=""
-            actionLabel={t("jobTypes.createFirstJobType")}
-            onAction={handleCreateJobType}
+            createButtonText={t("jobTypes.createFirstJobType")}
+            onCreateJob={handleCreateJobType}
           />
         )}
       </div>

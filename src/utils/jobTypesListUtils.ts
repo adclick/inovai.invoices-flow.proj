@@ -12,13 +12,12 @@ export const filterJobTypes = (
 
   return jobTypes.filter((jobType) => {
     const matchesSearch = jobType.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase()) ?? false;
 
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" && jobType.active) ||
-      (statusFilter === "inactive" && !jobType.active);
+    // Since job_types table doesn't have an 'active' column, we'll treat all as active
+    // or we can remove status filtering for job types
+    const matchesStatus = statusFilter === "all" || statusFilter === "active";
 
     return matchesSearch && matchesStatus;
   });
