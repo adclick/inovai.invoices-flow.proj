@@ -29,7 +29,9 @@ const JobsTypesList: React.FC = () => {
   // Data fetching
   const { data: jobTypes, isLoading, isError, error } = useJobTypesData();
   
-  // List logic - only pass data if it's an array
+  // List logic - only pass data if it's an array of valid job types
+  const validJobTypes = Array.isArray(jobTypes) && jobTypes.length >= 0 && !isError ? jobTypes : [];
+  
   const {
     searchTerm,
     statusFilter,
@@ -39,7 +41,7 @@ const JobsTypesList: React.FC = () => {
     handleSearchChange,
     handleStatusFilterChange,
     setCurrentPage,
-  } = useJobTypesListLogic(Array.isArray(jobTypes) ? jobTypes : []);
+  } = useJobTypesListLogic(validJobTypes);
 
   // Deletion logic
   const {
@@ -94,7 +96,7 @@ const JobsTypesList: React.FC = () => {
           </Button>
         </div>
 
-        {jobTypes && jobTypes.length > 0 ? (
+        {validJobTypes && validJobTypes.length > 0 ? (
           <JobTypesTable
             jobTypes={paginatedJobTypes}
             onEditJobType={handleEditJobType}
