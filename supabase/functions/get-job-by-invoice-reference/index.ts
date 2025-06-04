@@ -39,7 +39,6 @@ serve(async (req) => {
         job_type:job_types(*)
       `)
       .eq('invoice_reference', invoiceReference)
-			.single()
 
     if (error) {
       throw error
