@@ -9,9 +9,10 @@ import { useEntityQuery } from "@/hooks/useEntityQuery";
 import { supabase } from "@/integrations/supabase/client";
 import { JOB_FORM_DEFAULTS } from "@/utils/formConstants";
 
-// Form schema with proper validation using Supabase types
+// Updated form schema for multi-select
 const jobSchema = z.object({
-  campaign_id: z.string().min(1, "jobs.selectCampaign"),
+  client_ids: z.array(z.string()).min(1, "jobs.selectClients"),
+  campaign_ids: z.array(z.string()).min(1, "jobs.selectCampaigns"),
   provider_id: z.string().min(1, "jobs.selectProvider"),
   manager_id: z.string().min(1, "jobs.selectManager"),
   job_type_id: z.string().min(1, "jobs.selectJobType"),
@@ -40,7 +41,7 @@ interface UseJobFormLogicProps {
 export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: UseJobFormLogicProps) => {
   const { t } = useTranslation();
   const isEditMode = mode === "edit";
-  const [selectedClientId, setSelectedClientId] = useState("");
+  const [selectedClientIds, setSelectedClientIds] = useState<string[]>([]);
 
   // Setup form with default values
   const form = useForm<JobFormValues>({
@@ -62,30 +63,37 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     if (isEditMode && id) {
       const loadJob = async () => {
         try {
-          const { data } = await supabase
+          // Fetch job data
+          const { data: jobData } = await supabase
             .from("jobs")
             .select("*")
             .eq("id", id)
             .single();
           
-          if (data) {
-            // Find client ID from campaign
-            const campaign = campaigns.find(c => c.id === data.campaign_id);
-            if (campaign) {
-              setSelectedClientId(campaign.client_id);
-            }
+          if (jobData) {
+            // Fetch associated campaigns from junction table
+            const { data: jobCampaigns } = await supabase
+              .from("job_campaigns")
+              .select("campaign_id, campaigns(id, name, client_id)")
+              .eq("job_id", id);
+            
+            const campaignIds = jobCampaigns?.map(jc => jc.campaign_id) || [];
+            const clientIds = [...new Set(jobCampaigns?.map((jc: any) => jc.campaigns?.client_id).filter(Boolean))];
+            
+            setSelectedClientIds(clientIds);
             
             form.reset({
-              campaign_id: data.campaign_id,
-              provider_id: data.provider_id,
-              manager_id: data.manager_id,
-              job_type_id: data.job_type_id,
-              value: data.value,
-              status: data.status,
-              months: data.months || [],
-              due_date: data.due_date || "",
-              public_notes: data.public_notes || "",
-              private_notes: data.private_notes || "",
+              client_ids: clientIds,
+              campaign_ids: campaignIds,
+              provider_id: jobData.provider_id,
+              manager_id: jobData.manager_id,
+              job_type_id: jobData.job_type_id,
+              value: jobData.value,
+              status: jobData.status,
+              months: jobData.months || [],
+              due_date: jobData.due_date || "",
+              public_notes: jobData.public_notes || "",
+              private_notes: jobData.private_notes || "",
             });
           }
         } catch (error) {
@@ -94,7 +102,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       };
       loadJob();
     }
-  }, [isEditMode, id, form, campaigns]);
+  }, [isEditMode, id, form]);
 
   // Mutations
   const { createMutation, updateMutation } = useEntityMutation({
@@ -105,21 +113,26 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     onClose,
   });
 
-  // Filter campaigns by selected client
+  // Filter campaigns by selected clients
   const filteredCampaigns = useMemo(() => {
-    if (!selectedClientId) return campaigns;
-    return campaigns.filter(campaign => campaign.client_id === selectedClientId);
-  }, [campaigns, selectedClientId]);
+    if (selectedClientIds.length === 0) return [];
+    return campaigns.filter(campaign => selectedClientIds.includes(campaign.client_id));
+  }, [campaigns, selectedClientIds]);
 
-  const handleClientChange = (clientId: string) => {
-    setSelectedClientId(clientId);
-    form.setValue("campaign_id", "");
+  const handleClientChange = (clientIds: string[]) => {
+    setSelectedClientIds(clientIds);
+    // Clear campaign selection when clients change
+    const currentCampaignIds = form.getValues("campaign_ids");
+    const validCampaignIds = currentCampaignIds.filter(campaignId => 
+      campaigns.find(c => c.id === campaignId && clientIds.includes(c.client_id))
+    );
+    form.setValue("campaign_ids", validCampaignIds);
   };
 
   // Form submission handler
-  const onSubmit = (values: JobFormValues) => {
+  const onSubmit = async (values: JobFormValues) => {
     const submitData = {
-      campaign_id: values.campaign_id,
+      campaign_id: values.campaign_ids[0] || null, // Keep first campaign for backward compatibility
       provider_id: values.provider_id,
       manager_id: values.manager_id,
       job_type_id: values.job_type_id,
@@ -133,9 +146,58 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     };
 
     if (isEditMode && id) {
-      updateMutation.mutate({ id, values: submitData });
+      // Update job
+      updateMutation.mutate({ 
+        id, 
+        values: submitData 
+      });
+      
+      // Update junction table
+      try {
+        // Delete existing relationships
+        await supabase
+          .from("job_campaigns")
+          .delete()
+          .eq("job_id", id);
+        
+        // Insert new relationships
+        const jobCampaignInserts = values.campaign_ids.map(campaignId => ({
+          job_id: id,
+          campaign_id: campaignId,
+        }));
+        
+        await supabase
+          .from("job_campaigns")
+          .insert(jobCampaignInserts);
+      } catch (error) {
+        console.error("Error updating job-campaign relationships:", error);
+      }
     } else {
-      createMutation.mutate(submitData);
+      // Create job first, then handle junction table
+      try {
+        const { data: newJob, error } = await supabase
+          .from("jobs")
+          .insert(submitData)
+          .select()
+          .single();
+        
+        if (error) throw error;
+        
+        // Insert job-campaign relationships
+        const jobCampaignInserts = values.campaign_ids.map(campaignId => ({
+          job_id: newJob.id,
+          campaign_id: campaignId,
+        }));
+        
+        await supabase
+          .from("job_campaigns")
+          .insert(jobCampaignInserts);
+        
+        onSuccess?.();
+        onClose();
+      } catch (error) {
+        console.error("Error creating job:", error);
+      }
     }
   };
 
@@ -143,7 +205,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
 
   return {
     form,
-    selectedClientId,
+    selectedClientIds,
     filteredCampaigns,
     handleClientChange,
     onSubmit,

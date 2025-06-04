@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Job, formatJobStatus } from "@/types/job";
@@ -18,19 +17,21 @@ export const useJobsData = () => {
   return useQuery({
     queryKey: ["jobs"],
     queryFn: async () => {
-      // Fetch all jobs
+      // Fetch all jobs with their campaigns via junction table
       const { data: jobs, error: jobsError } = await supabase
         .from("jobs")
-        .select("*")
+        .select(`
+          *,
+          job_campaigns(
+            campaign_id,
+            campaigns(id, name, client_id, clients(id, name))
+          )
+        `)
         .order("created_at", { ascending: false });
 
       if (jobsError) throw jobsError;
 
-      // Fetch campaigns with their client information
-      const { data: campaigns } = await supabase
-        .from("campaigns")
-        .select("id, name, client:client_id(id, name)");
-
+      // Fetch providers and managers for lookup
       const { data: providers } = await supabase
         .from("providers")
         .select("id, name");
@@ -39,19 +40,11 @@ export const useJobsData = () => {
         .from("managers")
         .select("id, name");
 
-			const { data: jobTypes } = await supabase
-				.from("job_types")
-				.select("id, name");
+      const { data: jobTypes } = await supabase
+        .from("job_types")
+        .select("id, name");
 
       // Create lookup tables for entity names
-      const campaignMap = campaigns?.reduce((acc: Record<string, any>, campaign) => {
-        acc[campaign.id] = {
-          name: campaign.name,
-          client_name: campaign.client?.name || "Unknown Client"
-        };
-        return acc;
-      }, {}) || {};
-
       const providerMap = providers?.reduce((acc: Record<string, string>, provider) => {
         acc[provider.id] = provider.name;
         return acc;
@@ -62,15 +55,35 @@ export const useJobsData = () => {
         return acc;
       }, {}) || {};
 
-      // Add entity names to jobs
-      return jobs.map((job: any) => ({
-        ...job,
-        campaign_name: campaignMap[job.campaign_id]?.name || "Unknown Campaign",
-        client_name: campaignMap[job.campaign_id]?.client_name || "Unknown Client",
-        provider_name: providerMap[job.provider_id] || "Unknown Provider",
-        manager_name: managerMap[job.manager_id] || "Unknown Manager",
-				job_type_name: jobTypes?.find((jobType: any) => jobType.id === job.job_type_id)?.name || "Unknown Job Type"
-      })) as Job[];
+      // Transform jobs with campaign information
+      return jobs.map((job: any) => {
+        const jobCampaigns = job.job_campaigns || [];
+        const campaigns = jobCampaigns.map((jc: any) => jc.campaigns).filter(Boolean);
+        const clients = campaigns.map((c: any) => c.clients).filter(Boolean);
+        
+        // Get unique client information
+        const uniqueClients = clients.reduce((acc: any[], client: any) => {
+          if (!acc.find(c => c.id === client.id)) {
+            acc.push(client);
+          }
+          return acc;
+        }, []);
+
+        return {
+          ...job,
+          // Keep backward compatibility fields
+          campaign_name: campaigns[0]?.name || "Unknown Campaign",
+          client_name: uniqueClients[0]?.name || "Unknown Client",
+          provider_name: providerMap[job.provider_id] || "Unknown Provider",
+          manager_name: managerMap[job.manager_id] || "Unknown Manager",
+          job_type_name: jobTypes?.find((jobType: any) => jobType.id === job.job_type_id)?.name || "Unknown Job Type",
+          // New fields for multiple relationships
+          campaign_ids: campaigns.map((c: any) => c.id),
+          campaign_names: campaigns.map((c: any) => c.name),
+          client_ids: uniqueClients.map((c: any) => c.id),
+          client_names: uniqueClients.map((c: any) => c.name),
+        };
+      }) as Job[];
     },
   });
 };
@@ -85,19 +98,19 @@ export const useJobById = (jobId: string) => {
 
       const { data: job, error: jobError } = await supabase
         .from("jobs")
-        .select("*")
+        .select(`
+          *,
+          job_campaigns(
+            campaign_id,
+            campaigns(id, name, client_id, clients(id, name))
+          )
+        `)
         .eq("id", jobId)
         .single();
 
       if (jobError) throw jobError;
 
-      // Get associated campaign with client information
-      const { data: campaign } = await supabase
-        .from("campaigns")
-        .select("name, client:client_id(name)")
-        .eq("id", job.campaign_id)
-        .single();
-
+      // Get provider and manager information
       const { data: provider } = await supabase
         .from("providers")
         .select("name")
@@ -110,12 +123,28 @@ export const useJobById = (jobId: string) => {
         .eq("id", job.manager_id)
         .single();
 
+      // Transform job with campaign information
+      const jobCampaigns = job.job_campaigns || [];
+      const campaigns = jobCampaigns.map((jc: any) => jc.campaigns).filter(Boolean);
+      const clients = campaigns.map((c: any) => c.clients).filter(Boolean);
+      
+      const uniqueClients = clients.reduce((acc: any[], client: any) => {
+        if (!acc.find(c => c.id === client.id)) {
+          acc.push(client);
+        }
+        return acc;
+      }, []);
+
       return {
         ...job,
-        campaign_name: campaign?.name || "Unknown Campaign",
-        client_name: campaign?.client?.name || "Unknown Client",
+        campaign_name: campaigns[0]?.name || "Unknown Campaign",
+        client_name: uniqueClients[0]?.name || "Unknown Client",
         provider_name: provider?.name || "Unknown Provider",
-        manager_name: manager?.name || "Unknown Manager"
+        manager_name: manager?.name || "Unknown Manager",
+        campaign_ids: campaigns.map((c: any) => c.id),
+        campaign_names: campaigns.map((c: any) => c.name),
+        client_ids: uniqueClients.map((c: any) => c.id),
+        client_names: uniqueClients.map((c: any) => c.name),
       } as Job;
     },
     enabled: !!jobId,

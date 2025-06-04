@@ -1,7 +1,7 @@
 
 export type Job = {
   id: string;
-  campaign_id: string;
+  campaign_id: string; // Keep for backward compatibility
   provider_id: string;
   manager_id: string;
   value: number;
@@ -18,10 +18,15 @@ export type Job = {
   manager_name?: string;
   client_name?: string; // We keep this for display purposes, derived from the campaign
   client_id?: string; // Adding this to support the current implementation in JobsGroupedList
-	provider_email_sent?: string | null;
-	job_type_id?: string | null;
-	job_type_name?: string | null;
-	invoice_reference?: string | null;
+  provider_email_sent?: string | null;
+  job_type_id?: string | null;
+  job_type_name?: string | null;
+  invoice_reference?: string | null;
+  // New fields for many-to-many relationship
+  campaign_ids?: string[];
+  campaign_names?: string[];
+  client_ids?: string[];
+  client_names?: string[];
 };
 
 // Helper function to format status labels for display

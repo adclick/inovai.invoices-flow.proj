@@ -41,9 +41,10 @@ export const CURRENCY_OPTIONS = [
   { value: "gbp", label: "common.gbp" },
 ];
 
-// Job form default values - fix the months type issue
+// Job form default values - updated for multi-select
 export const JOB_FORM_DEFAULTS = {
-  campaign_id: "",
+  client_ids: [] as string[],
+  campaign_ids: [] as string[],
   provider_id: "",
   manager_id: "",
   job_type_id: "",

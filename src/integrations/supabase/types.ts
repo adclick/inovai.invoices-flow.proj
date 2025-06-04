@@ -77,24 +77,60 @@ export type Database = {
         }
         Relationships: []
       }
+      job_campaigns: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          job_id: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          job_id: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          job_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_campaigns_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_campaigns_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_types: {
         Row: {
           created_at: string
-					updated_at: string
           id: string
           name: string | null
+          updated_at: string
         }
         Insert: {
           created_at?: string
-					updated_at: string
           id?: string
           name?: string | null
+          updated_at?: string
         }
         Update: {
           created_at?: string
-					updated_at: string
           id?: string
           name?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

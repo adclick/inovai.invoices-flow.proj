@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { BaseEntityFormProps } from "../common/EntityModal";
 import { Form } from "@/components/ui/form";
@@ -38,7 +38,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
   // Handle form logic
   const {
     form,
-    selectedClientId,
+    selectedClientIds,
     filteredCampaigns,
     handleClientChange,
     onSubmit,
@@ -50,6 +50,16 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
     onSuccess,
     campaigns,
   });
+
+  // Watch for client changes in the form
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "client_ids") {
+        handleClientChange(value.client_ids || []);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form, handleClientChange]);
 
   const isLoading = dataLoading || isSubmitting;
   const isReadOnly = mode === "view";
@@ -70,7 +80,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
           filteredCampaigns={filteredCampaigns}
           providers={providers}
           managers={managers}
-          selectedClientId={selectedClientId}
+          selectedClientIds={selectedClientIds}
           onClientChange={handleClientChange}
           t={t}
         />
