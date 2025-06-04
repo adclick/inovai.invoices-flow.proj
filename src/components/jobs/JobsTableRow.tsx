@@ -39,7 +39,7 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
         {job.documents && job.documents.length > 0 ? (
           <Link to={job.documents[0]} onClick={e => e.stopPropagation()} target="_blank">
             <Badge variant="outline" className="bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400 border-blue-200 dark:border-blue-800/30">
-              Document
+              {t("common.document")}
             </Badge>
           </Link>
         ) : (
