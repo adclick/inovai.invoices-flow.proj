@@ -80,7 +80,7 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
   };
 
   return (
-    <TableRow>
+    <TableRow className="cursor-pointer" onClick={() => onEditJob(job.id)}>
       <TableCell>
         <JobStatusBadge status={job.status} t={t} />
       </TableCell>
@@ -97,13 +97,6 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
       <TableCell>{job.invoice_reference || "-"}</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onEditJob(job.id)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
           <Button
             variant="outline"
             size="sm"
