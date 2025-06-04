@@ -13,6 +13,7 @@ import { useModalState } from "@/hooks/useModalState";
 import { useJobTypesData } from "@/hooks/useJobTypesData";
 import { useJobTypesListLogic } from "@/hooks/useJobTypesListLogic";
 import { useJobTypeDeletion } from "@/hooks/useJobTypeDeletion";
+import { Database } from "@/integrations/supabase/types";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+type JobType = Database["public"]["Tables"]["job_types"]["Row"];
+
 const JobsTypesList: React.FC = () => {
   const { t } = useTranslation();
   const { openModal } = useModalState();
@@ -29,8 +32,11 @@ const JobsTypesList: React.FC = () => {
   // Data fetching
   const { data: jobTypes, isLoading, isError, error } = useJobTypesData();
   
-  // List logic - only pass data if it's an array of valid job types
-  const validJobTypes = Array.isArray(jobTypes) && jobTypes.length >= 0 && !isError ? jobTypes : [];
+  // List logic - only pass data if it's valid job types array and no error
+  const validJobTypes: JobType[] = Array.isArray(jobTypes) && !isError && 
+    jobTypes.every((item: any) => item && typeof item === 'object' && 'id' in item && 'name' in item) 
+    ? jobTypes as JobType[] 
+    : [];
   
   const {
     searchTerm,
