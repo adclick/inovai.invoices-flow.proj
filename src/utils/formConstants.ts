@@ -41,12 +41,13 @@ export const CURRENCY_OPTIONS = [
   { value: "gbp", label: "common.gbp" },
 ];
 
-// Job form default values - updated for multi-select
+// Job form default values - updated for multi-select and company
 export const JOB_FORM_DEFAULTS = {
   client_ids: [] as string[],
   campaign_ids: [] as string[],
   provider_id: "",
   manager_id: "",
+  company_id: "",
   job_type_id: "",
   value: 0,
   status: "draft" as const,

@@ -4,6 +4,7 @@ export type Job = {
   campaign_id: string; // Keep for backward compatibility
   provider_id: string;
   manager_id: string;
+  company_id?: string | null; // New company field
   value: number;
   currency: "euro" | "usd" | "gbp";
   status: "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid";
@@ -18,6 +19,7 @@ export type Job = {
   manager_name?: string;
   client_name?: string; // We keep this for display purposes, derived from the campaign
   client_id?: string; // Adding this to support the current implementation in JobsGroupedList
+  company_name?: string; // New company name field
   provider_email_sent?: string | null;
   job_type_id?: string | null;
   job_type_name?: string | null;

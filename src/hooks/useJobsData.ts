@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Job, formatJobStatus } from "@/types/job";
@@ -17,7 +18,7 @@ export const useJobsData = () => {
   return useQuery({
     queryKey: ["jobs"],
     queryFn: async () => {
-      // Fetch all jobs with their campaigns via junction table
+      // Fetch all jobs with their campaigns via junction table and companies
       const { data: jobs, error: jobsError } = await supabase
         .from("jobs")
         .select(`
@@ -25,7 +26,8 @@ export const useJobsData = () => {
           job_campaigns(
             campaign_id,
             campaigns(id, name, client_id, clients(id, name))
-          )
+          ),
+          companies(id, name)
         `)
         .order("created_at", { ascending: false });
 
@@ -55,7 +57,7 @@ export const useJobsData = () => {
         return acc;
       }, {}) || {};
 
-      // Transform jobs with campaign information
+      // Transform jobs with campaign and company information
       return jobs.map((job: any) => {
         const jobCampaigns = job.job_campaigns || [];
         const campaigns = jobCampaigns.map((jc: any) => jc.campaigns).filter(Boolean);
@@ -77,6 +79,7 @@ export const useJobsData = () => {
           provider_name: providerMap[job.provider_id] || "Unknown Provider",
           manager_name: managerMap[job.manager_id] || "Unknown Manager",
           job_type_name: jobTypes?.find((jobType: any) => jobType.id === job.job_type_id)?.name || "Unknown Job Type",
+          company_name: job.companies?.name || "No Company",
           // New fields for multiple relationships
           campaign_ids: campaigns.map((c: any) => c.id),
           campaign_names: campaigns.map((c: any) => c.name),
@@ -103,7 +106,8 @@ export const useJobById = (jobId: string) => {
           job_campaigns(
             campaign_id,
             campaigns(id, name, client_id, clients(id, name))
-          )
+          ),
+          companies(id, name)
         `)
         .eq("id", jobId)
         .single();
@@ -123,7 +127,7 @@ export const useJobById = (jobId: string) => {
         .eq("id", job.manager_id)
         .single();
 
-      // Transform job with campaign information
+      // Transform job with campaign and company information
       const jobCampaigns = job.job_campaigns || [];
       const campaigns = jobCampaigns.map((jc: any) => jc.campaigns).filter(Boolean);
       const clients = campaigns.map((c: any) => c.clients).filter(Boolean);
@@ -141,6 +145,7 @@ export const useJobById = (jobId: string) => {
         client_name: uniqueClients[0]?.name || "Unknown Client",
         provider_name: provider?.name || "Unknown Provider",
         manager_name: manager?.name || "Unknown Manager",
+        company_name: job.companies?.name || "No Company",
         campaign_ids: campaigns.map((c: any) => c.id),
         campaign_names: campaigns.map((c: any) => c.name),
         client_ids: uniqueClients.map((c: any) => c.id),

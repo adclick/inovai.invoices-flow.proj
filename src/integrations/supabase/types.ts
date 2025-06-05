@@ -77,6 +77,30 @@ export type Database = {
         }
         Relationships: []
       }
+      companies: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_campaigns: {
         Row: {
           campaign_id: string
@@ -137,6 +161,7 @@ export type Database = {
       jobs: {
         Row: {
           campaign_id: string
+          company_id: string | null
           created_at: string
           currency: Database["public"]["Enums"]["currency_type"]
           documents: string[] | null
@@ -157,6 +182,7 @@ export type Database = {
         }
         Insert: {
           campaign_id: string
+          company_id?: string | null
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]
           documents?: string[] | null
@@ -177,6 +203,7 @@ export type Database = {
         }
         Update: {
           campaign_id?: string
+          company_id?: string | null
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]
           documents?: string[] | null
@@ -201,6 +228,13 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {

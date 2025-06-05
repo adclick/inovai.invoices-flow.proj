@@ -12,6 +12,7 @@ interface JobEntitySelectionFieldsProps {
   filteredCampaigns: { id: string; name: string; client_id: string }[];
   providers: EntitySelectOption[];
   managers: EntitySelectOption[];
+  companies: EntitySelectOption[];
   selectedClientIds: string[];
   onClientChange: (clientIds: string[]) => void;
   t: (key: string) => string;
@@ -23,6 +24,7 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
   filteredCampaigns,
   providers,
   managers,
+  companies,
   selectedClientIds,
   onClientChange,
   t,
@@ -66,6 +68,15 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
         placeholder={t("jobs.selectManager")}
         options={managers}
         emptyMessage={t("managers.noManagersAvailable")}
+      />
+
+      <EntitySelectField
+        control={control}
+        name="company_id"
+        label={t("jobs.company")}
+        placeholder={t("jobs.selectCompany")}
+        options={companies}
+        emptyMessage={t("companies.noCompaniesAvailable")}
       />
     </div>
   );

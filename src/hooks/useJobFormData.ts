@@ -30,6 +30,12 @@ export const useJobFormData = () => {
     orderBy: "name",
   });
 
+  const { data: companiesData, isLoading: companiesLoading } = useEntitiesQuery("companies", {
+    select: "id, name",
+    filters: { active: true },
+    orderBy: "name",
+  });
+
   const { data: jobTypesData, isLoading: jobTypesLoading } = useEntitiesQuery("job_types", {
     select: "id, name",
     orderBy: "name",
@@ -69,6 +75,14 @@ export const useJobFormData = () => {
     }));
   }, [managersData]);
 
+  const companies = useMemo((): EntitySelectOption[] => {
+    if (!companiesData || !Array.isArray(companiesData)) return [];
+    return companiesData.map((company: any) => ({
+      id: company.id,
+      name: company.name,
+    }));
+  }, [companiesData]);
+
   const jobTypes = useMemo((): EntitySelectOption[] => {
     if (!jobTypesData || !Array.isArray(jobTypesData)) return [];
     return jobTypesData.map((jobType: any) => ({
@@ -92,13 +106,14 @@ export const useJobFormData = () => {
     })), [t]
   );
 
-  const isLoading = clientsLoading || campaignsLoading || providersLoading || managersLoading || jobTypesLoading;
+  const isLoading = clientsLoading || campaignsLoading || providersLoading || managersLoading || companiesLoading || jobTypesLoading;
 
   return {
     clients,
     campaigns,
     providers,
     managers,
+    companies,
     jobTypes,
     statusOptions,
     monthOptions,

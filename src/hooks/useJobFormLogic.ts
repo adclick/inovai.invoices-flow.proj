@@ -9,12 +9,13 @@ import { useEntityQuery } from "@/hooks/useEntityQuery";
 import { supabase } from "@/integrations/supabase/client";
 import { JOB_FORM_DEFAULTS } from "@/utils/formConstants";
 
-// Updated form schema for multi-select
+// Updated form schema for multi-select and company
 const jobSchema = z.object({
   client_ids: z.array(z.string()).min(1, "jobs.selectClients"),
   campaign_ids: z.array(z.string()).min(1, "jobs.selectCampaigns"),
   provider_id: z.string().min(1, "jobs.selectProvider"),
   manager_id: z.string().min(1, "jobs.selectManager"),
+  company_id: z.string().optional(),
   job_type_id: z.string().min(1, "jobs.selectJobType"),
   value: z.coerce.number().min(0, "jobs.valueRequired"),
   status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"] as const),
@@ -87,6 +88,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
               campaign_ids: campaignIds,
               provider_id: jobData.provider_id,
               manager_id: jobData.manager_id,
+              company_id: jobData.company_id || "",
               job_type_id: jobData.job_type_id,
               value: jobData.value,
               status: jobData.status,
@@ -135,6 +137,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       campaign_id: values.campaign_ids[0] || null, // Keep first campaign for backward compatibility
       provider_id: values.provider_id,
       manager_id: values.manager_id,
+      company_id: values.company_id || null,
       job_type_id: values.job_type_id,
       value: values.value,
       status: values.status,

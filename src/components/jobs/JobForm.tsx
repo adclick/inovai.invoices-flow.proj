@@ -29,6 +29,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
     campaigns,
     providers,
     managers,
+    companies,
     jobTypes,
     statusOptions,
     monthOptions,
@@ -80,6 +81,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
           filteredCampaigns={filteredCampaigns}
           providers={providers}
           managers={managers}
+          companies={companies}
           selectedClientIds={selectedClientIds}
           onClientChange={handleClientChange}
           t={t}
