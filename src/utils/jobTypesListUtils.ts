@@ -11,3 +11,13 @@ export const filterJobTypes = (jobTypes: JobType[], searchTerm: string) => {
     return matchesSearch;
   });
 };
+
+export const paginateJobTypes = (jobTypes: JobType[], currentPage: number, itemsPerPage: number) => {
+  const totalItems = jobTypes.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginatedJobTypes = jobTypes.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  return { paginatedJobTypes, totalItems, totalPages };
+};

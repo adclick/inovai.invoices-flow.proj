@@ -28,11 +28,11 @@ const ProvidersTable: React.FC<ProvidersTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>{t("common.status")}</TableHead>
             <TableHead>{t("providers.providerName")}</TableHead>
             <TableHead>{t("providers.email")}</TableHead>
             <TableHead>{t("providers.language")}</TableHead>
             <TableHead>{t("providers.country")}</TableHead>
-            <TableHead>{t("common.status")}</TableHead>
             <TableHead className="w-[120px] text-right">{t("common.actions")}</TableHead>
           </TableRow>
         </TableHeader>

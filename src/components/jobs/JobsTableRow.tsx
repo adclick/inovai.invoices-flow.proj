@@ -2,8 +2,8 @@
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
-import { Job, formatJobStatus } from "@/types/job";
+import { Trash2 } from "lucide-react";
+import { Job } from "@/types/job";
 import { formatCurrency } from "@/hooks/useJobsData";
 import { Badge } from "@/components/ui/badge";
 import JobStatusBadge from "./JobStatusBadge";
@@ -98,8 +98,8 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
       <TableCell className="text-right">
         <div className="flex justify-end space-x-2">
           <Button
-            variant="outline"
-            size="sm"
+            variant="ghost"
+            className="h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"
             onClick={(e) => onDeleteClick(e, job)}
           >
             <Trash2 className="h-4 w-4" />

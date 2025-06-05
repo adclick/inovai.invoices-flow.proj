@@ -39,9 +39,9 @@ const CampaignsTable: React.FC<CampaignsTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>{t("common.status")}</TableHead>
             <TableHead>{t("campaigns.client")}</TableHead>
             <TableHead>{t("campaigns.campaignName")}</TableHead>
-            <TableHead>{t("common.status")}</TableHead>
             <TableHead className="text-right">{t("common.actions")}</TableHead>
           </TableRow>
         </TableHeader>

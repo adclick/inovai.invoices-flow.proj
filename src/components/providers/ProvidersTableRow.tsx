@@ -23,6 +23,14 @@ const ProvidersTableRow: React.FC<ProvidersTableRowProps> = ({
       onClick={() => onEditProvider(provider.id)} 
       className="cursor-pointer"
     >
+			<TableCell>
+        <span className={`px-2 py-1 rounded-full text-xs ${provider.active 
+          ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
+          : "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
+        }`}>
+          {provider.active ? t("common.active") : t("common.inactive")}
+        </span>
+      </TableCell>
       <TableCell className="font-medium">{provider.name}</TableCell>
       <TableCell>
         <div className="flex items-center">
@@ -39,14 +47,7 @@ const ProvidersTableRow: React.FC<ProvidersTableRowProps> = ({
       <TableCell>
         {provider.country || "-"}
       </TableCell>
-      <TableCell>
-        <span className={`px-2 py-1 rounded-full text-xs ${provider.active 
-          ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
-          : "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300"
-        }`}>
-          {provider.active ? t("common.active") : t("common.inactive")}
-        </span>
-      </TableCell>
+      
       <TableCell className="text-right">
         <div className="flex justify-end space-x-2">
           <a

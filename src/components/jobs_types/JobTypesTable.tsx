@@ -1,12 +1,11 @@
 
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow
+	Table,
+	TableBody,
+	TableHead,
+	TableHeader,
+	TableRow
 } from "@/components/ui/table";
 import { Database } from "@/integrations/supabase/types";
 import JobTypesTableRow from "./JobTypesTableRow";
@@ -16,16 +15,16 @@ type JobType = Database["public"]["Tables"]["job_types"]["Row"];
 interface JobTypesTableProps {
   jobTypes: JobType[];
   onEditJobType: (id: string) => void;
-  onDeleteJobType: (jobType: JobType) => void;
+	t: (key: string) => string;
+	onDeleteJobType: (jobType: JobType) => void;
 }
 
 const JobTypesTable: React.FC<JobTypesTableProps> = ({
   jobTypes,
   onEditJobType,
-  onDeleteJobType,
+	onDeleteJobType,
+	t,
 }) => {
-  const { t } = useTranslation();
-
   return (
     <div className="border rounded-lg overflow-hidden">
       <Table>

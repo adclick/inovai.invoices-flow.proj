@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { EntityModal } from "../common/EntityModal";
@@ -15,10 +14,10 @@ export const JobTypeModal: React.FC = () => {
   }
 
   const isCreateMode = modalState.mode === 'create';
-  const title = isCreateMode ? t("jobTypes.createJobType") : t("jobTypes.editJobType");
+  const title = isCreateMode ? t("jobTypes.createNew") : t("jobTypes.editJobType");
   const description = isCreateMode 
-    ? t("jobTypes.createJobTypeDescription")
-    : t("jobTypes.editJobTypeDescription");
+    ? t("jobTypes.createDescription")
+    : t("jobTypes.updateDescription");
 
   return (
     <EntityModal

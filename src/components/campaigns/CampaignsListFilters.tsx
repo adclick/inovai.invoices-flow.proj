@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CAMPAIGN_STATUS_OPTIONS } from "@/utils/campaignsListConstants";
+import { Search } from "lucide-react";
 
 interface CampaignsListFiltersProps {
   searchTerm: string;
@@ -31,12 +32,13 @@ const CampaignsListFilters: React.FC<CampaignsListFiltersProps> = ({
 }) => {
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
-      <div className="flex-1">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
         <Input
           placeholder={searchPlaceholder}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="max-w-md"
+          className="pl-10"
         />
       </div>
       <div className="flex flex-row gap-2">

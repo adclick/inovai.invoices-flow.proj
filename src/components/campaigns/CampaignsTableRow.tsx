@@ -31,8 +31,6 @@ const CampaignsTableRow: React.FC<CampaignsTableRowProps> = ({
 }) => {
   return (
     <TableRow className="cursor-pointer" onClick={() => onEditCampaign(campaign.id)}>
-      <TableCell>{campaign.client_name}</TableCell>
-      <TableCell className="font-medium">{campaign.name}</TableCell>
       <TableCell>
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
           campaign.active
@@ -42,6 +40,8 @@ const CampaignsTableRow: React.FC<CampaignsTableRowProps> = ({
           {campaign.active ? t("common.active") : t("common.inactive")}
         </span>
       </TableCell>
+      <TableCell>{campaign.client_name}</TableCell>
+      <TableCell className="font-medium">{campaign.name}</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
           <Button

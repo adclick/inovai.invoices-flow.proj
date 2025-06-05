@@ -28,9 +28,9 @@ const ManagersTable: React.FC<ManagersTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>{t("common.status")}</TableHead>
             <TableHead>{t("managers.name")}</TableHead>
             <TableHead>{t("common.email")}</TableHead>
-            <TableHead>{t("common.status")}</TableHead>
             <TableHead className="w-[120px] text-right">{t("common.actions")}</TableHead>
           </TableRow>
         </TableHeader>

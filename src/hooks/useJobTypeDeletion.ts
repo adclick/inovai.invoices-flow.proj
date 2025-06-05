@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -12,60 +11,56 @@ export const useJobTypeDeletion = () => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [jobTypeToDelete, setJobTypeToDelete] = useState<JobType | null>(null);
 
-  const deleteJobTypeMutation = useMutation({
-    mutationFn: async (jobTypeId: string) => {
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
       const { error } = await supabase
         .from("job_types")
         .delete()
-        .eq("id", jobTypeId);
+        .eq("id", id);
 
       if (error) {
-        throw new Error(error.message);
+        throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobTypes"] });
       toast({
-        title: t("jobTypes.jobTypeDeleted"),
-        description: t("jobTypes.jobTypeDeletedDescription"),
+        title: t("common.success"),
+        description: t("jobTypes.deleteSuccess"),
       });
-      setDeleteDialogOpen(false);
+      setIsDeleteDialogOpen(false);
       setJobTypeToDelete(null);
     },
     onError: (error) => {
       toast({
         title: t("common.error"),
-        description: t("jobTypes.jobTypeDeleteError"),
+        description: t("jobTypes.deleteError"),
         variant: "destructive",
       });
+      console.error("Error deleting job type:", error);
     },
   });
 
-  const handleDeleteJobType = (jobType: JobType) => {
+  const handleDeleteClick = (jobType: JobType) => {
     setJobTypeToDelete(jobType);
-    setDeleteDialogOpen(true);
+    setIsDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
     if (jobTypeToDelete) {
-      deleteJobTypeMutation.mutate(jobTypeToDelete.id);
+      deleteMutation.mutate(jobTypeToDelete.id);
     }
   };
 
-  const cancelDelete = () => {
-    setDeleteDialogOpen(false);
-    setJobTypeToDelete(null);
-  };
-
   return {
-    deleteDialogOpen,
+    isDeleteDialogOpen,
+    setIsDeleteDialogOpen,
     jobTypeToDelete,
-    handleDeleteJobType,
+    handleDeleteClick,
     confirmDelete,
-    cancelDelete,
-    isDeleting: deleteJobTypeMutation.isPending,
+    isDeletingJobType: deleteMutation.isPending,
   };
 };

@@ -28,8 +28,8 @@ const ClientsTable: React.FC<ClientsTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{t("clients.clientName")}</TableHead>
             <TableHead>{t("common.status")}</TableHead>
+            <TableHead>{t("clients.clientName")}</TableHead>
             <TableHead className="w-[120px] text-right">{t("common.actions")}</TableHead>
           </TableRow>
         </TableHeader>

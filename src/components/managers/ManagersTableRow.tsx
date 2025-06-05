@@ -24,13 +24,7 @@ const ManagersTableRow: React.FC<ManagersTableRowProps> = ({
       onClick={() => onEditManager(manager.id)} 
       className="cursor-pointer"
     >
-      <TableCell className="font-medium">
-        {manager.name}
-      </TableCell>
-      <TableCell>
-        {manager.email}
-      </TableCell>
-      <TableCell>
+			<TableCell>
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
           manager.active
             ? "bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-300"
@@ -38,6 +32,12 @@ const ManagersTableRow: React.FC<ManagersTableRowProps> = ({
         }`}>
           {manager.active ? t("common.active") : t("common.inactive")}
         </span>
+      </TableCell>
+      <TableCell className="font-medium">
+        {manager.name}
+      </TableCell>
+      <TableCell>
+        {manager.email}
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end space-x-2">

@@ -23,7 +23,6 @@ const ClientsTableRow: React.FC<ClientsTableRowProps> = ({
       onClick={() => onEditClient(client.id)} 
       className="cursor-pointer"
     >
-      <TableCell className="font-medium">{client.name}</TableCell>
       <TableCell>
         <span className={`px-2 py-1 rounded-full text-xs ${client.active 
             ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400" 
@@ -32,6 +31,7 @@ const ClientsTableRow: React.FC<ClientsTableRowProps> = ({
           {client.active ? t("common.active") : t("common.inactive")}
         </span>
       </TableCell>
+      <TableCell className="font-medium">{client.name}</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end space-x-2">
           <Link
