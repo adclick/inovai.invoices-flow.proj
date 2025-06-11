@@ -118,7 +118,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 							onClick={() => {
 								setMobileMenuOpen(false);
 							}}
-							className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors duration-200 group ml-4
+							className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors duration-200 group
 								${isActive
 									? 'bg-white/10 text-white font-medium dark:bg-slate-700 dark:text-primary'
 									: 'text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white'
