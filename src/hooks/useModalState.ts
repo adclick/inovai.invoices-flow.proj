@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
@@ -62,9 +63,12 @@ export function useModalState(): {
   );
 
   const closeModal = useCallback(() => {
-    const currentPath = window.location.pathname;
-    navigate(currentPath, { replace: true });
-  }, [navigate]);
+    const newParams = new URLSearchParams(searchParams);
+    // Only remove modal-specific parameters, preserve others (like company filter)
+    newParams.delete('modal');
+    newParams.delete('id');
+    setSearchParams(newParams, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   return { modalState, openModal, closeModal };
 }
