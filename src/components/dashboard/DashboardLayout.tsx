@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,7 +31,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 
-	// Fetch companies data for the dynamic jobs menu
+	// Fetch companies data for the dynamic jobs menu - make this query stable
 	const { data: companies, isLoading: isLoadingCompanies } = useCompaniesData();
 
 	useEffect(() => {
