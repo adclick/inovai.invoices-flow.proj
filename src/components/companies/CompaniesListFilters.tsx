@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import OptionalSelectField from "@/components/common/form/OptionalSelectField";
 import { STATUS_FILTER_OPTIONS } from "@/utils/companiesListConstants";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CompaniesListFiltersProps {
   searchTerm: string;
@@ -36,17 +37,20 @@ const CompaniesListFilters: React.FC<CompaniesListFiltersProps> = ({
         />
       </div>
 
-      <div className="md:w-48">
-        <OptionalSelectField
-          control={{} as any}
-          name="statusFilter"
-          label=""
-          placeholder={filterByStatusText}
-          options={STATUS_FILTER_OPTIONS}
-          t={t}
-          onValueChange={onStatusFilterChange}
-        />
-      </div>
+			<div className="flex flex-row gap-2">
+				<Select value={statusFilter} onValueChange={onStatusFilterChange}>
+					<SelectTrigger>
+						<SelectValue placeholder={filterByStatusText} />
+					</SelectTrigger>
+					<SelectContent>
+						{STATUS_FILTER_OPTIONS.map((option) => (
+							<SelectItem key={option.value} value={option.value}>
+								{t(option.label)}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</div>
     </div>
   );
 };

@@ -11,7 +11,7 @@ import { ArrowLeft } from "lucide-react";
 import { useEntityMutation } from "@/hooks/useEntityMutation";
 import { useEntityQuery } from "@/hooks/useEntityQuery";
 import RequiredTextField from "@/components/common/form/RequiredTextField";
-import { ActiveSwitchField } from "@/components/common/ActiveSwitchField";
+import ActiveSwitchField from "../common/ActiveSwitchField";
 
 const companySchema = z.object({
   name: z.string().min(1, "companies.nameRequired"),

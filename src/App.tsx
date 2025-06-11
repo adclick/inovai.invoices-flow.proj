@@ -15,6 +15,7 @@ import ManagersList from "./pages/managers/ManagersList";
 import ProvidersList from "./pages/providers/ProvidersList"; 
 import JobsList from "./pages/jobs/JobsList"; 
 import JobsTypesList from "./pages/jobs_types/JobsTypesList";
+import CompaniesList from "./pages/companies/CompaniesList";
 import Settings from "./pages/settings/Settings";
 import Profile from "./pages/profile/Profile";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -45,6 +46,7 @@ const App = () => (
 										<Route path="/providers" element={<ProvidersList />} />
 										<Route path="/jobs/" element={<JobsList />} />
 										<Route path="/jobs-types" element={<JobsTypesList />} />
+										<Route path="/companies" element={<CompaniesList />} />
 										<Route path="/settings" element={<Settings />} />
 										<Route path="/profile" element={<Profile />} />
 										<Route path="*" element={<NotFound />} />

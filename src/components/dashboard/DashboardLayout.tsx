@@ -5,7 +5,8 @@ import { useSidebar } from "@/contexts/SidebarContext";
 import { useTranslation } from "react-i18next";
 import {
 	LayoutDashboard, LogOut, UserCog, Sidebar as SidebarIcon, List, Handshake, Megaphone, Wrench, LucideIcon, Menu, Settings, User,
-	Layers
+	Layers,
+	Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -103,6 +104,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	];
 
 	const managementItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
+		{ path: "/companies", icon: Building, label: t("navigation.companies") },
 		{ path: "/providers", icon: Wrench, label: t("navigation.providers") },
 		{ path: "/managers", icon: UserCog, label: t("navigation.managers") },
 		{ path: "/clients", icon: Handshake, label: t("navigation.clients") },
