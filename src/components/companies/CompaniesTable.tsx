@@ -28,9 +28,8 @@ const CompaniesTable: React.FC<CompaniesTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{t("companies.name")}</TableHead>
             <TableHead>{t("common.status")}</TableHead>
-            <TableHead>{t("common.createdAt")}</TableHead>
+            <TableHead>{t("companies.name")}</TableHead>
             <TableHead className="text-right">{t("common.actions")}</TableHead>
           </TableRow>
         </TableHeader>

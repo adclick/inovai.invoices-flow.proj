@@ -2,7 +2,7 @@
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { File, FileSymlink, Trash2 } from "lucide-react";
 import { Job } from "@/types/job";
 import { formatCurrency } from "@/hooks/useJobsData";
 import { Badge } from "@/components/ui/badge";
@@ -92,16 +92,15 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
 			<TableCell>{job.provider_name}</TableCell>
 			<TableCell>{formatMonths(job.months)}</TableCell>
 			<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
-			<TableCell>{formatDate(job.created_at)}</TableCell>
-			<TableCell>{job.provider_email_sent ? formatDate(job.provider_email_sent) : "-"}</TableCell>
-			<TableCell>
-				<Link onClick={(e) => e.stopPropagation()} to={job.documents ? job.documents[0] : "-"} target="_blank">
-					Invoice
-				</Link>
-			</TableCell>
-			<TableCell>{job.invoice_reference || "-"}</TableCell>
 			<TableCell className="text-right">
 				<div className="flex justify-end space-x-2">
+					{job.documents && job.documents.length > 0 && (
+						<Button variant="ghost" className="h-9 px-3 text-slate-400 hover:text-slate-500 hover:bg-slate-100 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-400" onClick={(e) => e.stopPropagation()} >
+							<a href={job.documents[0]} target="_blank">
+								<FileSymlink className="h-4 w-4" />
+							</a>
+						</Button>
+					)}
 					<Button
 						variant="ghost"
 						className="h-9 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-500 dark:hover:bg-red-950/20"

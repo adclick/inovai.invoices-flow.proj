@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Job, formatJobStatus } from "@/types/job";
+import { Job } from "@/types/job";
 
 export const formatCurrency = (value: number, currency: string) => {
   const symbols: Record<string, string> = {
@@ -27,7 +27,7 @@ export const useJobsData = () => {
             campaign_id,
             campaigns(id, name, client_id, clients(id, name))
           ),
-          companies(id, name)
+          companies(id, name, active)
         `)
         .order("created_at", { ascending: false });
 
@@ -107,7 +107,7 @@ export const useJobById = (jobId: string) => {
             campaign_id,
             campaigns(id, name, client_id, clients(id, name))
           ),
-          companies(id, name)
+          companies(id, name, active)
         `)
         .eq("id", jobId)
         .single();

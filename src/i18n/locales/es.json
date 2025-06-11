@@ -306,6 +306,20 @@
     "jobTypeDeletedDescription": "El tipo de trabajo ha sido eliminado con éxito del sistema",
     "jobTypeDeleteError": "Error al eliminar tipo de trabajo. Por favor, inténtalo de nuevo."
   },
+	"companies": {
+		"title": "Empresas",
+		"name": "Nombre",
+		"createNew": "Crear Empresa",
+		"createFirstCompany": "Crear Tu Primera Empresa",
+		"editCompany": "Editar Empresa",
+		"createDescription": "Añadir una nueva empresa a tu sistema",
+		"noCompaniesFound": "No se encontraron empresas",
+		"noCompaniesAvailable": "No hay empresas disponibles",
+		"searchCompanies": "Buscar empresas por nombre...",
+		"allStatuses": "Todos los Estados",
+		"enterName": "Introducir nombre de la empresa",
+		"activeDescription": "Activar o desactivar esta empresa"
+	},
   "dashboard": {
     "welcome": "Bienvenido a tu panel",
     "workingJobs": "Trabajos en Curso",

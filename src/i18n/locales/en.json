@@ -306,6 +306,20 @@
     "jobTypeDeletedDescription": "The job type has been successfully removed from the system",
     "jobTypeDeleteError": "Failed to delete job type. Please try again."
   },
+	"companies": {
+		"title": "Companies",
+		"name": "Name",
+		"createNew": "Create Company",
+		"createFirstCompany": "Create Your First Company",
+		"editCompany": "Edit Company",
+		"createDescription": "Add a new company to your system",
+		"noCompaniesFound": "No companies found",
+		"noCompaniesAvailable": "No companies available",
+		"searchCompanies": "Search companies by name...",
+		"allStatuses": "All Statuses",
+		"enterName": "Enter company name",
+		"activeDescription": "Enable or disable this company"
+	},
   "dashboard": {
     "welcome": "Welcome to your dashboard",
     "workingJobs": "Working Jobs",

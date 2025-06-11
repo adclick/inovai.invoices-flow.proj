@@ -31,7 +31,7 @@ export const useJobFormData = () => {
   });
 
   const { data: companiesData, isLoading: companiesLoading } = useEntitiesQuery("companies", {
-    select: "id, name",
+    select: "id, name, active",
     filters: { active: true },
     orderBy: "name",
   });
