@@ -3,6 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useTranslation } from "react-i18next";
+import { useCompaniesData } from "@/hooks/useCompaniesData";
 import {
 	LayoutDashboard, LogOut, UserCog, Sidebar as SidebarIcon, List, Handshake, Megaphone, Wrench, LucideIcon, Menu, Settings, User,
 	Layers,
@@ -28,6 +29,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 	const location = useLocation();
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+
+	// Fetch companies data for the dynamic jobs menu
+	const { data: companies, isLoading: isLoadingCompanies } = useCompaniesData();
 
 	useEffect(() => {
 		const checkIfMobile = () => {
@@ -56,6 +60,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
 	const isActiveRoute = (path: string) => {
 		return location.pathname === path;
+	};
+
+	const isActiveCompanyRoute = (companyId: string) => {
+		const searchParams = new URLSearchParams(location.search);
+		return location.pathname === "/jobs" && searchParams.get("company") === companyId;
 	};
 
 	const NavItemWithTooltip = ({ path, icon: Icon, label, isSidebarExpanded }: { path: string, icon: LucideIcon, label: string, isSidebarExpanded: boolean }) => {
@@ -95,12 +104,45 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 		);
 	};
 
+	const CompanyNavItem = ({ companyId, companyName, isSidebarExpanded }: { companyId: string, companyName: string, isSidebarExpanded: boolean }) => {
+		const iconSize = 16;
+		const isActive = isActiveCompanyRoute(companyId);
+
+		return (
+			<TooltipProvider delayDuration={100}>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<NavLink
+							to={`/jobs?company=${companyId}`}
+							onClick={() => {
+								setMobileMenuOpen(false);
+							}}
+							className={`flex items-center w-full px-3 py-2 rounded-lg transition-colors duration-200 group ml-4
+								${isActive
+									? 'bg-white/10 text-white font-medium dark:bg-slate-700 dark:text-primary'
+									: 'text-white/80 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700 hover:text-white dark:hover:text-white'
+								}`}
+						>
+							<div className="flex items-center">
+								<Building size={iconSize} className="flex-shrink-0" />
+								{isSidebarExpanded && (
+									<span className="ml-3 text-sm truncate">{companyName}</span>
+								)}
+							</div>
+						</NavLink>
+					</TooltipTrigger>
+					{!isSidebarExpanded && !isMobile && (
+						<TooltipContent side="right" align="center">
+							{companyName}
+						</TooltipContent>
+					)}
+				</Tooltip>
+			</TooltipProvider>
+		);
+	};
+
 	const navItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
 		{ path: "/dashboard", icon: LayoutDashboard, label: t("navigation.dashboard") },
-	];
-
-	const jobItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
-		{ path: "/jobs", icon: List, label: t("navigation.allJobs") },
 	];
 
 	const managementItems: Array<{ path: string; icon: LucideIcon; label: string }> = [
@@ -143,11 +185,35 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 						</h3>
 					)}
 					<ul className="space-y-1">
-						{jobItems.map((item) => (
-							<li key={item.path}>
-								<NavItemWithTooltip {...item} isSidebarExpanded={expanded} />
+						{isLoadingCompanies ? (
+							<li>
+								<div className="flex items-center w-full px-3 py-2 rounded-lg text-white/60 dark:text-slate-400">
+									<List size={20} className="flex-shrink-0" />
+									{expanded && (
+										<span className="ml-3 text-sm">{t("common.loading")}...</span>
+									)}
+								</div>
 							</li>
-						))}
+						) : companies && companies.length > 0 ? (
+							companies.filter(company => company.active).map((company) => (
+								<li key={company.id}>
+									<CompanyNavItem 
+										companyId={company.id} 
+										companyName={company.name} 
+										isSidebarExpanded={expanded} 
+									/>
+								</li>
+							))
+						) : (
+							<li>
+								<div className="flex items-center w-full px-3 py-2 rounded-lg text-white/60 dark:text-slate-400">
+									<Building size={20} className="flex-shrink-0" />
+									{expanded && (
+										<span className="ml-3 text-sm">{t("companies.noCompaniesFound")}</span>
+									)}
+								</div>
+							</li>
+						)}
 					</ul>
 				</div>
 

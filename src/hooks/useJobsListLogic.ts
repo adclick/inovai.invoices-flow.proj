@@ -11,6 +11,9 @@ export const useJobsListLogic = () => {
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
+  
+  // Get company filter from URL params
+  const companyFilter = searchParams.get("company") || "";
 
   // Update URL when search term changes
   useEffect(() => {
@@ -23,14 +26,27 @@ export const useJobsListLogic = () => {
     setSearchParams(newParams);
   }, [searchTerm, setSearchParams, searchParams]);
 
+  // Reset current page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, paymentFilter, companyFilter]);
+
   // Fetch jobs data
   const { data: jobs, isLoading, error } = useJobsData();
 
   // Filter and paginate jobs
   const filteredJobs = useMemo(() => {
     if (!jobs) return [];
-    return filterJobs(jobs, searchTerm, statusFilter, paymentFilter);
-  }, [jobs, searchTerm, statusFilter, paymentFilter]);
+    
+    let filtered = filterJobs(jobs, searchTerm, statusFilter, paymentFilter);
+    
+    // Apply company filter if specified
+    if (companyFilter) {
+      filtered = filtered.filter(job => job.company_id === companyFilter);
+    }
+    
+    return filtered;
+  }, [jobs, searchTerm, statusFilter, paymentFilter, companyFilter]);
 
   const { paginatedJobs, totalItems, totalPages } = useMemo(() => {
     return paginateJobs(filteredJobs, currentPage, ITEMS_PER_PAGE);
@@ -52,5 +68,6 @@ export const useJobsListLogic = () => {
     setCurrentPage,
     totalItems,
     totalPages,
+    companyFilter,
   };
 };
