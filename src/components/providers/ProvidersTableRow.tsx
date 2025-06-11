@@ -41,7 +41,7 @@ const ProvidersTableRow: React.FC<ProvidersTableRowProps> = ({
       <TableCell>
         <div className="flex items-center">
           <Globe className="h-4 w-4 mr-2 text-slate-400" />
-          {provider.language.toUpperCase()}
+          {provider.language?.toUpperCase() || "-"}
         </div>
       </TableCell>
       <TableCell>
