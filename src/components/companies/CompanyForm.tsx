@@ -49,8 +49,8 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
     if (isEditMode && id) {
       const loadCompany = async () => {
         try {
-          const { data: supabase } = await import("@/integrations/supabase/client");
-          const { data: companyData } = await supabase.supabase
+          const { supabase } = await import("@/integrations/supabase/client");
+          const { data: companyData } = await supabase
             .from("companies")
             .select("*")
             .eq("id", id)
@@ -110,7 +110,6 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
           name="active"
           label={t("common.active")}
           description={t("companies.activeDescription")}
-          disabled={isReadOnly}
         />
 
         <div className="sticky bottom-0 z-10 bg-card p-4 border-t border-border flex justify-between items-center">

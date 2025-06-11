@@ -15,7 +15,8 @@ interface ActiveSwitchFieldProps<TFieldValues extends FieldValues> {
   control: Control<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label?: string;
-  description: string; 
+  description: string;
+  disabled?: boolean;
 }
 
 const ActiveSwitchField = <TFieldValues extends FieldValues>({
@@ -23,6 +24,7 @@ const ActiveSwitchField = <TFieldValues extends FieldValues>({
   name,
   label,
   description,
+  disabled = false,
 }: ActiveSwitchFieldProps<TFieldValues>) => {
   const { t } = useTranslation();
   return (
@@ -41,6 +43,7 @@ const ActiveSwitchField = <TFieldValues extends FieldValues>({
             <Switch
               checked={field.value}
               onCheckedChange={field.onChange}
+              disabled={disabled}
               aria-label={label || t('common.active')}
             />
           </FormControl>
@@ -50,4 +53,4 @@ const ActiveSwitchField = <TFieldValues extends FieldValues>({
   );
 };
 
-export default ActiveSwitchField; 
+export default ActiveSwitchField;
