@@ -18,6 +18,7 @@ interface RequiredTextFieldProps<TFieldValues extends FieldValues> {
   type?: "text" | "email" | "number";
   disabled?: boolean;
   min?: string | number;
+  max?: string | number;
   step?: string;
 }
 
@@ -29,6 +30,7 @@ const RequiredTextField = <TFieldValues extends FieldValues>({
   type = "text",
   disabled = false,
   min,
+  max,
   step,
 }: RequiredTextFieldProps<TFieldValues>) => {
   return (
@@ -44,6 +46,7 @@ const RequiredTextField = <TFieldValues extends FieldValues>({
               placeholder={placeholder}
               disabled={disabled}
               min={min}
+              max={max}
               step={step}
               {...field}
             />
