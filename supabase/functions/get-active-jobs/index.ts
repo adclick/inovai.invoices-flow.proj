@@ -16,7 +16,6 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-	
   try {
     // Create a Supabase client with the service role key
 	const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
