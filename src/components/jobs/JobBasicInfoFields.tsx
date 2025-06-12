@@ -5,7 +5,7 @@ import { JobFormValues } from "@/hooks/useJobFormLogic";
 import RequiredTextField from "@/components/common/form/RequiredTextField";
 import OptionalSelectField from "@/components/common/form/OptionalSelectField";
 import DateField from "@/components/common/form/DateField";
-import { SelectOption } from "@/utils/formConstants";
+import { SelectOption, NUMERIC_MONTH_OPTIONS } from "@/utils/formConstants";
 
 interface JobBasicInfoFieldsProps {
   control: Control<JobFormValues>;
@@ -50,6 +50,26 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
         step="0.01"
       />
 
+      <div className="grid grid-cols-2 gap-4">
+        <RequiredTextField
+          control={control}
+          name="year"
+          label={t("jobs.year")}
+          placeholder={t("jobs.yearPlaceholder")}
+          type="number"
+          min="1900"
+          max="2100"
+        />
+
+        <OptionalSelectField
+          control={control}
+          name="month"
+          label={t("jobs.month")}
+          placeholder={t("jobs.selectMonth")}
+          options={NUMERIC_MONTH_OPTIONS}
+          t={t}
+        />
+      </div>
     </div>
   );
 };

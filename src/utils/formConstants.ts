@@ -27,6 +27,22 @@ export const MONTH_OPTIONS = [
   { value: "december", label: "common.december" },
 ];
 
+// Numeric month options (01-12)
+export const NUMERIC_MONTH_OPTIONS = [
+  { value: "1", label: "01" },
+  { value: "2", label: "02" },
+  { value: "3", label: "03" },
+  { value: "4", label: "04" },
+  { value: "5", label: "05" },
+  { value: "6", label: "06" },
+  { value: "7", label: "07" },
+  { value: "8", label: "08" },
+  { value: "9", label: "09" },
+  { value: "10", label: "10" },
+  { value: "11", label: "11" },
+  { value: "12", label: "12" },
+];
+
 // Language options for providers
 export const LANGUAGE_OPTIONS = [
   { value: "pt", label: "common.portuguese" },
@@ -52,6 +68,8 @@ export const JOB_FORM_DEFAULTS = {
   value: 0,
   status: "draft" as const,
   months: [] as ("january" | "february" | "march" | "april" | "may" | "june" | "july" | "august" | "september" | "october" | "november" | "december")[],
+  year: new Date().getFullYear(),
+  month: "",
   due_date: "",
   public_notes: "",
   private_notes: "",

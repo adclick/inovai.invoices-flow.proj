@@ -9,6 +9,8 @@ export type Job = {
   currency: "euro" | "usd" | "gbp";
   status: "draft" | "active" | "pending_invoice" | "pending_validation" | "pending_payment" | "paid";
   months: string[];
+  year?: number | null; // New year field
+  month?: number | null; // New month field (1-12)
   due_date?: string | null;
   public_notes?: string | null;
   private_notes?: string | null;

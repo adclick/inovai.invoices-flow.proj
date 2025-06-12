@@ -30,6 +30,11 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
 		return new Date(dateString).toLocaleDateString();
 	};
 
+	const formatMonth = (month: number | null) => {
+		if (!month) return "-";
+		return month.toString().padStart(2, "0");
+	};
+
 	const renderMultipleCampaigns = (campaignNames: string[] = []) => {
 		if (campaignNames.length === 0) {
 			return job.campaign_name || "Unknown Campaign";
@@ -90,6 +95,8 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
 			<TableCell>{renderMultipleCampaigns(job.campaign_names)}</TableCell>
 			<TableCell>{job.manager_name}</TableCell>
 			<TableCell>{job.provider_name}</TableCell>
+			<TableCell>{job.year || "-"}</TableCell>
+			<TableCell>{formatMonth(job.month)}</TableCell>
 			<TableCell>{formatMonths(job.months)}</TableCell>
 			<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 			<TableCell>{job.invoice_reference}</TableCell>

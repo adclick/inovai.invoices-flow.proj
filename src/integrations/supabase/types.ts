@@ -170,6 +170,7 @@ export type Database = {
           invoice_reference: string | null
           job_type_id: string | null
           manager_id: string
+          month: number | null
           months: Database["public"]["Enums"]["month_type"][]
           private_notes: string | null
           provider_email_sent: string | null
@@ -179,6 +180,7 @@ export type Database = {
           status: Database["public"]["Enums"]["job_status"]
           updated_at: string
           value: number
+          year: number | null
         }
         Insert: {
           campaign_id: string
@@ -191,6 +193,7 @@ export type Database = {
           invoice_reference?: string | null
           job_type_id?: string | null
           manager_id: string
+          month?: number | null
           months: Database["public"]["Enums"]["month_type"][]
           private_notes?: string | null
           provider_email_sent?: string | null
@@ -200,6 +203,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
           value: number
+          year?: number | null
         }
         Update: {
           campaign_id?: string
@@ -212,6 +216,7 @@ export type Database = {
           invoice_reference?: string | null
           job_type_id?: string | null
           manager_id?: string
+          month?: number | null
           months?: Database["public"]["Enums"]["month_type"][]
           private_notes?: string | null
           provider_email_sent?: string | null
@@ -221,6 +226,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["job_status"]
           updated_at?: string
           value?: number
+          year?: number | null
         }
         Relationships: [
           {
