@@ -38,6 +38,7 @@ const JobsTable: React.FC<JobsTableProps> = ({
             <TableHead>{t("jobs.month")}</TableHead>
             <TableHead>{t("jobs.value")}</TableHead>
 						<TableHead>{t("jobs.reference")}</TableHead>
+						<TableHead>{t("jobs.providerEmailSent")}</TableHead>
             <TableHead className="text-right">{t("jobs.actions")}</TableHead>
           </TableRow>
         </TableHeader>

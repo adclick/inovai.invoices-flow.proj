@@ -99,6 +99,7 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
 			<TableCell>{formatMonth(job.month)}</TableCell>
 			<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 			<TableCell>{job.invoice_reference}</TableCell>
+			<TableCell>{job.provider_email_sent}</TableCell>
 			<TableCell className="text-right">
 				<div className="flex justify-end space-x-2">
 					{job.documents && job.documents.length > 0 && (

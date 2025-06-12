@@ -31,7 +31,6 @@ serve(async (req) => {
 				job_type:job_types(*)
       `)
       .eq('status', 'active')
-			.is('provider_email_sent', null)
       .order('created_at', { ascending: false })
 
     if (error) {
