@@ -252,7 +252,11 @@
     "pendingValidation": "Validación Pendiente",
     "pending_payment": "Pago Pendiente",
     "pendingPayment": "Pago Pendiente",
-    "paid": "Pagado"
+    "paid": "Pagado",
+		"year": "Año",
+		"month": "Mes",
+		"yearPlaceholder": "Introducir año",
+		"selectMonth": "Seleccionar mes"
   },
   "managers": {
     "title": "Gestores",

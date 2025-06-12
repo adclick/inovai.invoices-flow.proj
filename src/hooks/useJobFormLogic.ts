@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +28,7 @@ const jobSchema = z.object({
   provider_message: z.string().optional(),
   public_notes: z.string().optional(),
   private_notes: z.string().optional(),
+  invoice_reference: z.string().optional(),
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
@@ -100,6 +100,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
               due_date: jobData.due_date || "",
               public_notes: jobData.public_notes || "",
               private_notes: jobData.private_notes || "",
+              invoice_reference: jobData.invoice_reference || "",
             });
           }
         } catch (error) {
@@ -152,6 +153,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       provider_message: values.provider_message || null,
       public_notes: values.public_notes || null,
       private_notes: values.private_notes || null,
+      invoice_reference: values.invoice_reference || null,
     };
 
     if (isEditMode && id) {

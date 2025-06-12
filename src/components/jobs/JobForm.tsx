@@ -87,12 +87,6 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 					t={t}
 				/>
 
-				<JobMonthsField
-					control={form.control}
-					monthOptions={monthOptions}
-					t={t}
-				/>
-
 				<JobNotesFields
 					control={form.control}
 					t={t}

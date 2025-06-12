@@ -97,7 +97,6 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
 			<TableCell>{job.provider_name}</TableCell>
 			<TableCell>{job.year || "-"}</TableCell>
 			<TableCell>{formatMonth(job.month)}</TableCell>
-			<TableCell>{formatMonths(job.months)}</TableCell>
 			<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 			<TableCell>{job.invoice_reference}</TableCell>
 			<TableCell className="text-right">

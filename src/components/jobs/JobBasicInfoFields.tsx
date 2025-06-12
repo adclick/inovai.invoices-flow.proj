@@ -1,9 +1,9 @@
-
 import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
 import RequiredTextField from "@/components/common/form/RequiredTextField";
 import OptionalSelectField from "@/components/common/form/OptionalSelectField";
+import OptionalTextField from "@/components/common/form/OptionalTextField";
 import DateField from "@/components/common/form/DateField";
 import { SelectOption, NUMERIC_MONTH_OPTIONS } from "@/utils/formConstants";
 
@@ -49,6 +49,13 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
         min="0"
         step="0.01"
       />
+
+			<OptionalTextField
+				control={control}
+				name="invoice_reference"
+				label={t("jobs.invoiceReference")}
+				placeholder={t("jobs.invoiceReference")}
+			/>
 
       <div className="grid grid-cols-2 gap-4">
         <RequiredTextField
