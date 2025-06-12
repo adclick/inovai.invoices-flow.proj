@@ -24,19 +24,19 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
     <div className="grid grid-cols-1 gap-6">
       <OptionalSelectField
         control={control}
-        name="status"
-        label={t("jobs.status")}
-        placeholder={t("jobs.selectStatus")}
-        options={statusOptions}
-        t={t}
-      />
-
-      <OptionalSelectField
-        control={control}
         name="job_type_id"
         label={t("jobs.jobType")}
         placeholder={t("jobs.selectJobType")}
         options={jobTypes.map(type => ({ value: type.id, label: type.name }))}
+        t={t}
+      />
+			
+			<OptionalSelectField
+        control={control}
+        name="status"
+        label={t("jobs.status")}
+        placeholder={t("jobs.selectStatus")}
+        options={statusOptions}
         t={t}
       />
 
@@ -50,12 +50,6 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
         step="0.01"
       />
 
-      <DateField
-        control={control}
-        name="due_date"
-        label={t("jobs.dueDate")}
-        placeholder={t("jobs.dueDate")}
-      />
     </div>
   );
 };

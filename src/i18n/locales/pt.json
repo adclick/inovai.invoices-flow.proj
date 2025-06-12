@@ -318,7 +318,8 @@
 		"searchCompanies": "Pesquisar empresas por nome...",
 		"allStatuses": "Todos os Estados",
 		"enterName": "Introduzir nome da empresa",
-		"activeDescription": "Ativar ou desativar esta empresa"
+		"activeDescription": "Ativar ou desativar esta empresa",
+		"selectCompany": "Selecionar uma empresa"
 	},
   "dashboard": {
     "welcome": "Bem-vindo ao seu painel",

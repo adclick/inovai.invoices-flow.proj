@@ -318,7 +318,8 @@
 		"searchCompanies": "Search companies by name...",
 		"allStatuses": "All Statuses",
 		"enterName": "Enter company name",
-		"activeDescription": "Enable or disable this company"
+		"activeDescription": "Enable or disable this company",
+		"selectCompany": "Select a company"
 	},
   "dashboard": {
     "welcome": "Welcome to your dashboard",

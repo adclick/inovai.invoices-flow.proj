@@ -41,15 +41,6 @@ const ManagersTableRow: React.FC<ManagersTableRowProps> = ({
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end space-x-2">
-          <Button 
-            size="sm" 
-            variant="ghost" 
-            onClick={(e) => { e.stopPropagation(); onEditManager(manager.id);}}
-            className="hover:bg-slate-100 dark:hover:bg-slate-700"
-          >
-            <Pencil className="h-4 w-4" />
-            <span className="sr-only">{t("common.edit")}</span>
-          </Button>
           <Button
             size="sm"
             variant="ghost"

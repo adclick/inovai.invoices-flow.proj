@@ -35,7 +35,7 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
       <MultiSelectField
         control={control}
         name="client_ids"
-        label={t("jobs.clients")}
+        label={t("clients.title")}
         placeholder={t("jobs.selectClients")}
         options={clients}
         emptyMessage={t("clients.noClientsAvailable")}
@@ -45,8 +45,8 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
       <MultiSelectField
         control={control}
         name="campaign_ids"
-        label={t("jobs.campaigns")}
-        placeholder={selectedClientIds.length > 0 ? t("jobs.selectCampaigns") : t("jobs.selectClientsFirst")}
+        label={t("campaigns.title")}
+        placeholder={selectedClientIds.length > 0 ? t("jobs.selectCampaigns") : t("campaigns.selectClientFirst")}
         options={filteredCampaigns.map(campaign => ({ id: campaign.id, name: campaign.name }))}
         disabled={selectedClientIds.length === 0}
         emptyMessage={selectedClientIds.length > 0 ? t("campaigns.noCampaignsForClient") : t("campaigns.selectClientFirst")}
@@ -73,8 +73,8 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
       <EntitySelectField
         control={control}
         name="company_id"
-        label={t("jobs.company")}
-        placeholder={t("jobs.selectCompany")}
+        label={t("companies.title")}
+        placeholder={t("companies.selectCompany")}
         options={companies}
         emptyMessage={t("companies.noCompaniesAvailable")}
       />
