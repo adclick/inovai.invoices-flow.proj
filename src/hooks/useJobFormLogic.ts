@@ -8,7 +8,7 @@ import { useEntityQuery } from "@/hooks/useEntityQuery";
 import { supabase } from "@/integrations/supabase/client";
 import { JOB_FORM_DEFAULTS } from "@/utils/formConstants";
 import { Database } from "@/integrations/supabase/types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Job = Database["public"]["Tables"]["jobs"]["Row"];
 
@@ -158,13 +158,6 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
 
   // Form submission handler
   const onSubmit = async (values: JobFormValues) => {
-    const monthNames = [
-      "january", "february", "march", "april", "may", "june",
-      "july", "august", "september", "october", "november", "december"
-    ] as const;
-    
-    type MonthName = typeof monthNames[number];
-    
     const submitData = {
       campaign_id: values.campaign_ids[0] || null, // Keep first campaign for backward compatibility
       provider_id: values.provider_id,
@@ -175,7 +168,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       status: values.status,
       year: values.year,
       month: parseInt(values.month),
-      months: [monthNames[parseInt(values.month) - 1] as MonthName], // Convert month number to name with proper type
+      months: [], // Convert month number to name with proper type
       due_date: values.due_date || null,
       provider_message: values.provider_message || null,
       public_notes: values.public_notes || null,

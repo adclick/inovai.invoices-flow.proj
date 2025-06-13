@@ -2,23 +2,12 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { useModalState } from "@/hooks/useModalState";
 import { useJobsListLogic } from "@/hooks/useJobsListLogic";
 import { useJobDeletion } from "@/hooks/useJobDeletion";
 import { useCompaniesData } from "@/hooks/useCompaniesData";
 import JobModal from "@/components/jobs/JobModal";
-import JobsListHeader from "@/components/jobs/JobsListHeader";
 import JobsListFilters from "@/components/jobs/JobsListFilters";
 import JobsTable from "@/components/jobs/JobsTable";
 import JobsListPagination from "@/components/jobs/JobsListPagination";
@@ -59,9 +48,6 @@ const JobsAllList: React.FC = () => {
 		confirmDelete,
 		isDeletingJob,
 	} = useJobDeletion();
-
-	// Get current company name for display
-	const currentCompany = companies?.find(company => company.id === companyFilter);
 
 	// Redirect to first company if no company is selected and companies exist
 	useEffect(() => {
@@ -120,10 +106,6 @@ const JobsAllList: React.FC = () => {
 			</DashboardLayout>
 		);
 	}
-
-	const pageTitle = currentCompany
-		? `${t("jobs.title")} - ${currentCompany.name}`
-		: t("jobs.title");
 
 	return (
 		<DashboardLayout>

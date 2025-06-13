@@ -28,6 +28,7 @@ serve(async (req) => {
         provider:providers(*),
         manager:managers(*),
         campaign:campaigns(*),
+        company:companies(*),
 				job_type:job_types(*)
       `)
       .eq('status', 'active')
