@@ -85,7 +85,8 @@
     "usd": "Dólar Americano ($)",
     "gbp": "Libra Esterlina (£)",
     "document": "Documento",
-    "viewAll": "Ver Todos"
+    "viewAll": "Ver Todos",
+		"invoice": "Fatura"
   },
   "providers": {
     "title": "Fornecedores",

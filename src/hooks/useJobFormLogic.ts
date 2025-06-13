@@ -7,6 +7,10 @@ import { useEntityMutation } from "@/hooks/useEntityMutation";
 import { useEntityQuery } from "@/hooks/useEntityQuery";
 import { supabase } from "@/integrations/supabase/client";
 import { JOB_FORM_DEFAULTS } from "@/utils/formConstants";
+import { Database } from "@/integrations/supabase/types";
+import { useMutation } from "@tanstack/react-query";
+
+type Job = Database["public"]["Tables"]["jobs"]["Row"];
 
 // Updated form schema for multi-select and company
 const jobSchema = z.object({
@@ -18,10 +22,6 @@ const jobSchema = z.object({
   job_type_id: z.string().min(1, "jobs.selectJobType"),
   value: z.coerce.number().min(0, "jobs.valueRequired"),
   status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"] as const),
-  months: z.array(z.enum([
-    "january", "february", "march", "april", "may", "june",
-    "july", "august", "september", "october", "november", "december"
-  ] as const)).min(1, "jobs.selectMonths"),
   year: z.coerce.number().min(1900, "jobs.yearRequired").max(2100, "jobs.yearMax"),
   month: z.string().min(1, "jobs.monthRequired"),
   due_date: z.string().optional(),
@@ -29,6 +29,7 @@ const jobSchema = z.object({
   public_notes: z.string().optional(),
   private_notes: z.string().optional(),
   invoice_reference: z.string().optional(),
+  documents: z.array(z.string()).optional(),
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
@@ -94,13 +95,13 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
               job_type_id: jobData.job_type_id,
               value: jobData.value,
               status: jobData.status,
-              months: jobData.months || [],
               year: jobData.year || new Date().getFullYear(),
               month: jobData.month ? jobData.month.toString() : "",
               due_date: jobData.due_date || "",
               public_notes: jobData.public_notes || "",
               private_notes: jobData.private_notes || "",
               invoice_reference: jobData.invoice_reference || "",
+              documents: jobData.documents || [],
             });
           }
         } catch (error) {
@@ -118,6 +119,25 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     queryKey: "jobs",
     onSuccess,
     onClose,
+  });
+
+  // Separate mutation for job-campaign relationships
+  const createJobCampaignsMutation = useMutation({
+    mutationFn: async ({ jobId, campaignIds }: { jobId: string; campaignIds: string[] }) => {
+      const jobCampaignInserts = campaignIds.map(campaignId => ({
+        job_id: jobId,
+        campaign_id: campaignId,
+      }));
+      
+      const { error } = await supabase
+        .from("job_campaigns")
+        .insert(jobCampaignInserts);
+
+      if (error) {
+        console.error("Error creating job-campaign relationships:", error);
+        throw error;
+      }
+    }
   });
 
   // Filter campaigns by selected clients
@@ -138,6 +158,13 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
 
   // Form submission handler
   const onSubmit = async (values: JobFormValues) => {
+    const monthNames = [
+      "january", "february", "march", "april", "may", "june",
+      "july", "august", "september", "october", "november", "december"
+    ] as const;
+    
+    type MonthName = typeof monthNames[number];
+    
     const submitData = {
       campaign_id: values.campaign_ids[0] || null, // Keep first campaign for backward compatibility
       provider_id: values.provider_id,
@@ -146,14 +173,15 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       job_type_id: values.job_type_id,
       value: values.value,
       status: values.status,
-      months: values.months,
       year: values.year,
       month: parseInt(values.month),
+      months: [monthNames[parseInt(values.month) - 1] as MonthName], // Convert month number to name with proper type
       due_date: values.due_date || null,
       provider_message: values.provider_message || null,
       public_notes: values.public_notes || null,
       private_notes: values.private_notes || null,
       invoice_reference: values.invoice_reference || null,
+      documents: values.documents || [],
     };
 
     if (isEditMode && id) {
@@ -184,35 +212,37 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
         console.error("Error updating job-campaign relationships:", error);
       }
     } else {
-      // Create job first, then handle junction table
       try {
+        // Create job
         const { data: newJob, error } = await supabase
           .from("jobs")
           .insert(submitData)
           .select()
           .single();
-        
-        if (error) throw error;
-        
-        // Insert job-campaign relationships
-        const jobCampaignInserts = values.campaign_ids.map(campaignId => ({
-          job_id: newJob.id,
-          campaign_id: campaignId,
-        }));
-        
-        await supabase
-          .from("job_campaigns")
-          .insert(jobCampaignInserts);
-        
-        onSuccess?.();
-        onClose();
+
+        if (error) {
+          console.error("Error creating job:", error);
+          return;
+        }
+
+        if (newJob) {
+          // Create job-campaign relationships
+          await createJobCampaignsMutation.mutateAsync({
+            jobId: newJob.id,
+            campaignIds: values.campaign_ids
+          });
+
+          // Call onSuccess and onClose after successful creation
+          onSuccess?.();
+          onClose?.();
+        }
       } catch (error) {
-        console.error("Error creating job:", error);
+        console.error("Error in job creation process:", error);
       }
     }
   };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending || jobLoading;
+  const isSubmitting = createMutation.isPending || updateMutation.isPending || createJobCampaignsMutation.isPending || jobLoading;
 
   return {
     form,

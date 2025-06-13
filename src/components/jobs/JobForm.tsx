@@ -4,12 +4,10 @@ import { useTranslation } from "react-i18next";
 import { BaseEntityFormProps } from "../common/EntityModal";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { useJobFormData } from "@/hooks/useJobFormData";
 import { useJobFormLogic } from "@/hooks/useJobFormLogic";
 import JobBasicInfoFields from "./JobBasicInfoFields";
 import JobEntitySelectionFields from "./JobEntitySelectionFields";
-import JobMonthsField from "./JobMonthsField";
 import JobNotesFields from "./JobNotesFields";
 
 const JobForm: React.FC<BaseEntityFormProps> = ({
@@ -75,6 +73,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 					providers={providers}
 					managers={managers}
 					companies={companies}
+					jobTypes={jobTypes}
 					selectedClientIds={selectedClientIds}
 					onClientChange={handleClientChange}
 					t={t}
@@ -83,7 +82,6 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 				<JobBasicInfoFields
 					control={form.control}
 					statusOptions={statusOptions}
-					jobTypes={jobTypes}
 					t={t}
 				/>
 

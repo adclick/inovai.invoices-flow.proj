@@ -1,6 +1,6 @@
 
 import { useCallback } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 export type EntityType = 'client' | 'campaign' | 'provider' | 'manager' | 'job' | 'jobType' | 'company';
 export type ModalMode = 'create' | 'edit' | 'view';
@@ -18,7 +18,6 @@ export function useModalState(): {
   closeModal: () => void;
 } {
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
 
   const modal = searchParams.get('modal');
   const id = searchParams.get('id');

@@ -152,38 +152,6 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           disabled={isLoading}
         />
 
-        <RequiredTextField
-          control={form.control}
-          name="duration"
-          label={t("campaigns.duration")}
-          placeholder={t("campaigns.enterDuration")}
-          type="number"
-          min="1"
-          disabled={isLoading}
-        />
-
-        <RequiredTextField
-          control={form.control}
-          name="estimated_cost"
-          label={t("campaigns.estimatedCost")}
-          placeholder={t("campaigns.enterEstimatedCost")}
-          type="number"
-          min="0"
-          step="0.01"
-          disabled={isLoading}
-        />
-
-        <RequiredTextField
-          control={form.control}
-          name="revenue"
-          label={t("campaigns.revenue")}
-          placeholder={t("campaigns.enterRevenue")}
-          type="number"
-          min="0"
-          step="0.01"
-          disabled={isLoading}
-        />
-
         <ActiveSwitchField 
           control={form.control}
           name="active" 

@@ -85,7 +85,8 @@
     "usd": "US Dollar ($)",
     "gbp": "British Pound (£)",
     "document": "Document",
-    "viewAll": "View All"
+    "viewAll": "View All",
+		"invoice": "Invoice"
   },
   "providers": {
     "title": "Providers",
