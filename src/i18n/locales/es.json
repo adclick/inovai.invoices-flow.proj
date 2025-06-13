@@ -120,9 +120,9 @@
     "deleteProvider": "Eliminar Proveedor",
     "deleteConfirmation": "¿Estás seguro de que quieres eliminar el proveedor \"{{name}}\"? Esta acción no se puede deshacer.",
     "deleting": "Eliminando...",
-    "providerCreated": "Proveedor creado con éxito",
-    "providerUpdated": "Proveedor actualizado con éxito",
-    "providerDeleted": "Proveedor eliminado con éxito",
+    "created": "Proveedor creado con éxito",
+    "updated": "Proveedor actualizado con éxito",
+    "deleted": "Proveedor eliminado con éxito",
     "noProvidersAvailable": "No hay proveedores disponibles"
   },
   "clients": {
@@ -146,9 +146,9 @@
     "deleteClient": "Eliminar Cliente",
     "deleteConfirmation": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
     "deleting": "Eliminando...",
-    "clientCreated": "Cliente creado con éxito",
-    "clientUpdated": "Cliente actualizado con éxito",
-    "clientDeleted": "Cliente eliminado con éxito",
+    "created": "Cliente creado con éxito",
+    "updated": "Cliente actualizado con éxito",
+    "deleted": "Cliente eliminado con éxito",
     "noClientsAvailable": "No hay clientes disponibles"
   },
   "campaigns": {
@@ -181,9 +181,9 @@
     "allStatuses": "Todos los Estados",
     "deleteCampaign": "Eliminar Campaña",
     "confirmDelete": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
-    "campaignCreated": "Campaña creada con éxito",
-    "campaignUpdated": "Campaña actualizada con éxito",
-    "campaignDeleted": "Campaña eliminada con éxito",
+    "created": "Campaña creada con éxito",
+    "updated": "Campaña actualizada con éxito",
+    "deleted": "Campaña eliminada con éxito",
     "noCampaignsForClient": "No hay campañas disponibles para este cliente",
     "selectClientFirst": "Selecciona un cliente primero"
   },
@@ -203,9 +203,9 @@
     "allStatuses": "Todos los Estados",
     "deleteJob": "Eliminar Trabajo",
     "deleteConfirmation": "¿Estás seguro de que quieres eliminar este trabajo? Esta acción no se puede deshacer.",
-    "jobCreated": "Trabajo creado con éxito",
-    "jobUpdated": "Trabajo actualizado con éxito",
-    "jobDeleted": "Trabajo eliminado con éxito",
+    "created": "Trabajo creado con éxito",
+    "updated": "Trabajo actualizado con éxito",
+    "deleted": "Trabajo eliminado con éxito",
     "deleteSuccess": "Trabajo eliminado con éxito",
     "jobDeletedDescription": "El trabajo ha sido eliminado del sistema",
     "deleteError": "Error al eliminar trabajo. Por favor, inténtalo de nuevo.",
@@ -257,7 +257,9 @@
 		"year": "Año",
 		"month": "Mes",
 		"yearPlaceholder": "Introducir año",
-		"selectMonth": "Seleccionar mes"
+		"selectMonth": "Seleccionar mes",
+		"documentsPlaceholder": "URL del documento",
+		"documentsHelp": "Introducir la URL del documento"
   },
   "managers": {
     "title": "Gestores",
@@ -284,9 +286,9 @@
     "deleteManager": "Eliminar Gestor",
     "deleteConfirmation": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
     "deleting": "Eliminando...",
-    "managerCreated": "Gestor creado con éxito",
-    "managerUpdated": "Gestor actualizado con éxito",
-    "managerDeleted": "Gestor eliminado con éxito",
+    "created": "Gestor creado con éxito",
+    "updated": "Gestor actualizado con éxito",
+    "deleted": "Gestor eliminado con éxito",
     "noManagersAvailable": "No hay gestores disponibles"
   },
   "jobTypes": {
@@ -305,9 +307,9 @@
     "deleteJobType": "Eliminar Tipo de Trabajo",
     "deleteConfirmation": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
     "deleting": "Eliminando...",
-    "jobTypeCreated": "Tipo de trabajo creado con éxito",
-    "jobTypeUpdated": "Tipo de trabajo actualizado con éxito",
-    "jobTypeDeleted": "Tipo de trabajo eliminado con éxito",
+    "created": "Tipo de trabajo creado con éxito",
+    "updated": "Tipo de trabajo actualizado con éxito",
+    "deleted": "Tipo de trabajo eliminado con éxito",
     "jobTypeDeletedDescription": "El tipo de trabajo ha sido eliminado con éxito del sistema",
     "jobTypeDeleteError": "Error al eliminar tipo de trabajo. Por favor, inténtalo de nuevo."
   },
@@ -318,13 +320,17 @@
 		"createFirstCompany": "Crear Tu Primera Empresa",
 		"editCompany": "Editar Empresa",
 		"createDescription": "Añadir una nueva empresa a tu sistema",
+		"updateDescription": "Actualizar información de la empresa",
 		"noCompaniesFound": "No se encontraron empresas",
 		"noCompaniesAvailable": "No hay empresas disponibles",
 		"searchCompanies": "Buscar empresas por nombre...",
 		"allStatuses": "Todos los Estados",
 		"enterName": "Introducir nombre de la empresa",
 		"activeDescription": "Activar o desactivar esta empresa",
-		"selectCompany": "Seleccionar una empresa"
+		"selectCompany": "Seleccionar una empresa",
+		"created": "Empresa creada con éxito",
+		"updated": "Empresa actualizada con éxito",
+		"deleted": "Empresa eliminada con éxito"
 	},
   "dashboard": {
     "welcome": "Bienvenido a tu panel",

@@ -120,9 +120,9 @@
     "deleteProvider": "Delete Provider",
     "deleteConfirmation": "Are you sure you want to delete the provider \"{{name}}\"? This action cannot be undone.",
     "deleting": "Deleting...",
-    "providerCreated": "Provider created successfully",
-    "providerUpdated": "Provider updated successfully",
-    "providerDeleted": "Provider deleted successfully",
+    "created": "Provider created successfully",
+    "updated": "Provider updated successfully",
+    "deleted": "Provider deleted successfully",
     "noProvidersAvailable": "No providers available"
   },
   "clients": {
@@ -146,9 +146,9 @@
     "deleteClient": "Delete Client",
     "deleteConfirmation": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
     "deleting": "Deleting...",
-    "clientCreated": "Client created successfully",
-    "clientUpdated": "Client updated successfully",
-    "clientDeleted": "Client deleted successfully",
+    "created": "Client created successfully",
+    "updated": "Client updated successfully",
+    "deleted": "Client deleted successfully",
     "noClientsAvailable": "No clients available"
   },
   "campaigns": {
@@ -181,9 +181,9 @@
     "allStatuses": "All Statuses",
     "deleteCampaign": "Delete Campaign",
     "confirmDelete": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
-    "campaignCreated": "Campaign created successfully",
-    "campaignUpdated": "Campaign updated successfully",
-    "campaignDeleted": "Campaign deleted successfully",
+    "created": "Campaign created successfully",
+    "updated": "Campaign updated successfully",
+    "deleted": "Campaign deleted successfully",
     "noCampaignsForClient": "No campaigns available for this client",
     "selectClientFirst": "Please select a client first"
   },
@@ -203,9 +203,9 @@
     "allStatuses": "All Statuses",
     "deleteJob": "Delete Job",
     "deleteConfirmation": "Are you sure you want to delete this job? This action cannot be undone.",
-    "jobCreated": "Job created successfully",
-    "jobUpdated": "Job updated successfully",
-    "jobDeleted": "Job deleted successfully",
+    "created": "Job created successfully",
+    "updated": "Job updated successfully",
+    "deleted": "Job deleted successfully",
     "deleteSuccess": "Job deleted successfully",
     "jobDeletedDescription": "The job has been removed from the system",
     "deleteError": "Failed to delete job. Please try again.",
@@ -257,7 +257,9 @@
 		"year": "Year",
 		"month": "Month",
 		"yearPlaceholder": "Enter year",
-		"selectMonth": "Select month"
+		"selectMonth": "Select month",
+		"documentsPlaceholder": "Document URL",
+		"documentsHelp": "Enter the URL of the document"
   },
   "managers": {
     "title": "Managers",
@@ -284,9 +286,9 @@
     "deleteManager": "Delete Manager",
     "deleteConfirmation": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
     "deleting": "Deleting...",
-    "managerCreated": "Manager created successfully",
-    "managerUpdated": "Manager updated successfully",
-    "managerDeleted": "Manager deleted successfully",
+    "created": "Manager created successfully",
+    "updated": "Manager updated successfully",
+    "deleted": "Manager deleted successfully",
     "noManagersAvailable": "No managers available"
   },
   "jobTypes": {
@@ -305,9 +307,9 @@
     "deleteJobType": "Delete Job Type",
     "deleteConfirmation": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
     "deleting": "Deleting...",
-    "jobTypeCreated": "Job type created successfully",
-    "jobTypeUpdated": "Job type updated successfully",
-    "jobTypeDeleted": "Job type deleted successfully",
+    "created": "Job type created successfully",
+    "updated": "Job type updated successfully",
+    "deleted": "Job type deleted successfully",
     "jobTypeDeletedDescription": "The job type has been successfully removed from the system",
     "jobTypeDeleteError": "Failed to delete job type. Please try again."
   },
@@ -318,13 +320,17 @@
 		"createFirstCompany": "Create Your First Company",
 		"editCompany": "Edit Company",
 		"createDescription": "Add a new company to your system",
+		"updateDescription": "Update company information",
 		"noCompaniesFound": "No companies found",
 		"noCompaniesAvailable": "No companies available",
 		"searchCompanies": "Search companies by name...",
 		"allStatuses": "All Statuses",
 		"enterName": "Enter company name",
 		"activeDescription": "Enable or disable this company",
-		"selectCompany": "Select a company"
+		"selectCompany": "Select a company",
+		"created": "Company created successfully",
+		"updated": "Company updated successfully",
+		"deleted": "Company deleted successfully"
 	},
   "dashboard": {
     "welcome": "Welcome to your dashboard",

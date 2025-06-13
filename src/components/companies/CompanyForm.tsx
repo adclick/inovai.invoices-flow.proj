@@ -112,11 +112,7 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
           description={t("companies.activeDescription")}
         />
 
-        <div className="sticky bottom-0 z-10 bg-card p-4 border-t border-border flex justify-between items-center">
-          <Button variant="outline" onClick={onClose}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("common.back")}
-          </Button>
+        <div className="sticky bottom-0 z-10 bg-card p-4 border-t border-border flex justify-end items-center">
           {!isReadOnly && (
             <div className="flex justify-end space-x-4">
               <Button type="button" variant="outline" onClick={onClose}>

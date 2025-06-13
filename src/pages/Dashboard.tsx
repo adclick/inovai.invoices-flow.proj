@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
           id,
           status,
           created_at,
-          campaign:campaign_id(name),
+          campaign:campaign_id(name, client:client_id(name)),
           provider:provider_id(name),
           manager:manager_id(name)
         `)
@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
       return data?.map(item => ({
         ...item,
         client: {
-          name: t("dashboard.unknownClient") // Use translated fallback name
+          name: item.campaign?.client?.name || t("dashboard.unknownClient") // Use translated fallback name
         }
       })) || [];
     },
