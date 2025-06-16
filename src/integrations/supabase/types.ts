@@ -107,18 +107,21 @@ export type Database = {
           created_at: string
           id: string
           job_id: string
+          value: number | null
         }
         Insert: {
           campaign_id: string
           created_at?: string
           id?: string
           job_id: string
+          value?: number | null
         }
         Update: {
           campaign_id?: string
           created_at?: string
           id?: string
           job_id?: string
+          value?: number | null
         }
         Relationships: [
           {
@@ -172,6 +175,7 @@ export type Database = {
           manager_id: string
           month: number | null
           months: Database["public"]["Enums"]["month_type"][]
+          payment_date: string | null
           private_notes: string | null
           provider_email_sent: string | null
           provider_id: string
@@ -181,7 +185,6 @@ export type Database = {
           updated_at: string
           value: number
           year: number | null
-          payment_date: string | null
         }
         Insert: {
           campaign_id: string
@@ -196,6 +199,7 @@ export type Database = {
           manager_id: string
           month?: number | null
           months: Database["public"]["Enums"]["month_type"][]
+          payment_date?: string | null
           private_notes?: string | null
           provider_email_sent?: string | null
           provider_id: string
@@ -205,7 +209,6 @@ export type Database = {
           updated_at?: string
           value: number
           year?: number | null
-          payment_date?: string | null
         }
         Update: {
           campaign_id?: string
@@ -220,6 +223,7 @@ export type Database = {
           manager_id?: string
           month?: number | null
           months?: Database["public"]["Enums"]["month_type"][]
+          payment_date?: string | null
           private_notes?: string | null
           provider_email_sent?: string | null
           provider_id?: string
@@ -229,7 +233,6 @@ export type Database = {
           updated_at?: string
           value?: number
           year?: number | null
-          payment_date?: string | null
         }
         Relationships: [
           {

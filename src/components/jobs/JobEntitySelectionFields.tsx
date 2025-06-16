@@ -1,8 +1,9 @@
+
 import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
 import EntitySelectField from "@/components/common/form/EntitySelectField";
-import MultiSelectField from "@/components/common/form/MultiSelectField";
+import CampaignValueField from "@/components/common/form/CampaignValueField";
 import { EntitySelectOption } from "@/utils/formConstants";
 import OptionalSelectField from "../common/form/OptionalSelectField";
 
@@ -53,23 +54,28 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 				/>
 			</div>
 
-			{/* Clients and Campaigns in a single row */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<MultiSelectField
-					control={control}
-					name="client_ids"
-					label={t("clients.title")}
-					placeholder={t("jobs.selectClients")}
-					options={clients}
-					emptyMessage={t("clients.noClientsAvailable")}
-				/>
+			{/* Clients and Campaign Values */}
+			<div className="grid grid-cols-1 gap-4">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+					<EntitySelectField
+						control={control}
+						name="client_ids"
+						label={t("clients.title")}
+						placeholder={t("jobs.selectClients")}
+						options={clients}
+						emptyMessage={t("clients.noClientsAvailable")}
+						multiple
+					/>
 
-				<MultiSelectField
+					<div /> {/* Empty space to maintain grid layout */}
+				</div>
+
+				<CampaignValueField
 					control={control}
-					name="campaign_ids"
+					name="campaign_values"
 					label={t("campaigns.title")}
 					placeholder={selectedClientIds.length > 0 ? t("jobs.selectCampaigns") : t("campaigns.selectClientFirst")}
-					options={filteredCampaigns.map(campaign => ({ id: campaign.id, name: campaign.name }))}
+					filteredCampaigns={filteredCampaigns}
 					disabled={selectedClientIds.length === 0}
 					emptyMessage={selectedClientIds.length > 0 ? t("campaigns.noCampaignsForClient") : t("campaigns.selectClientFirst")}
 				/>
@@ -95,8 +101,6 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 					emptyMessage={t("managers.noManagersAvailable")}
 				/>
 			</div>
-
-
 		</div>
 	);
 };

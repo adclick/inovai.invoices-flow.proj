@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,10 +13,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Job = Database["public"]["Tables"]["jobs"]["Row"];
 
-// Updated form schema for multi-select and company
+// Updated form schema for campaign values
 const jobSchema = z.object({
   client_ids: z.array(z.string()).min(1, "jobs.selectClients"),
-  campaign_ids: z.array(z.string()).min(1, "jobs.selectCampaigns"),
+  campaign_values: z.array(z.object({
+    campaign_id: z.string(),
+    value: z.number().min(0, "jobs.valueRequired")
+  })).min(1, "jobs.selectCampaigns"),
   provider_id: z.string().min(1, "jobs.selectProvider"),
   manager_id: z.string().min(1, "jobs.selectManager"),
   company_id: z.string().optional(),
@@ -54,6 +58,18 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     defaultValues: JOB_FORM_DEFAULTS,
   });
 
+  // Watch campaign values to update total
+  React.useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name?.startsWith('campaign_values')) {
+        const campaignValues = value.campaign_values || [];
+        const total = campaignValues.reduce((sum, cv) => sum + (cv?.value || 0), 0);
+        form.setValue('value', total);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
   // Fetch job data if in edit mode
   const { isLoading: jobLoading } = useEntityQuery({
     tableName: "jobs",
@@ -76,20 +92,24 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
             .single();
           
           if (jobData) {
-            // Fetch associated campaigns from junction table
+            // Fetch associated campaigns from junction table with values
             const { data: jobCampaigns } = await supabase
               .from("job_campaigns")
-              .select("campaign_id, campaigns(id, name, client_id)")
+              .select("campaign_id, value, campaigns(id, name, client_id)")
               .eq("job_id", id);
             
-            const campaignIds = jobCampaigns?.map(jc => jc.campaign_id) || [];
+            const campaignValues = jobCampaigns?.map(jc => ({
+              campaign_id: jc.campaign_id,
+              value: jc.value || 0
+            })) || [];
+            
             const clientIds = [...new Set(jobCampaigns?.map((jc: any) => jc.campaigns?.client_id).filter(Boolean))];
             
             setSelectedClientIds(clientIds);
             
             form.reset({
               client_ids: clientIds,
-              campaign_ids: campaignIds,
+              campaign_values: campaignValues,
               provider_id: jobData.provider_id,
               manager_id: jobData.manager_id,
               company_id: jobData.company_id || "",
@@ -125,10 +145,11 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
 
   // Separate mutation for job-campaign relationships
   const createJobCampaignsMutation = useMutation({
-    mutationFn: async ({ jobId, campaignIds }: { jobId: string; campaignIds: string[] }) => {
-      const jobCampaignInserts = campaignIds.map(campaignId => ({
+    mutationFn: async ({ jobId, campaignValues }: { jobId: string; campaignValues: Array<{ campaign_id: string; value: number }> }) => {
+      const jobCampaignInserts = campaignValues.map(cv => ({
         job_id: jobId,
-        campaign_id: campaignId,
+        campaign_id: cv.campaign_id,
+        value: cv.value,
       }));
       
       const { error } = await supabase
@@ -150,23 +171,25 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
 
   const handleClientChange = (clientIds: string[]) => {
     setSelectedClientIds(clientIds);
-    // Clear campaign selection when clients change
-    const currentCampaignIds = form.getValues("campaign_ids");
-    const validCampaignIds = currentCampaignIds.filter(campaignId => 
-      campaigns.find(c => c.id === campaignId && clientIds.includes(c.client_id))
+    // Clear campaign values when clients change
+    const currentCampaignValues = form.getValues("campaign_values");
+    const validCampaignValues = currentCampaignValues.filter(cv => 
+      campaigns.find(c => c.id === cv.campaign_id && clientIds.includes(c.client_id))
     );
-    form.setValue("campaign_ids", validCampaignIds);
+    form.setValue("campaign_values", validCampaignValues);
   };
 
   // Form submission handler
   const onSubmit = async (values: JobFormValues) => {
+    const totalValue = values.campaign_values.reduce((sum, cv) => sum + cv.value, 0);
+    
     const submitData = {
-      campaign_id: values.campaign_ids[0] || null, // Keep first campaign for backward compatibility
+      campaign_id: values.campaign_values[0]?.campaign_id || null, // Keep first campaign for backward compatibility
       provider_id: values.provider_id,
       manager_id: values.manager_id,
       company_id: values.company_id || null,
       job_type_id: values.job_type_id,
-      value: values.value,
+      value: totalValue,
       status: values.status,
       year: values.year,
       month: parseInt(values.month),
@@ -195,10 +218,11 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
           .delete()
           .eq("job_id", id);
         
-        // Insert new relationships
-        const jobCampaignInserts = values.campaign_ids.map(campaignId => ({
+        // Insert new relationships with values
+        const jobCampaignInserts = values.campaign_values.map(cv => ({
           job_id: id,
-          campaign_id: campaignId,
+          campaign_id: cv.campaign_id,
+          value: cv.value,
         }));
         
         await supabase
@@ -222,10 +246,10 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
         }
 
         if (newJob) {
-          // Create job-campaign relationships
+          // Create job-campaign relationships with values
           await createJobCampaignsMutation.mutateAsync({
             jobId: newJob.id,
-            campaignIds: values.campaign_ids
+            campaignValues: values.campaign_values
           });
 
           // Call onSuccess and onClose after successful creation
