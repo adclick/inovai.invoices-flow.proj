@@ -1,11 +1,11 @@
+
 import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
-import RequiredTextField from "@/components/common/form/RequiredTextField";
 import OptionalSelectField from "@/components/common/form/OptionalSelectField";
 import DocumentsField from "@/components/common/form/DocumentsField";
 import OptionalDateField from "@/components/common/form/OptionalDateField";
-import { SelectOption, NUMERIC_MONTH_OPTIONS } from "@/utils/formConstants";
+import { SelectOption } from "@/utils/formConstants";
 
 interface JobBasicInfoFieldsProps {
 	control: Control<JobFormValues>;
@@ -20,29 +20,7 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
 }) => {
 	return (
 		<div className="grid grid-cols-1 gap-6">
-
-			<div className="grid grid-cols-2 gap-4">
-				<RequiredTextField
-					control={control}
-					name="year"
-					label={t("jobs.year")}
-					placeholder={t("jobs.yearPlaceholder")}
-					type="number"
-					min="1900"
-					max="2100"
-				/>
-
-				<OptionalSelectField
-					control={control}
-					name="month"
-					label={t("jobs.month")}
-					placeholder={t("jobs.selectMonth")}
-					options={NUMERIC_MONTH_OPTIONS}
-					t={t}
-				/>
-			</div>
-
-			<div className="grid grid-cols-2 gap-4">
+			<div className="grid grid-cols-1 gap-4">
 				<OptionalSelectField
 					control={control}
 					name="status"
@@ -50,16 +28,6 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
 					placeholder={t("jobs.selectStatus")}
 					options={statusOptions}
 					t={t}
-				/>
-
-				<RequiredTextField
-					control={control}
-					name="value"
-					label={t("jobs.value")}
-					placeholder={t("jobs.value")}
-					type="number"
-					min="0"
-					step="0.01"
 				/>
 			</div>
 
