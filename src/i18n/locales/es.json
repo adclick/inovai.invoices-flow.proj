@@ -259,7 +259,8 @@
 		"yearPlaceholder": "Introducir año",
 		"selectMonth": "Seleccionar mes",
 		"documentsPlaceholder": "URL del documento",
-		"documentsHelp": "Introducir la URL del documento"
+		"documentsHelp": "Introducir la URL del documento",
+		"paymentDate": "Fecha de Pago"
   },
   "managers": {
     "title": "Gestores",

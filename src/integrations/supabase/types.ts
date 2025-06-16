@@ -181,6 +181,7 @@ export type Database = {
           updated_at: string
           value: number
           year: number | null
+          payment_date: string | null
         }
         Insert: {
           campaign_id: string
@@ -204,6 +205,7 @@ export type Database = {
           updated_at?: string
           value: number
           year?: number | null
+          payment_date?: string | null
         }
         Update: {
           campaign_id?: string
@@ -227,6 +229,7 @@ export type Database = {
           updated_at?: string
           value?: number
           year?: number | null
+          payment_date?: string | null
         }
         Relationships: [
           {

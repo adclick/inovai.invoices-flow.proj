@@ -259,7 +259,8 @@
 		"yearPlaceholder": "Enter year",
 		"selectMonth": "Select month",
 		"documentsPlaceholder": "Document URL",
-		"documentsHelp": "Enter the URL of the document"
+		"documentsHelp": "Enter the URL of the document",
+		"paymentDate": "Payment Date"
   },
   "managers": {
     "title": "Managers",

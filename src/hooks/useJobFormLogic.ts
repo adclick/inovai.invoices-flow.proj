@@ -25,6 +25,7 @@ const jobSchema = z.object({
   year: z.coerce.number().min(1900, "jobs.yearRequired").max(2100, "jobs.yearMax"),
   month: z.string().min(1, "jobs.monthRequired"),
   due_date: z.string().optional(),
+  payment_date: z.string().optional(),
   provider_message: z.string().optional(),
   public_notes: z.string().optional(),
   private_notes: z.string().optional(),
@@ -98,6 +99,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
               year: jobData.year || new Date().getFullYear(),
               month: jobData.month ? jobData.month.toString() : "",
               due_date: jobData.due_date || "",
+              payment_date: jobData.payment_date || "",
               public_notes: jobData.public_notes || "",
               private_notes: jobData.private_notes || "",
               invoice_reference: jobData.invoice_reference || "",
@@ -170,6 +172,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       month: parseInt(values.month),
       months: [], // Convert month number to name with proper type
       due_date: values.due_date || null,
+      payment_date: values.payment_date || null,
       provider_message: values.provider_message || null,
       public_notes: values.public_notes || null,
       private_notes: values.private_notes || null,

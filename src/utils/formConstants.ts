@@ -1,4 +1,3 @@
-
 import { Database } from "@/integrations/supabase/types";
 
 // Status options for jobs
@@ -71,6 +70,7 @@ export const JOB_FORM_DEFAULTS = {
   year: new Date().getFullYear(),
   month: "",
   due_date: "",
+  payment_date: "",
   public_notes: "",
   private_notes: "",
 };

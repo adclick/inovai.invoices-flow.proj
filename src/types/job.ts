@@ -31,6 +31,7 @@ export type Job = {
   campaign_names?: string[];
   client_ids?: string[];
   client_names?: string[];
+	payment_date?: string | null;
 };
 
 // Helper function to format status labels for display

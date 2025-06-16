@@ -4,6 +4,7 @@ import { JobFormValues } from "@/hooks/useJobFormLogic";
 import RequiredTextField from "@/components/common/form/RequiredTextField";
 import OptionalSelectField from "@/components/common/form/OptionalSelectField";
 import DocumentsField from "@/components/common/form/DocumentsField";
+import OptionalDateField from "@/components/common/form/OptionalDateField";
 import { SelectOption, NUMERIC_MONTH_OPTIONS } from "@/utils/formConstants";
 
 interface JobBasicInfoFieldsProps {
@@ -61,6 +62,13 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
 					step="0.01"
 				/>
 			</div>
+
+			<OptionalDateField
+				control={control}
+				name="payment_date"
+				label={t("jobs.paymentDate")}
+				placeholder={t("jobs.paymentDatePlaceholder")}
+			/>
 
 			<DocumentsField
 				control={control}
