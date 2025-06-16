@@ -1,3 +1,4 @@
+
 export type Job = {
   id: string;
   campaign_id: string; // Keep for backward compatibility
@@ -33,6 +34,20 @@ export type Job = {
   payment_date?: string | null;
   // New field for campaign values
   campaign_values?: Array<{ campaign_id: string; value: number; campaign_name?: string }>;
+  // New fields for line items
+  line_items?: Array<{
+    year: number;
+    month: string;
+    company_id: string;
+    client_id: string;
+    campaign_id: string;
+    job_type_id: string;
+    value: number;
+    company_name?: string;
+    client_name?: string;
+    campaign_name?: string;
+    job_type_name?: string;
+  }>;
 };
 
 // Helper function to format status labels for display

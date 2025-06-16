@@ -3,85 +3,35 @@ import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
 import EntitySelectField from "@/components/common/form/EntitySelectField";
-import CampaignValueField from "@/components/common/form/CampaignValueField";
+import JobLineItemsField from "./JobLineItemsField";
 import { EntitySelectOption } from "@/utils/formConstants";
-import OptionalSelectField from "../common/form/OptionalSelectField";
 
 interface JobEntitySelectionFieldsProps {
 	control: Control<JobFormValues>;
 	clients: EntitySelectOption[];
-	filteredCampaigns: { id: string; name: string; client_id: string }[];
+	campaigns: { id: string; name: string; client_id: string }[];
 	providers: EntitySelectOption[];
 	managers: EntitySelectOption[];
 	companies: EntitySelectOption[];
 	jobTypes: { id: string; name: string }[];
-	selectedClientIds: string[];
-	onClientChange: (clientIds: string[]) => void;
+	totalValue: number;
 	t: (key: string) => string;
 }
 
 const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 	control,
 	clients,
-	filteredCampaigns,
+	campaigns,
 	providers,
 	managers,
 	companies,
 	jobTypes,
-	selectedClientIds,
-	onClientChange,
+	totalValue,
 	t,
 }) => {
 	return (
-		<div className="grid grid-cols-1 gap-6">
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<EntitySelectField
-					control={control}
-					name="company_id"
-					label={t("companies.title")}
-					placeholder={t("companies.selectCompany")}
-					options={companies}
-					emptyMessage={t("companies.noCompaniesAvailable")}
-				/>
-
-				<OptionalSelectField
-					control={control}
-					name="job_type_id"
-					label={t("jobs.jobType")}
-					placeholder={t("jobs.selectJobType")}
-					options={jobTypes.map(type => ({ value: type.id, label: type.name }))}
-					t={t}
-				/>
-			</div>
-
-			{/* Clients and Campaign Values */}
-			<div className="grid grid-cols-1 gap-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<EntitySelectField
-						control={control}
-						name="client_ids"
-						label={t("clients.title")}
-						placeholder={t("jobs.selectClients")}
-						options={clients}
-						emptyMessage={t("clients.noClientsAvailable")}
-						multiple
-					/>
-
-					<div /> {/* Empty space to maintain grid layout */}
-				</div>
-
-				<CampaignValueField
-					control={control}
-					name="campaign_values"
-					label={t("campaigns.title")}
-					placeholder={selectedClientIds.length > 0 ? t("jobs.selectCampaigns") : t("campaigns.selectClientFirst")}
-					filteredCampaigns={filteredCampaigns}
-					disabled={selectedClientIds.length === 0}
-					emptyMessage={selectedClientIds.length > 0 ? t("campaigns.noCampaignsForClient") : t("campaigns.selectClientFirst")}
-				/>
-			</div>
-
-			{/* Provider and Manager in a single row */}
+		<div className="space-y-6">
+			{/* Job Information */}
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<EntitySelectField
 					control={control}
@@ -101,6 +51,17 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 					emptyMessage={t("managers.noManagersAvailable")}
 				/>
 			</div>
+
+			{/* Line Items */}
+			<JobLineItemsField
+				control={control}
+				clients={clients}
+				campaigns={campaigns}
+				companies={companies}
+				jobTypes={jobTypes}
+				totalValue={totalValue}
+				t={t}
+			/>
 		</div>
 	);
 };

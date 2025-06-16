@@ -1,3 +1,4 @@
+
 import { Database } from "@/integrations/supabase/types";
 
 // Status options for jobs
@@ -55,25 +56,6 @@ export const CURRENCY_OPTIONS = [
   { value: "usd", label: "common.usd" },
   { value: "gbp", label: "common.gbp" },
 ];
-
-// Job form default values - updated for campaign values
-export const JOB_FORM_DEFAULTS = {
-  client_ids: [] as string[],
-  campaign_values: [] as Array<{ campaign_id: string; value: number }>,
-  provider_id: "",
-  manager_id: "",
-  company_id: "",
-  job_type_id: "",
-  value: 0,
-  status: "draft" as const,
-  months: [] as ("january" | "february" | "march" | "april" | "may" | "june" | "july" | "august" | "september" | "october" | "november" | "december")[],
-  year: new Date().getFullYear(),
-  month: "",
-  due_date: "",
-  payment_date: "",
-  public_notes: "",
-  private_notes: "",
-};
 
 // Form field types for reusability
 export type SelectOption = {

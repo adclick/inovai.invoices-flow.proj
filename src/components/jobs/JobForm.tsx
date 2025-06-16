@@ -30,16 +30,13 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 		companies,
 		jobTypes,
 		statusOptions,
-		monthOptions,
 		isLoading: dataLoading,
 	} = useJobFormData();
 
 	// Handle form logic
 	const {
 		form,
-		selectedClientIds,
-		filteredCampaigns,
-		handleClientChange,
+		totalValue,
 		onSubmit,
 		isSubmitting,
 	} = useJobFormLogic({
@@ -50,16 +47,6 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 		campaigns,
 	});
 
-	// Watch for client changes in the form
-	useEffect(() => {
-		const subscription = form.watch((value, { name }) => {
-			if (name === "client_ids") {
-				handleClientChange(value.client_ids || []);
-			}
-		});
-		return () => subscription.unsubscribe();
-	}, [form, handleClientChange]);
-
 	const isLoading = dataLoading || isSubmitting;
 	const isReadOnly = mode === "view";
 
@@ -69,13 +56,12 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 				<JobEntitySelectionFields
 					control={form.control}
 					clients={clients}
-					filteredCampaigns={filteredCampaigns}
+					campaigns={campaigns}
 					providers={providers}
 					managers={managers}
 					companies={companies}
 					jobTypes={jobTypes}
-					selectedClientIds={selectedClientIds}
-					onClientChange={handleClientChange}
+					totalValue={totalValue}
 					t={t}
 				/>
 
