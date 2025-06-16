@@ -101,7 +101,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
             const campaignValues = jobCampaigns?.map(jc => ({
               campaign_id: jc.campaign_id,
               value: jc.value || 0
-            })) || [];
+            })).filter(cv => cv.campaign_id) || [];
             
             const clientIds = [...new Set(jobCampaigns?.map((jc: any) => jc.campaigns?.client_id).filter(Boolean))];
             

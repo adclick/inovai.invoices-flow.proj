@@ -2,27 +2,26 @@
 import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
-import CheckboxGroupField from "@/components/common/form/CheckboxGroupField";
-import { SelectOption } from "@/utils/formConstants";
+import OptionalSelectField from "@/components/common/form/OptionalSelectField";
+import { NUMERIC_MONTH_OPTIONS } from "@/utils/formConstants";
 
 interface JobMonthsFieldProps {
   control: Control<JobFormValues>;
-  monthOptions: SelectOption[];
   t: (key: string) => string;
 }
 
 const JobMonthsField: React.FC<JobMonthsFieldProps> = ({
   control,
-  monthOptions,
   t,
 }) => {
   return (
-    <CheckboxGroupField
+    <OptionalSelectField
       control={control}
-      name="months"
-      label={t("jobs.months")}
-      description={t("jobs.selectMonthsDescription")}
-      options={monthOptions}
+      name="month"
+      label={t("jobs.month")}
+      placeholder={t("jobs.selectMonth")}
+      options={NUMERIC_MONTH_OPTIONS}
+      t={t}
     />
   );
 };
