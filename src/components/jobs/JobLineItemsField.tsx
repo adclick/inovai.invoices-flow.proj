@@ -50,50 +50,48 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
   };
 
   return (
-    <FormField
-      control={control}
-      name="line_items"
-      render={() => (
-        <FormItem>
-          <FormLabel className="text-lg font-semibold">{t("jobs.lineItems")}</FormLabel>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">{t("jobs.lineItems")}</h3>
+      </div>
+      
+      <div className="space-y-4">
+        {fields.map((field, index) => (
+          <JobLineItem
+            key={field.id}
+            index={index}
+            control={control}
+            clients={clients}
+            campaigns={campaigns}
+            companies={companies}
+            jobTypes={jobTypes}
+            onRemove={() => remove(index)}
+            canRemove={fields.length > 1}
+            t={t}
+          />
+        ))}
+        
+        <div className="flex justify-between items-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addLineItem}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            {t("jobs.addLineItem")}
+          </Button>
           
-          <div className="space-y-4">
-            {fields.map((field, index) => (
-              <JobLineItem
-                key={field.id}
-                index={index}
-                control={control}
-                clients={clients}
-                campaigns={campaigns}
-                companies={companies}
-                jobTypes={jobTypes}
-                onRemove={() => remove(index)}
-                canRemove={fields.length > 1}
-                t={t}
-              />
-            ))}
-            
-            <div className="flex justify-between items-center">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addLineItem}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                {t("jobs.addLineItem")}
-              </Button>
-              
-              <div className="text-lg font-semibold">
-                {t("jobs.totalValue")}: €{totalValue.toFixed(2)}
-              </div>
-            </div>
+          <div className="text-lg font-semibold">
+            {t("jobs.totalValue")}: €{totalValue.toFixed(2)}
           </div>
-          
-          <FormMessage />
-        </FormItem>
+        </div>
+      </div>
+      
+      {fields.length === 0 && (
+        <p className="text-sm text-muted-foreground">{t("jobs.lineItemRequired")}</p>
       )}
-    />
+    </div>
   );
 };
 
