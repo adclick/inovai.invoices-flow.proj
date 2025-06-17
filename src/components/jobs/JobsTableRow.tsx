@@ -49,30 +49,9 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
             <JobStatusBadge status={job.status} t={t} />
           </div>
         </TableCell>
-        <TableCell>
-          <div className="flex items-center gap-1">
-            <span>{job.client_names?.length || 1}</span>
-            {job.client_names && job.client_names.length > 1 && (
-              <Badge variant="secondary" className="text-xs">
-                +{job.client_names.length - 1}
-              </Badge>
-            )}
-          </div>
-        </TableCell>
-        <TableCell>
-          <div className="flex items-center gap-1">
-            <span>{job.campaign_names?.length || 1}</span>
-            {job.campaign_names && job.campaign_names.length > 1 && (
-              <Badge variant="secondary" className="text-xs">
-                +{job.campaign_names.length - 1}
-              </Badge>
-            )}
-          </div>
-        </TableCell>
         <TableCell>{job.manager_name}</TableCell>
         <TableCell>{job.provider_name}</TableCell>
         <TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
-        <TableCell>{job.invoice_reference}</TableCell>
         <TableCell>{new Date(job.created_at).toISOString().split('T')[0]} {new Date(job.created_at).toLocaleTimeString()}</TableCell>
         <TableCell className="text-right">
           <div className="flex justify-end space-x-2">
