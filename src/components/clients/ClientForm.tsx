@@ -79,39 +79,58 @@ const ClientForm: React.FC<BaseEntityFormProps> = ({
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <RequiredTextField
-          control={form.control}
-          name="name"
-          label={t("clients.clientName")}
-          placeholder={t("clients.enterName")}
-        />
+    <div className="space-y-8">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {/* Basic Information Section */}
+          <div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+              <div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+              {t("clients.basicInformation")}
+            </h3>
+            <RequiredTextField
+              control={form.control}
+              name="name"
+              label={t("clients.clientName")}
+              placeholder={t("clients.enterName")}
+            />
+          </div>
 
-        {isEditMode && (
-          <ActiveSwitchField
-            control={form.control}
-            name="active"
-            description={t("clients.activeDescription")}
-          />
-        )}
+          {/* Status Section */}
+          {isEditMode && (
+            <div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+                <div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+                {t("common.status")}
+              </h3>
+              <ActiveSwitchField
+                control={form.control}
+                name="active"
+                description={t("clients.activeDescription")}
+              />
+            </div>
+          )}
 
-        <div className="flex justify-end space-x-2">
-          <Button type="button" variant="outline" onClick={onClose}>
-            {t("common.cancel")}
-          </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending
-              ? isEditMode
-                ? t("common.updating")
-                : t("common.creating")
-              : isEditMode
-              ? t("common.save")
-              : t("common.create")}
-          </Button>
-        </div>
-      </form>
-    </Form>
+          {/* Action Buttons */}
+          <div className="sticky bottom-0 z-10 bg-white dark:bg-slate-900 p-6 border-t-2 border-slate-200 dark:border-slate-600 -mx-6 -mb-6 rounded-b-xl bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+            <div className="flex justify-end space-x-4">
+              <Button type="button" variant="outline" onClick={onClose} size="lg">
+                {t("common.cancel")}
+              </Button>
+              <Button type="submit" disabled={isPending} size="lg">
+                {isPending
+                  ? isEditMode
+                    ? t("common.updating")
+                    : t("common.creating")
+                  : isEditMode
+                  ? t("common.save")
+                  : t("common.create")}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };
 

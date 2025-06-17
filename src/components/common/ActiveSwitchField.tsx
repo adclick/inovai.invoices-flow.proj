@@ -32,10 +32,12 @@ const ActiveSwitchField = <TFieldValues extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <FormLabel className="text-base">{label || t('common.active')}</FormLabel>
-            <FormDescription>
+        <FormItem className="flex flex-row items-center justify-between rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 shadow-sm hover:shadow-md transition-all duration-200">
+          <div className="space-y-1">
+            <FormLabel className="text-base font-semibold text-slate-800 dark:text-slate-100">
+              {label || t('common.active')}
+            </FormLabel>
+            <FormDescription className="text-sm text-slate-600 dark:text-slate-300 font-medium">
               {description}
             </FormDescription>
           </div>
@@ -45,6 +47,7 @@ const ActiveSwitchField = <TFieldValues extends FieldValues>({
               onCheckedChange={field.onChange}
               disabled={disabled}
               aria-label={label || t('common.active')}
+              className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-brand data-[state=checked]:to-brand-light"
             />
           </FormControl>
         </FormItem>

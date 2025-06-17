@@ -38,8 +38,11 @@ const RequiredTextField = <TFieldValues extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          <FormLabel>{label}</FormLabel>
+        <FormItem className="space-y-3">
+          <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+            {label}
+            <span className="text-red-500">*</span>
+          </FormLabel>
           <FormControl>
             <Input
               type={type}
@@ -48,10 +51,11 @@ const RequiredTextField = <TFieldValues extends FieldValues>({
               min={min}
               max={max}
               step={step}
+              className="border-2 border-slate-200 dark:border-slate-600 focus:border-brand dark:focus:border-brand-light focus:ring-2 focus:ring-brand/20 transition-all duration-200 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400"
               {...field}
             />
           </FormControl>
-          <FormMessage />
+          <FormMessage className="text-red-600 dark:text-red-400 text-xs font-medium" />
         </FormItem>
       )}
     />

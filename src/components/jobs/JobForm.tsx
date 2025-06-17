@@ -51,51 +51,75 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 	const isReadOnly = mode === "view";
 
 	return (
-		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-				<JobEntitySelectionFields
-					control={form.control}
-					clients={clients}
-					campaigns={campaigns}
-					providers={providers}
-					managers={managers}
-					companies={companies}
-					jobTypes={jobTypes}
-					totalValue={totalValue}
-					t={t}
-				/>
+		<div className="space-y-8">
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+					{/* Entity Selection Section */}
+					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
+						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+							<div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+							{t("jobs.entitySelection")}
+						</h3>
+						<JobEntitySelectionFields
+							control={form.control}
+							clients={clients}
+							campaigns={campaigns}
+							providers={providers}
+							managers={managers}
+							companies={companies}
+							jobTypes={jobTypes}
+							totalValue={totalValue}
+							t={t}
+						/>
+					</div>
 
-				<JobBasicInfoFields
-					control={form.control}
-					statusOptions={statusOptions}
-					t={t}
-				/>
+					{/* Basic Information Section */}
+					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
+						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+							<div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+							{t("jobs.basicInformation")}
+						</h3>
+						<JobBasicInfoFields
+							control={form.control}
+							statusOptions={statusOptions}
+							t={t}
+						/>
+					</div>
 
-				<JobNotesFields
-					control={form.control}
-					t={t}
-				/>
+					{/* Notes Section */}
+					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
+						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+							<div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+							{t("jobs.additionalNotes")}
+						</h3>
+						<JobNotesFields
+							control={form.control}
+							t={t}
+						/>
+					</div>
 
-				<div className="sticky bottom-0 z-10 bg-card p-4 border-t border-border flex justify-end items-center">
+					{/* Action Buttons */}
 					{!isReadOnly && (
-						<div className="flex justify-end space-x-4">
-							<Button type="button" variant="outline" onClick={onClose}>
-								{t("common.cancel")}
-							</Button>
-							<Button type="submit" disabled={isLoading}>
-								{isLoading
-									? formMode === "edit"
-										? t("common.updating")
-										: t("common.creating")
-									: formMode === "edit"
-										? t("common.save")
-										: t("common.create")}
-							</Button>
+						<div className="sticky bottom-0 z-10 bg-white dark:bg-slate-900 p-6 border-t-2 border-slate-200 dark:border-slate-600 -mx-6 -mb-6 rounded-b-xl bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+							<div className="flex justify-end space-x-4">
+								<Button type="button" variant="outline" onClick={onClose} size="lg">
+									{t("common.cancel")}
+								</Button>
+								<Button type="submit" disabled={isLoading} size="lg">
+									{isLoading
+										? formMode === "edit"
+											? t("common.updating")
+											: t("common.creating")
+										: formMode === "edit"
+											? t("common.save")
+											: t("common.create")}
+								</Button>
+							</div>
 						</div>
 					)}
-				</div>
-			</form>
-		</Form>
+				</form>
+			</Form>
+		</div>
 	);
 };
 

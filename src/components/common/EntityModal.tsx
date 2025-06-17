@@ -50,14 +50,22 @@ export const EntityModal: React.FC<EntityModalProps> = ({
     <Dialog open={modalState.isOpen} onOpenChange={(open) => {
       if (!open) closeModal();
     }}>
-      <DialogContent className={`${maxWidthClass} ${className}`}>
-        <DialogHeader className="mb-4">
+      <DialogContent className={`${maxWidthClass} ${className} border-slate-200 dark:border-slate-700 shadow-xl`}>
+        <DialogHeader className="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-brand/5 to-brand-light/5 dark:from-brand/10 dark:to-brand-light/10 -m-6 px-6 pt-6 rounded-t-lg">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
+            <DialogTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 bg-gradient-to-r from-brand-dark to-brand bg-clip-text text-transparent">
+              {title}
+            </DialogTitle>
           </div>
-          {description && <div className="text-sm text-muted-foreground mt-1">{description}</div>}
+          {description && (
+            <div className="text-sm text-slate-600 dark:text-slate-300 mt-2 font-medium">
+              {description}
+            </div>
+          )}
         </DialogHeader>
-        <div className="overflow-y-auto max-h-[calc(80vh-10rem)] px-1">{children}</div>
+        <div className="overflow-y-auto max-h-[calc(80vh-10rem)] px-1 space-y-6">
+          {children}
+        </div>
       </DialogContent>
     </Dialog>
   );
