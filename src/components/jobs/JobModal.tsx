@@ -20,7 +20,7 @@ export const JobModal: React.FC = () => {
   return (
     <EntityModal
       title={title}
-      size="7xl"
+      size="full"
     >
       <JobForm
         mode={modalState.mode || 'create'}

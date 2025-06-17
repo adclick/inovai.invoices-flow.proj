@@ -31,7 +31,7 @@ const sizeClasses = {
   "6xl": "max-w-6xl",
   "7xl": "max-w-7xl",
   "8xl": "max-w-8xl",
-  full: "max-w-[calc(100vw-2rem)]" 
+  full: "max-w-[calc(100vw-2rem)] overflow-y-auto h-[calc(100vh-2rem)]" 
 };
 
 export const EntityModal: React.FC<EntityModalProps> = ({
@@ -63,7 +63,7 @@ export const EntityModal: React.FC<EntityModalProps> = ({
             </div>
           )}
         </DialogHeader>
-        <div className="overflow-y-auto max-h-[calc(80vh-10rem)] px-1 space-y-6">
+        <div className="overflow-y-auto max-h-[calc(100vh)] px-1 space-y-6">
           {children}
         </div>
       </DialogContent>
