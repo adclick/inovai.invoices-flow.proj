@@ -20,7 +20,7 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
 }) => {
 	return (
 		<div className="grid grid-cols-1 gap-6">
-			<div className="grid grid-cols-1 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<OptionalSelectField
 					control={control}
 					name="status"
@@ -29,14 +29,13 @@ const JobBasicInfoFields: React.FC<JobBasicInfoFieldsProps> = ({
 					options={statusOptions}
 					t={t}
 				/>
-			</div>
-
 			<OptionalDateField
 				control={control}
 				name="payment_date"
 				label={t("jobs.paymentDate")}
 				placeholder={t("jobs.paymentDatePlaceholder")}
 			/>
+			</div>
 
 			<DocumentsField
 				control={control}

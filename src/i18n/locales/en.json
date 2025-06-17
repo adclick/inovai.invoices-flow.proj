@@ -260,7 +260,11 @@
 		"selectMonth": "Select month",
 		"documentsPlaceholder": "Document URL",
 		"documentsHelp": "Enter the URL of the document",
-		"paymentDate": "Payment Date"
+		"paymentDate": "Payment Date",
+		"lineItems": "Line Items",
+		"addLineItem": "Add Line Item",
+		"lineItemRequired": "Please add at least one line item",
+		"totalValue": "Total Value"
   },
   "managers": {
     "title": "Managers",

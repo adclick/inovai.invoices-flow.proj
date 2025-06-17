@@ -260,7 +260,11 @@
 		"selectMonth": "Selecionar mês",
 		"documentsPlaceholder": "URL do documento",
 		"documentsHelp": "Introduzir a URL do documento",
-		"paymentDate": "Data de Pagamento"
+		"paymentDate": "Data de Pagamento",
+		"lineItems": "Linhas de Trabalho",
+		"addLineItem": "Adicionar Linha de Trabalho",
+		"lineItemRequired": "Por favor, adicione pelo menos uma linha de trabalho",
+		"totalValue": "Valor Total"
   },
   "managers": {
     "title": "Gestores",

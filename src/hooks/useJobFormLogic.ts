@@ -82,7 +82,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
   // Calculate total value from line items
   const totalValue = useMemo(() => {
     const lineItems = form.watch("line_items");
-    return lineItems?.reduce((sum, item) => sum + (item.value || 0), 0) || 0;
+    return lineItems?.reduce((sum, item) => sum + (Number(item.value) || 0), 0) || 0;
   }, [form.watch("line_items")]);
 
   // Fetch job data if in edit mode

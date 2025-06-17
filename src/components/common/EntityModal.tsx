@@ -16,7 +16,7 @@ interface EntityModalProps {
   description?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
-  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "5xl" | "6xl" | "7xl" | "8xl" | "full";
 }
 
 // Map of sizes to max-width classes
@@ -26,6 +26,11 @@ const sizeClasses = {
   lg: "max-w-lg",
   xl: "max-w-xl",
   "2xl": "max-w-2xl",
+  "4xl": "max-w-4xl",
+  "5xl": "max-w-5xl",
+  "6xl": "max-w-6xl",
+  "7xl": "max-w-7xl",
+  "8xl": "max-w-8xl",
   full: "max-w-[calc(100vw-2rem)]" 
 };
 

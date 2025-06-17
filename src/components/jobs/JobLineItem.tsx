@@ -45,7 +45,7 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
   // Generate year options (current year ± 5 years)
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from({ length: 11 }, (_, i) => {
-    const year = currentYear - 5 + i;
+    const year = currentYear + i;
     return { value: year.toString(), label: year.toString() };
   });
 
@@ -65,7 +65,7 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
         )}
         
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
             <OptionalSelectField
               control={control}
               name={`line_items.${index}.year` as any}
@@ -92,9 +92,6 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
               options={companies}
               emptyMessage={t("companies.noCompaniesAvailable")}
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <EntitySelectField
               control={control}
               name={`line_items.${index}.client_id` as any}
@@ -113,9 +110,6 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
               disabled={!selectedClientId}
               emptyMessage={selectedClientId ? t("campaigns.noCampaignsForClient") : t("campaigns.selectClientFirst")}
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <EntitySelectField
               control={control}
               name={`line_items.${index}.job_type_id` as any}
