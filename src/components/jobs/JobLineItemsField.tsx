@@ -1,17 +1,11 @@
 
 import React from "react";
-import { Control, useFieldArray, useFormContext } from "react-hook-form";
+import { Control, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
 import JobLineItem from "./JobLineItem";
 import { EntitySelectOption } from "@/utils/formConstants";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 
 interface JobLineItemsFieldProps {
   control: Control<JobFormValues>;
@@ -38,6 +32,7 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
   });
 
   const addLineItem = () => {
+    console.log("Adding new line item");
     append({
       year: new Date().getFullYear(),
       month: "",
@@ -47,6 +42,16 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
       job_type_id: "",
       value: 0,
     });
+  };
+
+  const handleRemoveLineItem = (index: number) => {
+    console.log("Removing line item at index:", index);
+    console.log("Current fields length:", fields.length);
+    try {
+      remove(index);
+    } catch (error) {
+      console.error("Error removing line item:", error);
+    }
   };
 
   return (
@@ -65,7 +70,7 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
             campaigns={campaigns}
             companies={companies}
             jobTypes={jobTypes}
-            onRemove={() => remove(index)}
+            onRemove={() => handleRemoveLineItem(index)}
             canRemove={fields.length > 1}
             t={t}
           />
