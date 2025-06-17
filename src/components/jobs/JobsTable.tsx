@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -23,6 +23,12 @@ const JobsTable: React.FC<JobsTableProps> = ({
   onDeleteClick,
   t,
 }) => {
+  const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
+
+  const handleRowExpand = (jobId: string) => {
+    setExpandedJobId(expandedJobId === jobId ? null : jobId);
+  };
+
   return (
     <div className="rounded-md border border-slate-200 dark:border-slate-700 overflow-hidden">
       <Table>
@@ -35,8 +41,8 @@ const JobsTable: React.FC<JobsTableProps> = ({
             <TableHead>{t("jobs.manager")}</TableHead>
             <TableHead>{t("jobs.provider")}</TableHead>
             <TableHead>{t("jobs.value")}</TableHead>
-						<TableHead>{t("jobs.reference")}</TableHead>
-						<TableHead>{t("jobs.providerEmailSent")}</TableHead>
+            <TableHead>{t("jobs.reference")}</TableHead>
+            <TableHead>{t("jobs.providerEmailSent")}</TableHead>
             <TableHead className="text-right">{t("jobs.actions")}</TableHead>
           </TableRow>
         </TableHeader>
@@ -47,6 +53,8 @@ const JobsTable: React.FC<JobsTableProps> = ({
               job={job}
               onEditJob={onEditJob}
               onDeleteClick={onDeleteClick}
+              isExpanded={expandedJobId === job.id}
+              onRowExpand={handleRowExpand}
               t={t}
             />
           ))}
