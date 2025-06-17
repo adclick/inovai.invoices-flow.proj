@@ -26,8 +26,7 @@ const ClientsTableRow: React.FC<ClientsTableRowProps> = ({
 
   return (
     <TableRow 
-      onClick={() => onEditClient(client.id)} 
-      className={`cursor-pointer transition-all duration-200 border-b border-slate-100 dark:border-slate-700 ${rowBgClass} hover:bg-brand-light/5 dark:hover:bg-brand/10 hover:shadow-sm`}
+      className={`transition-all duration-200 border-b border-slate-100 dark:border-slate-700 ${rowBgClass} hover:bg-brand-light/5 dark:hover:bg-brand/10 hover:shadow-sm`}
     >
       <TableCell className="py-4">
         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${client.active 

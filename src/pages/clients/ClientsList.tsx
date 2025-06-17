@@ -1,5 +1,4 @@
 
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +18,6 @@ import ClientModal from "@/components/clients/ClientModal";
 import ClientsListFilters from "@/components/clients/ClientsListFilters";
 import ClientsTable from "@/components/clients/ClientsTable";
 import ClientsListPagination from "@/components/clients/ClientsListPagination";
-import JobsEmptyState from "@/components/jobs/JobsEmptyState";
 import JobsLoadingState from "@/components/jobs/JobsLoadingState";
 import JobsErrorState from "@/components/jobs/JobsErrorState";
 

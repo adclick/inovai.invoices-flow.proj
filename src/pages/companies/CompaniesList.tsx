@@ -23,6 +23,8 @@ import CompaniesListPagination from "@/components/companies/CompaniesListPaginat
 import CompaniesEmptyState from "@/components/companies/CompaniesEmptyState";
 import CompaniesLoadingState from "@/components/companies/CompaniesLoadingState";
 import CompaniesErrorState from "@/components/companies/CompaniesErrorState";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 
 const CompaniesList: React.FC = () => {
   const { t } = useTranslation();
@@ -84,45 +86,47 @@ const CompaniesList: React.FC = () => {
   return (
     <DashboardLayout>
       <div className="p-6">
-        <CompaniesListHeader
-          title={t("companies.title")}
-          createButtonText={t("companies.createNew")}
-          onCreateCompany={handleCreateCompany}
-        />
+				<div className="flex justify-between items-center mb-6">
+					<h1 className="text-2xl font-bold">{t("companies.title")}</h1>
+					<Button onClick={handleCreateCompany}>
+						<PlusCircle className="mr-2 h-4 w-4" />
+						{t("companies.createNew")}
+					</Button>
+				</div>
 
-        {companies && companies.length === 0 ? (
-          <CompaniesEmptyState
-            title={t("companies.noCompaniesFound")}
-            description={t("companies.getStarted")}
-            createButtonText={t("companies.createNew")}
-            onCreateCompany={handleCreateCompany}
-          />
-        ) : (
-          <>
-            <CompaniesListFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              statusFilter={statusFilter}
-              onStatusFilterChange={setStatusFilter}
-              searchPlaceholder={t("companies.searchCompanies")}
-              filterByStatusText={t("companies.filterByStatus")}
-              t={t}
-            />
+				<CompaniesListFilters
+					searchTerm={searchTerm}
+					onSearchChange={setSearchTerm}
+					statusFilter={statusFilter}
+					onStatusFilterChange={setStatusFilter}
+					searchPlaceholder={t("companies.searchCompanies")}
+					filterByStatusText={t("companies.filterByStatus")}
+					t={t}
+				/>
 
-            <CompaniesTable
-              companies={paginatedCompanies}
-              onEditCompany={handleEditCompany}
-              onDeleteClick={handleDeleteClick}
-              t={t}
-            />
+				{paginatedCompanies && paginatedCompanies.length > 0 ? (
+					<>
+						<CompaniesTable
+							companies={paginatedCompanies}
+							onEditCompany={handleEditCompany}
+							onDeleteClick={handleDeleteClick}
+							t={t}
+						/>
 
-            <CompaniesListPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </>
-        )}
+						<CompaniesListPagination
+							currentPage={currentPage}
+							totalPages={totalPages}
+							onPageChange={setCurrentPage}
+						/>
+					</>
+				) : (
+					<div className="flex flex-col items-center justify-center border rounded-lg p-8 bg-slate-50 dark:bg-slate-800">
+						<p className="text-slate-500 dark:text-slate-400 mb-4">{t("companies.noCompanies")}</p>
+						<Button onClick={handleCreateCompany}>
+							{t("companies.createCompany")}
+						</Button>
+					</div>
+				)}
 
         <CompanyModal />
         
