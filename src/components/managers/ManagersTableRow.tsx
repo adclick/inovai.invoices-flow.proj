@@ -2,7 +2,7 @@
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import { Manager } from "@/types/manager";
 
 interface ManagersTableRowProps {
@@ -47,6 +47,15 @@ const ManagersTableRow: React.FC<ManagersTableRowProps> = ({
       </TableCell>
       <TableCell className="text-right py-4">
         <div className="flex justify-end space-x-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30 transition-colors"
+            onClick={(e) => { e.stopPropagation(); onEditManager(manager.id); }}
+          >
+            <Edit className="h-4 w-4" />
+            <span className="sr-only">{t("common.edit")}</span>
+          </Button>
           <Button
             size="sm"
             variant="ghost"

@@ -1,7 +1,8 @@
 
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Mail, Trash2, Globe } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Mail, Edit, Trash2, Globe } from "lucide-react";
 import { Provider } from "@/types/provider";
 
 interface ProvidersTableRowProps {
@@ -56,13 +57,24 @@ const ProvidersTableRow: React.FC<ProvidersTableRowProps> = ({
       
       <TableCell className="text-right py-4">
         <div className="flex justify-end space-x-1">
-          <a
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30 transition-colors"
+            onClick={(e) => { e.stopPropagation(); onEditProvider(provider.id); }}
+          >
+            <Edit className="h-4 w-4" />
+            <span className="sr-only">{t("common.edit")}</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 transition-colors"
             onClick={(e) => { e.stopPropagation(); onDeleteClick(provider); }}
-            className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
           >
             <Trash2 className="h-4 w-4" />
             <span className="sr-only">{t("common.delete")}</span>
-          </a>
+          </Button>
         </div>
       </TableCell>
     </TableRow>
