@@ -91,12 +91,10 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
 				<JobStatusBadge status={job.status} t={t} />
 			</TableCell>
 			<TableCell>{job.job_type_name}</TableCell>
-			<TableCell>{renderMultipleClients(job.client_names)}</TableCell>
-			<TableCell>{renderMultipleCampaigns(job.campaign_names)}</TableCell>
+			<TableCell>{job.client_names.length}</TableCell>
+			<TableCell>{job.campaign_names.length}</TableCell>
 			<TableCell>{job.manager_name}</TableCell>
 			<TableCell>{job.provider_name}</TableCell>
-			<TableCell>{job.year || "-"}</TableCell>
-			<TableCell>{formatMonth(job.month)}</TableCell>
 			<TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
 			<TableCell>{job.invoice_reference}</TableCell>
 			<TableCell>{job.provider_email_sent}</TableCell>
