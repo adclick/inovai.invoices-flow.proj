@@ -32,7 +32,6 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
   });
 
   const addLineItem = () => {
-    console.log("Adding new line item");
     append({
       year: new Date().getFullYear(),
       month: "",
@@ -45,8 +44,6 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
   };
 
   const handleRemoveLineItem = (index: number) => {
-    console.log("Removing line item at index:", index);
-    console.log("Current fields length:", fields.length);
     try {
       remove(index);
     } catch (error) {

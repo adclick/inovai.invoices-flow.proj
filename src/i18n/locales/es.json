@@ -259,13 +259,18 @@
 		"yearPlaceholder": "Introducir año",
 		"selectMonth": "Seleccionar mes",
 		"documentsPlaceholder": "URL del documento",
-		"documentsHelp": "Introducir la URL del documento",
+		"documentsHelp": "Este campo se actualizará automáticamente con la URL del archivo de la factura",
 		"paymentDate": "Fecha de Pago",
 		"lineItems": "Líneas de Trabajo",
 		"addLineItem": "Añadir Línea de Trabajo",
 		"lineItemRequired": "Por favor, añade al menos una línea de trabajo",
 		"totalValue": "Valor Total",
-		"createdAt": "Creado el"
+		"createdAt": "Creado el",
+		"financial_info": "Información Financiera",
+		"dates": "Fechas",
+		"basic_info": "Información Básica",
+		"notes": "Notas",
+		"associations": "Asociaciones"
   },
   "managers": {
     "title": "Gestores",

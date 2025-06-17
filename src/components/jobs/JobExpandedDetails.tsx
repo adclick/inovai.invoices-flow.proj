@@ -22,7 +22,7 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
         {/* Dates Section */}
         <div className="space-y-3">
           <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-brand-light/30 pb-2">
-            {t("jobs.importantDates")}
+            {t("jobs.dates")}
           </h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between py-1">
@@ -43,7 +43,7 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
         {/* Financial Section */}
         <div className="space-y-3">
           <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-brand-light/30 pb-2">
-            {t("jobs.financialInfo")}
+            {t("jobs.financial_info")}
           </h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between py-1">

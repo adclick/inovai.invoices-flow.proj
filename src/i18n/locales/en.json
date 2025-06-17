@@ -259,13 +259,18 @@
 		"yearPlaceholder": "Enter year",
 		"selectMonth": "Select month",
 		"documentsPlaceholder": "Document URL",
-		"documentsHelp": "Enter the URL of the document",
+		"documentsHelp": "This field will be automatically updated with the invoice file URL",
 		"paymentDate": "Payment Date",
 		"lineItems": "Line Items",
 		"addLineItem": "Add Line Item",
 		"lineItemRequired": "Please add at least one line item",
 		"totalValue": "Total Value",
-		"createdAt": "Created At"
+		"createdAt": "Created At",
+		"financial_info": "Financial Info",
+		"dates": "Dates",
+		"basic_info": "Basic Info",
+		"notes": "Notes",
+		"associations": "Associations"
   },
   "managers": {
     "title": "Managers",

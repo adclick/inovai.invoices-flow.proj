@@ -54,11 +54,25 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 		<div className="space-y-8">
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+					{/* Basic Information Section */}
+					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
+						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+							<div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+							{t("jobs.basic_info")}
+						</h3>
+						<JobBasicInfoFields
+							control={form.control}
+							statusOptions={statusOptions}
+							t={t}
+						/>
+					</div>
+
 					{/* Entity Selection Section */}
 					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
 						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
 							<div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
-							{t("jobs.entitySelection")}
+							{t("jobs.associations")}
 						</h3>
 						<JobEntitySelectionFields
 							control={form.control}
@@ -73,24 +87,13 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 						/>
 					</div>
 
-					{/* Basic Information Section */}
-					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
-						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-							<div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
-							{t("jobs.basicInformation")}
-						</h3>
-						<JobBasicInfoFields
-							control={form.control}
-							statusOptions={statusOptions}
-							t={t}
-						/>
-					</div>
+
 
 					{/* Notes Section */}
 					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
 						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
 							<div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
-							{t("jobs.additionalNotes")}
+							{t("jobs.notes")}
 						</h3>
 						<JobNotesFields
 							control={form.control}
