@@ -101,41 +101,67 @@ export type Database = {
         }
         Relationships: []
       }
-      job_campaigns: {
+      job_line_items: {
         Row: {
           campaign_id: string
+          company_id: string | null
           created_at: string
           id: string
           job_id: string
-          value: number | null
+          job_type_id: string | null
+          month: number
+          value: number
+          year: number
         }
         Insert: {
           campaign_id: string
+          company_id?: string | null
           created_at?: string
           id?: string
           job_id: string
-          value?: number | null
+          job_type_id?: string | null
+          month: number
+          value?: number
+          year: number
         }
         Update: {
           campaign_id?: string
+          company_id?: string | null
           created_at?: string
           id?: string
           job_id?: string
-          value?: number | null
+          job_type_id?: string | null
+          month?: number
+          value?: number
+          year?: number
         }
         Relationships: [
           {
-            foreignKeyName: "job_campaigns_campaign_id_fkey"
+            foreignKeyName: "job_line_items_campaign_id_fkey"
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "job_campaigns_job_id_fkey"
+            foreignKeyName: "job_line_items_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_line_items_job_id_fkey"
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_line_items_job_type_id_fkey"
+            columns: ["job_type_id"]
+            isOneToOne: false
+            referencedRelation: "job_types"
             referencedColumns: ["id"]
           },
         ]

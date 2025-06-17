@@ -107,27 +107,30 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
             .single();
           
           if (jobData) {
-            // Fetch associated campaigns from junction table with values
-            const { data: jobCampaigns } = await supabase
-              .from("job_campaigns")
-              .select("campaign_id, value, campaigns(id, name, client_id)")
+            // Fetch associated line items with all the necessary data
+            const { data: jobLineItems } = await supabase
+              .from("job_line_items")
+              .select(`
+                *,
+                campaigns(id, name, client_id)
+              `)
               .eq("job_id", id);
             
-            // Convert existing data to line items format
-            const lineItems = jobCampaigns?.map((jc: any) => ({
-              year: jobData.year || new Date().getFullYear(),
-              month: jobData.month ? jobData.month.toString() : "",
-              company_id: jobData.company_id || "",
-              client_id: jc.campaigns?.client_id || "",
-              campaign_id: jc.campaign_id,
-              job_type_id: jobData.job_type_id || "",
-              value: jc.value || 0,
-            })).filter(item => item.campaign_id) || [{
+            // Convert line items to form format
+            const lineItems = jobLineItems?.map((item: any) => ({
+              year: item.year,
+              month: item.month.toString(),
+              company_id: item.company_id || "",
+              client_id: item.campaigns?.client_id || "",
+              campaign_id: item.campaign_id,
+              job_type_id: item.job_type_id || "",
+              value: item.value || 0,
+            })) || [{
               year: jobData.year || new Date().getFullYear(),
               month: jobData.month ? jobData.month.toString() : "",
               company_id: jobData.company_id || "",
               client_id: "",
-              campaign_id: "",
+              campaign_id: jobData.campaign_id,
               job_type_id: jobData.job_type_id || "",
               value: jobData.value || 0,
             }];
@@ -162,21 +165,25 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     onClose,
   });
 
-  // Separate mutation for job-campaign relationships
-  const createJobCampaignsMutation = useMutation({
+  // Separate mutation for job line items
+  const createJobLineItemsMutation = useMutation({
     mutationFn: async ({ jobId, lineItems }: { jobId: string; lineItems: LineItemFormValues[] }) => {
-      const jobCampaignInserts = lineItems.map(item => ({
+      const jobLineItemInserts = lineItems.map(item => ({
         job_id: jobId,
         campaign_id: item.campaign_id,
+        company_id: item.company_id,
+        job_type_id: item.job_type_id,
+        year: item.year,
+        month: parseInt(item.month),
         value: item.value,
       }));
       
       const { error } = await supabase
-        .from("job_campaigns")
-        .insert(jobCampaignInserts);
+        .from("job_line_items")
+        .insert(jobLineItemInserts);
 
       if (error) {
-        console.error("Error creating job-campaign relationships:", error);
+        console.error("Error creating job line items:", error);
         throw error;
       }
     }
@@ -186,7 +193,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
   const onSubmit = async (values: JobFormValues) => {
     const totalValue = values.line_items.reduce((sum, item) => sum + item.value, 0);
     
-    // Use the first line item for backward compatibility
+    // Use the first line item for backward compatibility with main jobs table
     const firstLineItem = values.line_items[0];
     
     const submitData = {
@@ -216,26 +223,30 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
         values: submitData 
       });
       
-      // Update junction table
+      // Update line items
       try {
-        // Delete existing relationships
+        // Delete existing line items
         await supabase
-          .from("job_campaigns")
+          .from("job_line_items")
           .delete()
           .eq("job_id", id);
         
-        // Insert new relationships with values
-        const jobCampaignInserts = values.line_items.map(item => ({
+        // Insert new line items
+        const jobLineItemInserts = values.line_items.map(item => ({
           job_id: id,
           campaign_id: item.campaign_id,
+          company_id: item.company_id,
+          job_type_id: item.job_type_id,
+          year: item.year,
+          month: parseInt(item.month),
           value: item.value,
         }));
         
         await supabase
-          .from("job_campaigns")
-          .insert(jobCampaignInserts);
+          .from("job_line_items")
+          .insert(jobLineItemInserts);
       } catch (error) {
-        console.error("Error updating job-campaign relationships:", error);
+        console.error("Error updating job line items:", error);
       }
     } else {
       try {
@@ -252,8 +263,8 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
         }
 
         if (newJob) {
-          // Create job-campaign relationships with values
-          await createJobCampaignsMutation.mutateAsync({
+          // Create job line items
+          await createJobLineItemsMutation.mutateAsync({
             jobId: newJob.id,
             lineItems: values.line_items
           });
@@ -268,7 +279,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     }
   };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending || createJobCampaignsMutation.isPending || jobLoading;
+  const isSubmitting = createMutation.isPending || updateMutation.isPending || createJobLineItemsMutation.isPending || jobLoading;
 
   return {
     form,

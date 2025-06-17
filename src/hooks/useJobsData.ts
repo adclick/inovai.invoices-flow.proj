@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Job } from "@/types/job";
@@ -18,14 +17,22 @@ export const useJobsData = () => {
   return useQuery({
     queryKey: ["jobs"],
     queryFn: async () => {
-      // Fetch all jobs with their campaigns via junction table and companies
+      // Fetch all jobs with their line items and companies
       const { data: jobs, error: jobsError } = await supabase
         .from("jobs")
         .select(`
           *,
-          job_campaigns(
+          job_line_items(
+            id,
             campaign_id,
-            campaigns(id, name, client_id, clients(id, name))
+            company_id,
+            job_type_id,
+            year,
+            month,
+            value,
+            campaigns(id, name, client_id, clients(id, name)),
+            companies(id, name, active),
+            job_types(id, name)
           ),
           companies(id, name, active)
         `)
@@ -42,10 +49,6 @@ export const useJobsData = () => {
         .from("managers")
         .select("id, name");
 
-      const { data: jobTypes } = await supabase
-        .from("job_types")
-        .select("id, name");
-
       // Create lookup tables for entity names
       const providerMap = providers?.reduce((acc: Record<string, string>, provider) => {
         acc[provider.id] = provider.name;
@@ -57,10 +60,10 @@ export const useJobsData = () => {
         return acc;
       }, {}) || {};
 
-      // Transform jobs with campaign and company information
+      // Transform jobs with line items information
       return jobs.map((job: any) => {
-        const jobCampaigns = job.job_campaigns || [];
-        const campaigns = jobCampaigns.map((jc: any) => jc.campaigns).filter(Boolean);
+        const jobLineItems = job.job_line_items || [];
+        const campaigns = jobLineItems.map((item: any) => item.campaigns).filter(Boolean);
         const clients = campaigns.map((c: any) => c.clients).filter(Boolean);
         
         // Get unique client information
@@ -71,20 +74,37 @@ export const useJobsData = () => {
           return acc;
         }, []);
 
+        // Create line items with complete information
+        const lineItems = jobLineItems.map((item: any) => ({
+          year: item.year,
+          month: item.month,
+          company_id: item.company_id,
+          client_id: item.campaigns?.client_id,
+          campaign_id: item.campaign_id,
+          job_type_id: item.job_type_id,
+          value: item.value,
+          company_name: item.companies?.name || "No Company",
+          client_name: item.campaigns?.clients?.name || "Unknown Client",
+          campaign_name: item.campaigns?.name || "Unknown Campaign",
+          job_type_name: item.job_types?.name || "Unknown Job Type",
+        }));
+
         return {
           ...job,
-          // Keep backward compatibility fields
+          // Keep backward compatibility fields using first line item or fallback to job data
           campaign_name: campaigns[0]?.name || "Unknown Campaign",
           client_name: uniqueClients[0]?.name || "Unknown Client",
           provider_name: providerMap[job.provider_id] || "Unknown Provider",
           manager_name: managerMap[job.manager_id] || "Unknown Manager",
-          job_type_name: jobTypes?.find((jobType: any) => jobType.id === job.job_type_id)?.name || "Unknown Job Type",
-          company_name: job.companies?.name || "No Company",
+          job_type_name: jobLineItems[0]?.job_types?.name || "Unknown Job Type",
+          company_name: job.companies?.name || jobLineItems[0]?.companies?.name || "No Company",
           // New fields for multiple relationships
           campaign_ids: campaigns.map((c: any) => c.id),
           campaign_names: campaigns.map((c: any) => c.name),
           client_ids: uniqueClients.map((c: any) => c.id),
           client_names: uniqueClients.map((c: any) => c.name),
+          // Line items with complete data
+          line_items: lineItems,
         };
       }) as Job[];
     },
@@ -103,9 +123,17 @@ export const useJobById = (jobId: string) => {
         .from("jobs")
         .select(`
           *,
-          job_campaigns(
+          job_line_items(
+            id,
             campaign_id,
-            campaigns(id, name, client_id, clients(id, name))
+            company_id,
+            job_type_id,
+            year,
+            month,
+            value,
+            campaigns(id, name, client_id, clients(id, name)),
+            companies(id, name, active),
+            job_types(id, name)
           ),
           companies(id, name, active)
         `)
@@ -127,9 +155,9 @@ export const useJobById = (jobId: string) => {
         .eq("id", job.manager_id)
         .single();
 
-      // Transform job with campaign and company information
-      const jobCampaigns = job.job_campaigns || [];
-      const campaigns = jobCampaigns.map((jc: any) => jc.campaigns).filter(Boolean);
+      // Transform job with line items information
+      const jobLineItems = job.job_line_items || [];
+      const campaigns = jobLineItems.map((item: any) => item.campaigns).filter(Boolean);
       const clients = campaigns.map((c: any) => c.clients).filter(Boolean);
       
       const uniqueClients = clients.reduce((acc: any[], client: any) => {
@@ -139,17 +167,33 @@ export const useJobById = (jobId: string) => {
         return acc;
       }, []);
 
+      // Create line items with complete information
+      const lineItems = jobLineItems.map((item: any) => ({
+        year: item.year,
+        month: item.month,
+        company_id: item.company_id,
+        client_id: item.campaigns?.client_id,
+        campaign_id: item.campaign_id,
+        job_type_id: item.job_type_id,
+        value: item.value,
+        company_name: item.companies?.name || "No Company",
+        client_name: item.campaigns?.clients?.name || "Unknown Client",
+        campaign_name: item.campaigns?.name || "Unknown Campaign",
+        job_type_name: item.job_types?.name || "Unknown Job Type",
+      }));
+
       return {
         ...job,
         campaign_name: campaigns[0]?.name || "Unknown Campaign",
         client_name: uniqueClients[0]?.name || "Unknown Client",
         provider_name: provider?.name || "Unknown Provider",
         manager_name: manager?.name || "Unknown Manager",
-        company_name: job.companies?.name || "No Company",
+        company_name: job.companies?.name || jobLineItems[0]?.companies?.name || "No Company",
         campaign_ids: campaigns.map((c: any) => c.id),
         campaign_names: campaigns.map((c: any) => c.name),
         client_ids: uniqueClients.map((c: any) => c.id),
         client_names: uniqueClients.map((c: any) => c.name),
+        line_items: lineItems,
       } as Job;
     },
     enabled: !!jobId,
