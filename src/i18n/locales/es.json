@@ -264,7 +264,8 @@
 		"lineItems": "Líneas de Trabajo",
 		"addLineItem": "Añadir Línea de Trabajo",
 		"lineItemRequired": "Por favor, añade al menos una línea de trabajo",
-		"totalValue": "Valor Total"
+		"totalValue": "Valor Total",
+		"createdAt": "Creado el"
   },
   "managers": {
     "title": "Gestores",

@@ -8,6 +8,7 @@ import { formatCurrency } from "@/hooks/useJobsData";
 import { Badge } from "@/components/ui/badge";
 import JobStatusBadge from "./JobStatusBadge";
 import JobExpandedDetails from "./JobExpandedDetails";
+import { formatDate } from "@/utils/jobsListUtils";
 
 interface JobsTableRowProps {
   job: Job;
@@ -48,7 +49,6 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
             <JobStatusBadge status={job.status} t={t} />
           </div>
         </TableCell>
-        <TableCell>{job.job_type_name}</TableCell>
         <TableCell>
           <div className="flex items-center gap-1">
             <span>{job.client_names?.length || 1}</span>
@@ -73,7 +73,7 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
         <TableCell>{job.provider_name}</TableCell>
         <TableCell>{formatCurrency(job.value, job.currency)}</TableCell>
         <TableCell>{job.invoice_reference}</TableCell>
-        <TableCell>{job.provider_email_sent}</TableCell>
+        <TableCell>{new Date(job.created_at).toISOString().split('T')[0]} {new Date(job.created_at).toLocaleTimeString()}</TableCell>
         <TableCell className="text-right">
           <div className="flex justify-end space-x-2">
             {job.documents && job.documents.length > 0 && (

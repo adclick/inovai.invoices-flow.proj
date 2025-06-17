@@ -264,7 +264,8 @@
 		"lineItems": "Line Items",
 		"addLineItem": "Add Line Item",
 		"lineItemRequired": "Please add at least one line item",
-		"totalValue": "Total Value"
+		"totalValue": "Total Value",
+		"createdAt": "Created At"
   },
   "managers": {
     "title": "Managers",

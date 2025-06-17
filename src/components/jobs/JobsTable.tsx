@@ -35,14 +35,13 @@ const JobsTable: React.FC<JobsTableProps> = ({
         <TableHeader>
           <TableRow>
             <TableHead>{t("jobs.status")}</TableHead>
-            <TableHead>{t("jobs.jobType")}</TableHead>
             <TableHead>{t("clients.title")}</TableHead>
             <TableHead>{t("campaigns.title")}</TableHead>
             <TableHead>{t("jobs.manager")}</TableHead>
             <TableHead>{t("jobs.provider")}</TableHead>
             <TableHead>{t("jobs.value")}</TableHead>
             <TableHead>{t("jobs.reference")}</TableHead>
-            <TableHead>{t("jobs.providerEmailSent")}</TableHead>
+						<TableHead>{t("jobs.createdAt")}</TableHead>
             <TableHead className="text-right">{t("jobs.actions")}</TableHead>
           </TableRow>
         </TableHeader>
