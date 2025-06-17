@@ -118,7 +118,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
             
             // Convert line items to form format
             const lineItems = jobLineItems?.map((item: any) => ({
-              year: item.year,
+              year: item.year.toString(),
               month: item.month.toString(),
               company_id: item.company_id || "",
               client_id: item.campaigns?.client_id || "",
