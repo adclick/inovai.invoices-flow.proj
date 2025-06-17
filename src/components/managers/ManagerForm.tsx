@@ -88,7 +88,7 @@ const ManagerForm: React.FC<BaseEntityFormProps> = ({
           {/* Basic Information Section */}
           <div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-              <div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+              <div className="w-2 h-6 bg-gradient-to-b from-primary to-sidebar-accent rounded-full"></div>
               {t("managers.basicInformation")}
             </h3>
             <div className="space-y-6">
@@ -113,7 +113,7 @@ const ManagerForm: React.FC<BaseEntityFormProps> = ({
           {isEditMode && (
             <div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
               <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-                <div className="w-2 h-6 bg-gradient-to-b from-brand to-brand-light rounded-full"></div>
+                <div className="w-2 h-6 bg-gradient-to-b from-primary to-sidebar-accent rounded-full"></div>
                 {t("common.status")}
               </h3>
               <ActiveSwitchField

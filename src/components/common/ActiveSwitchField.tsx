@@ -47,7 +47,7 @@ const ActiveSwitchField = <TFieldValues extends FieldValues>({
               onCheckedChange={field.onChange}
               disabled={disabled}
               aria-label={label || t('common.active')}
-              className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-brand data-[state=checked]:to-brand-light"
+              className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-primary data-[state=checked]:to-sidebar-accent"
             />
           </FormControl>
         </FormItem>

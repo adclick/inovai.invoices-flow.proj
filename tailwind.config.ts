@@ -53,11 +53,11 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Brand colors
+				// Brand colors now reference sidebar colors for consistency
 				brand: {
-					DEFAULT: '#0891b2', // teal-600
-					light: '#22d3ee', // teal-400
-					dark: '#0e7490', // teal-700
+					DEFAULT: 'hsl(var(--sidebar-primary))', // Use sidebar primary as main brand
+					light: 'hsl(var(--sidebar-accent))', // Use sidebar accent as light variant
+					dark: 'hsl(var(--primary))', // Use primary as dark variant
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',

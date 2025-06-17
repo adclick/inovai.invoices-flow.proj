@@ -17,11 +17,11 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50/20 to-brand-light/10 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 border-t border-brand-light/20 dark:border-brand/20">
+    <div className="p-6 bg-gradient-to-br from-slate-50 via-blue-50/20 to-primary/10 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 border-t border-primary/20 dark:border-primary/20">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Dates Section */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-brand-light/30 pb-2">
+          <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-primary/30 pb-2">
             {t("jobs.dates")}
           </h4>
           <div className="space-y-2 text-sm">
@@ -42,13 +42,13 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
 
         {/* Financial Section */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-brand-light/30 pb-2">
+          <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-primary/30 pb-2">
             {t("jobs.financial_info")}
           </h4>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between py-1">
               <span className="text-slate-600 dark:text-slate-400 font-medium">{t("jobs.totalValue")}:</span>
-              <span className="font-bold text-lg text-brand-dark dark:text-brand-light">{formatCurrency(job.value, job.currency)}</span>
+              <span className="font-bold text-lg text-primary dark:text-sidebar-accent">{formatCurrency(job.value, job.currency)}</span>
             </div>
             <div className="flex justify-between py-1">
               <span className="text-slate-600 dark:text-slate-400 font-medium">{t("jobs.reference")}:</span>
@@ -61,7 +61,7 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
                   href={job.documents[0]} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-brand hover:text-brand-dark dark:text-brand-light dark:hover:text-brand underline font-medium transition-colors"
+                  className="text-primary hover:text-primary/80 dark:text-sidebar-accent dark:hover:text-sidebar-accent/80 underline font-medium transition-colors"
                 >
                   {job.documents[0] ? "View Document" : "-"}
                 </a>
@@ -71,12 +71,12 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
         </div>
       </div>
 
-      <Separator className="my-6 bg-gradient-to-r from-transparent via-brand-light/30 to-transparent" />
+      <Separator className="my-6 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
       {/* Line Items Section */}
       {job.line_items && job.line_items.length > 0 && (
         <div className="space-y-4">
-          <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-brand-light/30 pb-2">
+          <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-primary/30 pb-2">
             {t("jobs.lineItems")}
           </h4>
           <div className="grid gap-3">
@@ -91,13 +91,13 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
                 <Badge variant="outline" className="text-xs font-medium bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700">
                   {item.client_name}
                 </Badge>
-                <Badge variant="secondary" className="text-xs font-medium bg-brand-light/20 text-brand-dark border-brand-light dark:bg-brand/20 dark:text-brand-light">
+                <Badge variant="secondary" className="text-xs font-medium bg-primary/20 text-primary border-primary/30 dark:bg-sidebar-accent/20 dark:text-sidebar-accent">
                   {item.campaign_name}
                 </Badge>
                 <Badge variant="outline" className="text-xs font-medium bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-700">
                   {item.job_type_name}
                 </Badge>
-                <div className="ml-auto font-bold text-lg text-brand-dark dark:text-brand-light">
+                <div className="ml-auto font-bold text-lg text-primary dark:text-sidebar-accent">
                   {formatCurrency(item.value, job.currency)}
                 </div>
               </div>
@@ -109,9 +109,9 @@ const JobExpandedDetails: React.FC<JobExpandedDetailsProps> = ({ job, t }) => {
       {/* Notes Section */}
       {(job.public_notes || job.private_notes) && (
         <>
-          <Separator className="my-6 bg-gradient-to-r from-transparent via-brand-light/30 to-transparent" />
+          <Separator className="my-6 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
           <div className="space-y-4">
-            <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-brand-light/30 pb-2">
+            <h4 className="font-semibold text-slate-800 dark:text-slate-200 text-sm uppercase tracking-wide border-b border-primary/30 pb-2">
               {t("jobs.notes")}
             </h4>
             {job.public_notes && (

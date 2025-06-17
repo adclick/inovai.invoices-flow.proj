@@ -51,7 +51,7 @@ const RequiredTextField = <TFieldValues extends FieldValues>({
               min={min}
               max={max}
               step={step}
-              className="border-2 border-slate-200 dark:border-slate-600 focus:border-brand dark:focus:border-brand-light focus:ring-2 focus:ring-brand/20 transition-all duration-200 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400"
+              className="border-2 border-slate-200 dark:border-slate-600 focus:border-primary dark:focus:border-sidebar-accent focus:ring-2 focus:ring-primary/20 transition-all duration-200 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400"
               {...field}
             />
           </FormControl>

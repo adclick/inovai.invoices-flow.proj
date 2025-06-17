@@ -51,9 +51,9 @@ export const EntityModal: React.FC<EntityModalProps> = ({
       if (!open) closeModal();
     }}>
       <DialogContent className={`${maxWidthClass} ${className} border-slate-200 dark:border-slate-700 shadow-xl`}>
-        <DialogHeader className="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-brand/5 to-brand-light/5 dark:from-brand/10 dark:to-brand-light/10 -m-6 px-6 pt-6 rounded-t-lg">
+        <DialogHeader className="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-primary/5 to-sidebar-accent/5 dark:from-primary/10 dark:to-sidebar-accent/10 -m-6 px-6 pt-6 rounded-t-lg">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 bg-gradient-to-r from-brand-dark to-brand bg-clip-text text-transparent">
+            <DialogTitle className="text-xl font-semibold text-slate-800 dark:text-slate-100 bg-gradient-to-r from-primary to-sidebar-accent bg-clip-text text-transparent">
               {title}
             </DialogTitle>
           </div>

@@ -10,15 +10,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-brand to-brand-light text-white hover:from-brand-dark hover:to-brand shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]",
+        default: "bg-gradient-to-r from-primary to-sidebar-accent text-primary-foreground hover:from-primary/90 hover:to-sidebar-accent/90 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]",
         destructive:
           "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]",
         outline:
-          "border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-brand dark:hover:border-brand-light transform hover:scale-[1.02] active:scale-[0.98]",
+          "border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 hover:border-primary dark:hover:border-sidebar-accent transform hover:scale-[1.02] active:scale-[0.98]",
         secondary:
           "bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-900 dark:text-slate-100 hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-600 transform hover:scale-[1.02] active:scale-[0.98]",
         ghost: "hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 text-slate-700 dark:text-slate-300",
-        link: "text-brand dark:text-brand-light underline-offset-4 hover:underline font-medium",
+        link: "text-primary dark:text-sidebar-accent underline-offset-4 hover:underline font-medium",
       },
       size: {
         default: "h-11 px-6 py-2",
