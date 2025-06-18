@@ -86,7 +86,8 @@
     "gbp": "British Pound (£)",
     "document": "Document",
     "viewAll": "View All",
-		"invoice": "Invoice"
+		"invoice": "Invoice",
+		"saveAndClose": "Save and Close"
   },
   "providers": {
     "title": "Providers",
@@ -270,7 +271,8 @@
 		"dates": "Dates",
 		"basic_info": "Basic Info",
 		"notes": "Notes",
-		"associations": "Associations"
+		"associations": "Associations",
+		"lineItemsOptional": "Line Items (optional)"
   },
   "managers": {
     "title": "Managers",

@@ -86,7 +86,8 @@
     "gbp": "Libra Esterlina (£)",
     "document": "Documento",
     "viewAll": "Ver Todos",
-		"invoice": "Fatura"
+		"invoice": "Fatura",
+		"saveAndClose": "Guardar e Fechar"
   },
   "providers": {
     "title": "Fornecedores",
@@ -270,7 +271,8 @@
 		"dates": "Datas",
 		"basic_info": "Informação Básica",
 		"notes": "Notas",
-		"associations": "Associações"
+		"associations": "Associações",
+		"lineItemsOptional": "Linhas de Trabalho (opcional)"
   },
   "managers": {
     "title": "Gestores",
