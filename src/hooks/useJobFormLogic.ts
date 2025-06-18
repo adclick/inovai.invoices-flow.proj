@@ -37,13 +37,22 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
   // Form submission handler
   const { onSubmit, isSubmitting } = useJobFormSubmit(id, isEditMode, onClose, onSuccess);
 
+  const handleSave = (values: JobFormValues) => {
+    onSubmit(values, false); // Don't close modal
+  };
+
+  const handleSaveAndClose = (values: JobFormValues) => {
+    onSubmit(values, true); // Close modal
+  };
+
   const finalIsSubmitting = isSubmitting || jobLoading;
 
   return {
     form,
     totalValue,
     hasLineItems,
-    onSubmit,
+    handleSave,
+    handleSaveAndClose,
     isSubmitting: finalIsSubmitting,
     t,
   };

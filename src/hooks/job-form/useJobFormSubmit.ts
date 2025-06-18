@@ -14,7 +14,7 @@ export const useJobFormSubmit = (
     onClose
   );
 
-  const onSubmit = async (values: JobFormValues) => {
+  const onSubmit = async (values: JobFormValues, shouldClose: boolean = true) => {
     const hasLineItems = values.line_items && values.line_items.length > 0;
     const totalValue = hasLineItems ? values.line_items.reduce((sum, item) => sum + item.value, 0) : 0;
     
@@ -45,7 +45,8 @@ export const useJobFormSubmit = (
       // Update job
       updateMutation.mutate({ 
         id, 
-        values: submitData 
+        values: submitData,
+        shouldClose 
       });
       
       // Update line items
@@ -96,9 +97,11 @@ export const useJobFormSubmit = (
           });
         }
 
-        // Call onSuccess and onClose after successful creation
+        // Call onSuccess and onClose based on shouldClose parameter
         onSuccess?.();
-        onClose?.();
+        if (shouldClose) {
+          onClose?.();
+        }
       } catch (error) {
         console.error("Error in job creation process:", error);
       }

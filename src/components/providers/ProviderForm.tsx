@@ -83,8 +83,8 @@ const ProviderForm: React.FC<BaseEntityFormProps> = ({
   const mutation = isEditMode ? updateMutation : createMutation;
   const isPending = mutation.isPending || isLoading;
 
-  // Form submission handler
-  const onSubmit = (values: ProviderFormValues) => {
+  // Form submission handlers
+  const handleSave = (values: ProviderFormValues) => {
     const safeValues = {
       name: values.name,
       email: values.email,
@@ -95,16 +95,33 @@ const ProviderForm: React.FC<BaseEntityFormProps> = ({
     };
 
     if (isEditMode && id) {
-      updateMutation.mutate({ id, values: safeValues });
+      updateMutation.mutate({ id, values: safeValues, shouldClose: false });
     } else {
-      createMutation.mutate(safeValues);
+      createMutation.mutate({ values: safeValues, shouldClose: false });
+    }
+  };
+
+  const handleSaveAndClose = (values: ProviderFormValues) => {
+    const safeValues = {
+      name: values.name,
+      email: values.email,
+      language: values.language,
+      country: values.country || null,
+      iban: values.iban || null,
+      active: values.active,
+    };
+
+    if (isEditMode && id) {
+      updateMutation.mutate({ id, values: safeValues, shouldClose: true });
+    } else {
+      createMutation.mutate({ values: safeValues, shouldClose: true });
     }
   };
 
   return (
     <div className="space-y-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form className="space-y-8">
           {/* Basic Information Section */}
           <div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
@@ -173,14 +190,30 @@ const ProviderForm: React.FC<BaseEntityFormProps> = ({
               <Button type="button" variant="outline" onClick={onClose} size="lg">
                 {t("common.cancel")}
               </Button>
-              <Button type="submit" disabled={isPending} size="lg">
+              <Button 
+                type="button" 
+                variant="secondary" 
+                onClick={form.handleSubmit(handleSave)} 
+                disabled={isPending} 
+                size="lg"
+              >
                 {isPending
                   ? isEditMode
                     ? t("common.updating")
                     : t("common.creating")
-                  : isEditMode
-                  ? t("common.save")
-                  : t("common.create")}
+                  : t("common.save")}
+              </Button>
+              <Button 
+                type="button" 
+                onClick={form.handleSubmit(handleSaveAndClose)} 
+                disabled={isPending} 
+                size="lg"
+              >
+                {isPending
+                  ? isEditMode
+                    ? t("common.updating")
+                    : t("common.creating")
+                  : t("common.saveAndClose")}
               </Button>
             </div>
           </div>

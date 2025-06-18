@@ -26,7 +26,7 @@ export const useEntityMutation = ({
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: async (values: any) => {
+    mutationFn: async ({ values, shouldClose = true }: { values: any; shouldClose?: boolean }) => {
       const { data, error } = await supabase
         .from(tableName as any)
         .insert(values)
@@ -37,15 +37,17 @@ export const useEntityMutation = ({
         console.error(`Error creating ${entityName}:`, error.message);
         throw error;
       }
-      return data;
+      return { data, shouldClose };
     },
-    onSuccess: () => {
+    onSuccess: ({ shouldClose }) => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast({
         title: t(`${entityName}.created`),
       });
       onSuccess?.();
-      onClose?.();
+      if (shouldClose) {
+        onClose?.();
+      }
     },
     onError: (error) => {
       toast({
@@ -58,7 +60,7 @@ export const useEntityMutation = ({
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, values }: { id: string; values: any }) => {
+    mutationFn: async ({ id, values, shouldClose = true }: { id: string; values: any; shouldClose?: boolean }) => {
       const updateData = {
         ...values,
         updated_at: new Date().toISOString(),
@@ -75,16 +77,18 @@ export const useEntityMutation = ({
         console.error(`Error updating ${entityName}:`, error.message);
         throw error;
       }
-      return data;
+      return { data, shouldClose };
     },
-    onSuccess: (_, { id }) => {
+    onSuccess: ({ shouldClose }, { id }) => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
       queryClient.invalidateQueries({ queryKey: [entityName, id] });
       toast({
         title: t(`${entityName}.updated`),
       });
       onSuccess?.();
-      onClose?.();
+      if (shouldClose) {
+        onClose?.();
+      }
     },
     onError: (error) => {
       toast({

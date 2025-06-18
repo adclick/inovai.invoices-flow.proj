@@ -38,7 +38,8 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 		form,
 		totalValue,
 		hasLineItems,
-		onSubmit,
+		handleSave,
+		handleSaveAndClose,
 		isSubmitting,
 	} = useJobFormLogic({
 		id,
@@ -54,7 +55,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 	return (
 		<div className="space-y-8">
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<form className="space-y-8">
 
 					{/* Basic Information Section */}
 					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
@@ -107,14 +108,30 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 								<Button type="button" variant="outline" onClick={onClose} size="lg">
 									{t("common.cancel")}
 								</Button>
-								<Button type="submit" disabled={isLoading} size="lg">
+								<Button 
+									type="button" 
+									variant="secondary" 
+									onClick={form.handleSubmit(handleSave)} 
+									disabled={isLoading} 
+									size="lg"
+								>
 									{isLoading
 										? formMode === "edit"
 											? t("common.updating")
 											: t("common.creating")
-										: formMode === "edit"
-											? t("common.save")
-											: t("common.create")}
+										: t("common.save")}
+								</Button>
+								<Button 
+									type="button" 
+									onClick={form.handleSubmit(handleSaveAndClose)} 
+									disabled={isLoading} 
+									size="lg"
+								>
+									{isLoading
+										? formMode === "edit"
+											? t("common.updating")
+											: t("common.creating")
+										: t("common.saveAndClose")}
 								</Button>
 							</div>
 						</div>

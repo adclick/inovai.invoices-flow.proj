@@ -113,8 +113,8 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
 
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
-  // Form submission handler
-  const onSubmit = (values: FormValues) => {
+  // Form submission handlers
+  const handleSave = (values: FormValues) => {
     const submitData = {
       name: values.name,
       client_id: values.client_id,
@@ -125,15 +125,32 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
     };
 
     if (isEditMode && id) {
-      updateMutation.mutate({ id, values: submitData });
+      updateMutation.mutate({ id, values: submitData, shouldClose: false });
     } else {
-      createMutation.mutate(submitData);
+      createMutation.mutate({ values: submitData, shouldClose: false });
+    }
+  };
+
+  const handleSaveAndClose = (values: FormValues) => {
+    const submitData = {
+      name: values.name,
+      client_id: values.client_id,
+      duration: values.duration,
+      estimated_cost: values.estimated_cost || null,
+      revenue: values.revenue || null,
+      active: values.active,
+    };
+
+    if (isEditMode && id) {
+      updateMutation.mutate({ id, values: submitData, shouldClose: true });
+    } else {
+      createMutation.mutate({ values: submitData, shouldClose: true });
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         <EntitySelectField
           control={form.control}
           name="client_id"
@@ -169,14 +186,24 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
             {t("common.cancel")}
           </Button>
           <Button 
-            type="submit" 
+            type="button" 
+            variant="secondary"
+            onClick={form.handleSubmit(handleSave)}
             disabled={isSubmitting}
           >
             {isSubmitting
               ? t("common.saving")
-              : isEditMode
-                ? t("common.update")
-                : t("common.create")
+              : t("common.save")
+            }
+          </Button>
+          <Button 
+            type="button" 
+            onClick={form.handleSubmit(handleSaveAndClose)}
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? t("common.saving")
+              : t("common.saveAndClose")
             }
           </Button>
         </div>

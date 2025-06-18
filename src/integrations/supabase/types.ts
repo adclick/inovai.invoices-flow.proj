@@ -189,7 +189,7 @@ export type Database = {
       }
       jobs: {
         Row: {
-          campaign_id: string
+          campaign_id: string | null
           company_id: string | null
           created_at: string
           currency: Database["public"]["Enums"]["currency_type"]
@@ -213,7 +213,7 @@ export type Database = {
           year: number | null
         }
         Insert: {
-          campaign_id: string
+          campaign_id?: string | null
           company_id?: string | null
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]
@@ -237,7 +237,7 @@ export type Database = {
           year?: number | null
         }
         Update: {
-          campaign_id?: string
+          campaign_id?: string | null
           company_id?: string | null
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]

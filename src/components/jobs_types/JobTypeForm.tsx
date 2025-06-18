@@ -58,11 +58,20 @@ const JobTypeForm: React.FC<BaseEntityFormProps> = ({
     onClose,
   });
 
-  const onSubmit = (values: JobTypeFormData) => {
+  // Form submission handlers
+  const handleSave = (values: JobTypeFormData) => {
     if (isEdit && id) {
-      updateMutation.mutate({ id, values });
+      updateMutation.mutate({ id, values, shouldClose: false });
     } else {
-      createMutation.mutate(values);
+      createMutation.mutate({ values, shouldClose: false });
+    }
+  };
+
+  const handleSaveAndClose = (values: JobTypeFormData) => {
+    if (isEdit && id) {
+      updateMutation.mutate({ id, values, shouldClose: true });
+    } else {
+      createMutation.mutate({ values, shouldClose: true });
     }
   };
 
@@ -70,7 +79,7 @@ const JobTypeForm: React.FC<BaseEntityFormProps> = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6">
         <RequiredTextField
           control={form.control}
           name="name"
@@ -88,14 +97,28 @@ const JobTypeForm: React.FC<BaseEntityFormProps> = ({
           >
             {t("common.cancel")}
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button 
+            type="button" 
+            variant="secondary"
+            onClick={form.handleSubmit(handleSave)}
+            disabled={isLoading}
+          >
             {isLoading
               ? isEdit
                 ? t("jobTypes.updating")
                 : t("jobTypes.creating")
-              : isEdit
-              ? t("common.save")
-              : t("common.create")}
+              : t("common.save")}
+          </Button>
+          <Button 
+            type="button" 
+            onClick={form.handleSubmit(handleSaveAndClose)}
+            disabled={isLoading}
+          >
+            {isLoading
+              ? isEdit
+                ? t("jobTypes.updating")
+                : t("jobTypes.creating")
+              : t("common.saveAndClose")}
           </Button>
         </div>
       </form>
