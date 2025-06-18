@@ -15,7 +15,6 @@ interface JobLineItemProps {
   control: Control<JobFormValues>;
   clients: EntitySelectOption[];
   campaigns: { id: string; name: string; client_id: string }[];
-  companies: EntitySelectOption[];
   jobTypes: { id: string; name: string }[];
   onRemove: () => void;
   canRemove: boolean;
@@ -27,7 +26,6 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
   control,
   clients,
   campaigns,
-  companies,
   jobTypes,
   onRemove,
   canRemove,
@@ -84,14 +82,6 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
               t={t}
             />
             
-            <EntitySelectField
-              control={control}
-              name={`line_items.${index}.company_id` as any}
-              label={t("companies.title")}
-              placeholder={t("companies.selectCompany")}
-              options={companies}
-              emptyMessage={t("companies.noCompaniesAvailable")}
-            />
             <EntitySelectField
               control={control}
               name={`line_items.${index}.client_id` as any}

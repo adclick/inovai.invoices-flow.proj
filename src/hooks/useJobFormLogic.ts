@@ -16,7 +16,6 @@ type Job = Database["public"]["Tables"]["jobs"]["Row"];
 const lineItemSchema = z.object({
   year: z.coerce.number().min(1900, "jobs.yearRequired").max(2100, "jobs.yearMax"),
   month: z.string().min(1, "jobs.monthRequired"),
-  company_id: z.string().min(1, "jobs.selectCompany"),
   client_id: z.string().min(1, "jobs.selectClient"),
   campaign_id: z.string().min(1, "jobs.selectCampaign"),
   job_type_id: z.string().min(1, "jobs.selectJobType"),
@@ -26,7 +25,8 @@ const lineItemSchema = z.object({
 // Updated form schema for line items
 const jobSchema = z.object({
   line_items: z.array(lineItemSchema).min(1, "jobs.lineItemRequired"),
-  provider_id: z.string().min(1, "jobs.selectProvider"),
+  company_id: z.string().min(1, "jobs.selectCompany"),
+  provider_id: z.string().optional(),
   manager_id: z.string().min(1, "jobs.selectManager"),
   status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"] as const),
   due_date: z.string().optional(),
@@ -60,12 +60,12 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       line_items: [{
         year: new Date().getFullYear(),
         month: "",
-        company_id: "",
         client_id: "",
         campaign_id: "",
         job_type_id: "",
         value: 0,
       }],
+			company_id: "",
       provider_id: "",
       manager_id: "",
       status: "draft",
@@ -171,7 +171,6 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       const jobLineItemInserts = lineItems.map(item => ({
         job_id: jobId,
         campaign_id: item.campaign_id,
-        company_id: item.company_id,
         job_type_id: item.job_type_id,
         year: item.year,
         month: parseInt(item.month),
@@ -200,7 +199,6 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
       campaign_id: firstLineItem.campaign_id,
       provider_id: values.provider_id,
       manager_id: values.manager_id,
-      company_id: firstLineItem.company_id,
       job_type_id: firstLineItem.job_type_id,
       value: totalValue,
       status: values.status,
@@ -235,7 +233,6 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
         const jobLineItemInserts = values.line_items.map(item => ({
           job_id: id,
           campaign_id: item.campaign_id,
-          company_id: item.company_id,
           job_type_id: item.job_type_id,
           year: item.year,
           month: parseInt(item.month),

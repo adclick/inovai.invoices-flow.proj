@@ -35,7 +35,6 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
     append({
       year: new Date().getFullYear(),
       month: "",
-      company_id: "",
       client_id: "",
       campaign_id: "",
       job_type_id: "",
@@ -65,7 +64,6 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
             control={control}
             clients={clients}
             campaigns={campaigns}
-            companies={companies}
             jobTypes={jobTypes}
             onRemove={() => handleRemoveLineItem(index)}
             canRemove={fields.length > 1}

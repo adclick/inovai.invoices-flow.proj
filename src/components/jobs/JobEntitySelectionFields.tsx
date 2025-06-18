@@ -32,7 +32,7 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 	return (
 		<div className="space-y-6">
 			{/* Job Information */}
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 				<EntitySelectField
 					control={control}
 					name="provider_id"
@@ -49,6 +49,15 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 					placeholder={t("jobs.selectManager")}
 					options={managers}
 					emptyMessage={t("managers.noManagersAvailable")}
+				/>
+
+				<EntitySelectField
+					control={control}
+					name="company_id"
+					label={t("companies.title")}
+					placeholder={t("companies.selectCompany")}
+					options={companies}
+					emptyMessage={t("companies.noCompaniesAvailable")}
 				/>
 			</div>
 
