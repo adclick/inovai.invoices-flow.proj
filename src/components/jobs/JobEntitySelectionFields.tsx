@@ -3,6 +3,7 @@ import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
 import EntitySelectField from "@/components/common/form/EntitySelectField";
+import OptionalEntitySelectField from "@/components/common/form/OptionalEntitySelectField";
 import JobLineItemsField from "./JobLineItemsField";
 import { EntitySelectOption } from "@/utils/formConstants";
 
@@ -33,7 +34,7 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 		<div className="space-y-6">
 			{/* Job Information */}
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-				<EntitySelectField
+				<OptionalEntitySelectField
 					control={control}
 					name="provider_id"
 					label={t("jobs.provider")}
@@ -42,7 +43,7 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 					emptyMessage={t("providers.noProvidersAvailable")}
 				/>
 
-				<EntitySelectField
+				<OptionalEntitySelectField
 					control={control}
 					name="manager_id"
 					label={t("jobs.manager")}
@@ -51,7 +52,7 @@ const JobEntitySelectionFields: React.FC<JobEntitySelectionFieldsProps> = ({
 					emptyMessage={t("managers.noManagersAvailable")}
 				/>
 
-				<EntitySelectField
+				<OptionalEntitySelectField
 					control={control}
 					name="company_id"
 					label={t("companies.title")}

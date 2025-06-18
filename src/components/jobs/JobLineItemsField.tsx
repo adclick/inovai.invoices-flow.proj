@@ -54,42 +54,58 @@ const JobLineItemsField: React.FC<JobLineItemsFieldProps> = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">{t("jobs.lineItems")}</h3>
+        <span className="text-sm text-muted-foreground">
+          {t("jobs.lineItemsOptional")}
+        </span>
       </div>
       
-      <div className="space-y-4">
-        {fields.map((field, index) => (
-          <JobLineItem
-            key={field.id}
-            index={index}
-            control={control}
-            clients={clients}
-            campaigns={campaigns}
-            jobTypes={jobTypes}
-            onRemove={() => handleRemoveLineItem(index)}
-            canRemove={fields.length > 1}
-            t={t}
-          />
-        ))}
-        
-        <div className="flex justify-between items-center">
+      {fields.length === 0 ? (
+        <div className="text-center py-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
+          <p className="text-sm text-muted-foreground mb-4">
+            {t("jobs.noLineItems")}
+          </p>
           <Button
             type="button"
             variant="outline"
             onClick={addLineItem}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 mx-auto"
           >
             <Plus className="h-4 w-4" />
-            {t("jobs.addLineItem")}
+            {t("jobs.addFirstLineItem")}
           </Button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {fields.map((field, index) => (
+            <JobLineItem
+              key={field.id}
+              index={index}
+              control={control}
+              clients={clients}
+              campaigns={campaigns}
+              jobTypes={jobTypes}
+              onRemove={() => handleRemoveLineItem(index)}
+              canRemove={true}
+              t={t}
+            />
+          ))}
           
-          <div className="text-lg font-semibold">
-            {t("jobs.totalValue")}: €{totalValue.toFixed(2)}
+          <div className="flex justify-between items-center">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addLineItem}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {t("jobs.addLineItem")}
+            </Button>
+            
+            <div className="text-lg font-semibold">
+              {t("jobs.totalValue")}: €{totalValue.toFixed(2)}
+            </div>
           </div>
         </div>
-      </div>
-      
-      {fields.length === 0 && (
-        <p className="text-sm text-muted-foreground">{t("jobs.lineItemRequired")}</p>
       )}
     </div>
   );

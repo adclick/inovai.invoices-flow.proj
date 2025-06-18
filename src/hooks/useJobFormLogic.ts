@@ -22,12 +22,12 @@ const lineItemSchema = z.object({
   value: z.coerce.number().min(0, "jobs.valueRequired"),
 });
 
-// Updated form schema for line items
+// Updated form schema for optional line items and conditional validation
 const jobSchema = z.object({
-  line_items: z.array(lineItemSchema).min(1, "jobs.lineItemRequired"),
-  company_id: z.string().min(1, "jobs.selectCompany"),
+  line_items: z.array(lineItemSchema).optional(),
+  company_id: z.string().optional(),
   provider_id: z.string().optional(),
-  manager_id: z.string().min(1, "jobs.selectManager"),
+  manager_id: z.string().optional(),
   status: z.enum(["draft", "active", "pending_invoice", "pending_validation", "pending_payment", "paid"] as const),
   due_date: z.string().optional(),
   payment_date: z.string().optional(),
@@ -36,6 +36,15 @@ const jobSchema = z.object({
   private_notes: z.string().optional(),
   invoice_reference: z.string().optional(),
   documents: z.array(z.string()).optional(),
+}).refine((data) => {
+  // If no line items, status must be draft
+  if (!data.line_items || data.line_items.length === 0) {
+    return data.status === "draft";
+  }
+  return true;
+}, {
+  message: "jobs.draftOnlyWithoutLineItems",
+  path: ["status"],
 });
 
 export type JobFormValues = z.infer<typeof jobSchema>;
@@ -57,15 +66,8 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
   const form = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
-      line_items: [{
-        year: new Date().getFullYear(),
-        month: "",
-        client_id: "",
-        campaign_id: "",
-        job_type_id: "",
-        value: 0,
-      }],
-			company_id: "",
+      line_items: [],
+      company_id: "",
       provider_id: "",
       manager_id: "",
       status: "draft",
@@ -83,6 +85,12 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
   const totalValue = useMemo(() => {
     const lineItems = form.watch("line_items");
     return lineItems?.reduce((sum, item) => sum + (Number(item.value) || 0), 0) || 0;
+  }, [form.watch("line_items")]);
+
+  // Check if line items exist for status restrictions
+  const hasLineItems = useMemo(() => {
+    const lineItems = form.watch("line_items");
+    return lineItems && lineItems.length > 0;
   }, [form.watch("line_items")]);
 
   // Fetch job data if in edit mode
@@ -125,20 +133,13 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
               campaign_id: item.campaign_id,
               job_type_id: item.job_type_id || "",
               value: item.value || 0,
-            })) || [{
-              year: jobData.year || new Date().getFullYear(),
-              month: jobData.month ? jobData.month.toString() : "",
-              company_id: jobData.company_id || "",
-              client_id: "",
-              campaign_id: jobData.campaign_id,
-              job_type_id: jobData.job_type_id || "",
-              value: jobData.value || 0,
-            }];
+            })) || [];
             
             form.reset({
               line_items: lineItems,
-              provider_id: jobData.provider_id,
-              manager_id: jobData.manager_id,
+              company_id: jobData.company_id || "",
+              provider_id: jobData.provider_id || "",
+              manager_id: jobData.manager_id || "",
               status: jobData.status,
               due_date: jobData.due_date || "",
               payment_date: jobData.payment_date || "",
@@ -190,20 +191,22 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
 
   // Form submission handler
   const onSubmit = async (values: JobFormValues) => {
-    const totalValue = values.line_items.reduce((sum, item) => sum + item.value, 0);
+    const hasLineItems = values.line_items && values.line_items.length > 0;
+    const totalValue = hasLineItems ? values.line_items.reduce((sum, item) => sum + item.value, 0) : 0;
     
-    // Use the first line item for backward compatibility with main jobs table
-    const firstLineItem = values.line_items[0];
+    // For backward compatibility with main jobs table
+    const firstLineItem = hasLineItems ? values.line_items[0] : null;
     
     const submitData = {
-      campaign_id: firstLineItem.campaign_id,
-      provider_id: values.provider_id,
-      manager_id: values.manager_id,
-      job_type_id: firstLineItem.job_type_id,
+      campaign_id: firstLineItem?.campaign_id || null,
+      provider_id: values.provider_id || null,
+      manager_id: values.manager_id || null,
+      company_id: values.company_id || null,
+      job_type_id: firstLineItem?.job_type_id || null,
       value: totalValue,
       status: values.status,
-      year: firstLineItem.year,
-      month: parseInt(firstLineItem.month),
+      year: firstLineItem?.year || null,
+      month: firstLineItem ? parseInt(firstLineItem.month) : null,
       months: [],
       due_date: values.due_date || null,
       payment_date: values.payment_date || null,
@@ -229,19 +232,21 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
           .delete()
           .eq("job_id", id);
         
-        // Insert new line items
-        const jobLineItemInserts = values.line_items.map(item => ({
-          job_id: id,
-          campaign_id: item.campaign_id,
-          job_type_id: item.job_type_id,
-          year: item.year,
-          month: parseInt(item.month),
-          value: item.value,
-        }));
-        
-        await supabase
-          .from("job_line_items")
-          .insert(jobLineItemInserts);
+        // Insert new line items if they exist
+        if (hasLineItems) {
+          const jobLineItemInserts = values.line_items.map(item => ({
+            job_id: id,
+            campaign_id: item.campaign_id,
+            job_type_id: item.job_type_id,
+            year: item.year,
+            month: parseInt(item.month),
+            value: item.value,
+          }));
+          
+          await supabase
+            .from("job_line_items")
+            .insert(jobLineItemInserts);
+        }
       } catch (error) {
         console.error("Error updating job line items:", error);
       }
@@ -259,17 +264,17 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
           return;
         }
 
-        if (newJob) {
-          // Create job line items
+        if (newJob && hasLineItems) {
+          // Create job line items only if they exist
           await createJobLineItemsMutation.mutateAsync({
             jobId: newJob.id,
             lineItems: values.line_items
           });
-
-          // Call onSuccess and onClose after successful creation
-          onSuccess?.();
-          onClose?.();
         }
+
+        // Call onSuccess and onClose after successful creation
+        onSuccess?.();
+        onClose?.();
       } catch (error) {
         console.error("Error in job creation process:", error);
       }
@@ -281,6 +286,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
   return {
     form,
     totalValue,
+    hasLineItems,
     onSubmit,
     isSubmitting,
     t,

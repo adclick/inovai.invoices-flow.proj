@@ -37,6 +37,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 	const {
 		form,
 		totalValue,
+		hasLineItems,
 		onSubmit,
 		isSubmitting,
 	} = useJobFormLogic({
@@ -86,8 +87,6 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
 							t={t}
 						/>
 					</div>
-
-
 
 					{/* Notes Section */}
 					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
