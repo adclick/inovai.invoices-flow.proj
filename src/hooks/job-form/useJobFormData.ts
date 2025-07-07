@@ -18,7 +18,7 @@ export const useJobFormData = (
           const { data: jobData, error: jobError } = await supabase
             .from("jobs")
             .select("*")
-            .eq("id", id)
+            .eq("id", id as string)
             .maybeSingle();
           
           if (jobError) {
@@ -26,7 +26,9 @@ export const useJobFormData = (
             return;
           }
           
-          if (jobData) {
+          if (jobData && typeof jobData === 'object' && 'id' in jobData) {
+            const job = jobData as any;
+            
             // Fetch associated line items with all the necessary data
             const { data: jobLineItems, error: lineItemsError } = await supabase
               .from("job_line_items")
@@ -34,7 +36,7 @@ export const useJobFormData = (
                 *,
                 campaigns(id, name, client_id)
               `)
-              .eq("job_id", id);
+              .eq("job_id", id as string);
             
             if (lineItemsError) {
               console.error("Error loading line items:", lineItemsError);
@@ -53,16 +55,16 @@ export const useJobFormData = (
             
             reset({
               line_items: lineItems,
-              company_id: jobData.company_id || "",
-              provider_id: jobData.provider_id || "",
-              manager_id: jobData.manager_id || "",
-              status: jobData.status || "draft",
-              due_date: jobData.due_date || "",
-              payment_date: jobData.payment_date || "",
-              public_notes: jobData.public_notes || "",
-              private_notes: jobData.private_notes || "",
-              invoice_reference: jobData.invoice_reference || "",
-              documents: jobData.documents || [],
+              company_id: job.company_id || "",
+              provider_id: job.provider_id || "",
+              manager_id: job.manager_id || "",
+              status: job.status || "draft",
+              due_date: job.due_date || "",
+              payment_date: job.payment_date || "",
+              public_notes: job.public_notes || "",
+              private_notes: job.private_notes || "",
+              invoice_reference: job.invoice_reference || "",
+              documents: job.documents || [],
             });
           }
         } catch (error) {

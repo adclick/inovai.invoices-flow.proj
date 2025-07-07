@@ -12,7 +12,7 @@ import EntitySelectField from "@/components/common/form/EntitySelectField";
 import ActiveSwitchField from "../common/ActiveSwitchField";
 import { BaseEntityFormProps } from "../common/EntityModal";
 import { useEntityMutation } from "@/hooks/useEntityMutation";
-import { useEntityQuery, useEntitiesQuery } from "@/hooks/useEntityQuery";
+import { useEntitiesQuery } from "@/hooks/useEntityQuery";
 
 // Form schema with validation that matches the database schema
 const formSchema = z.object({
@@ -63,15 +63,6 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
     }));
   }, [clientsData]);
 
-  // Fetch campaign data if in edit mode
-  const { isLoading } = useEntityQuery({
-    tableName: "campaigns",
-    entityName: "campaign",
-    id,
-    enabled: isEditMode && !!id,
-    select: "*",
-  });
-
   // Load campaign data into form when fetched
   React.useEffect(() => {
     if (isEditMode && id) {
@@ -80,7 +71,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           const { data, error } = await supabase
             .from("campaigns")
             .select("*")
-            .eq("id", id)
+            .eq("id", id as string)
             .maybeSingle();
           
           if (error) {
@@ -88,14 +79,16 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
             return;
           }
           
-          if (data) {
+          // Check if data exists and has the expected properties
+          if (data && typeof data === 'object' && 'name' in data) {
+            const campaignData = data as any;
             form.reset({
-              name: data.name || "",
-              client_id: data.client_id || "",
-              duration: data.duration || 1,
-              estimated_cost: data.estimated_cost || undefined,
-              revenue: data.revenue || undefined,
-              active: data.active ?? true,
+              name: campaignData.name || "",
+              client_id: campaignData.client_id || "",
+              duration: campaignData.duration || 1,
+              estimated_cost: campaignData.estimated_cost || undefined,
+              revenue: campaignData.revenue || undefined,
+              active: campaignData.active ?? true,
             });
           }
         } catch (error) {
@@ -170,7 +163,6 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           name="name"
           label={t("campaigns.campaignName")}
           placeholder={t("campaigns.enterCampaignName")}
-          disabled={isLoading}
         />
 
         <ActiveSwitchField 

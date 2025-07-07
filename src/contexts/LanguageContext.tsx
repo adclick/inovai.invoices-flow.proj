@@ -31,14 +31,17 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const { data, error } = await supabase
             .from("profiles")
             .select("language")
-            .eq("id", user.id)
+            .eq("id", user.id as string)
             .maybeSingle();
 
           if (error) {
             console.error("Error fetching user language:", error);
-          } else if (data && data.language) {
-            await i18n.changeLanguage(data.language);
-            setCurrentLanguage(data.language);
+          } else if (data && typeof data === 'object' && 'language' in data) {
+            const profileData = data as any;
+            if (profileData.language) {
+              await i18n.changeLanguage(profileData.language);
+              setCurrentLanguage(profileData.language);
+            }
           }
         } catch (error) {
           console.error("Error fetching user language:", error);
@@ -61,8 +64,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (user) {
         const { error } = await supabase
           .from("profiles")
-          .update({ language: lang })
-          .eq("id", user.id);
+          .update({ language: lang } as any)
+          .eq("id", user.id as string);
 
         if (error) {
           console.error("Error updating user language:", error);

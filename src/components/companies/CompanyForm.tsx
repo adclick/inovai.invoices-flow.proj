@@ -8,7 +8,6 @@ import { BaseEntityFormProps } from "../common/EntityModal";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { useEntityMutation } from "@/hooks/useEntityMutation";
-import { useEntityQuery } from "@/hooks/useEntityQuery";
 import RequiredTextField from "@/components/common/form/RequiredTextField";
 import ActiveSwitchField from "../common/ActiveSwitchField";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,14 +36,6 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
     },
   });
 
-  const { isLoading: companyLoading } = useEntityQuery({
-    tableName: "companies",
-    entityName: "company",
-    id,
-    enabled: isEditMode && !!id,
-    select: "*",
-  });
-
   React.useEffect(() => {
     if (isEditMode && id) {
       const loadCompany = async () => {
@@ -52,7 +43,7 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
           const { data: companyData, error } = await supabase
             .from("companies")
             .select("*")
-            .eq("id", id)
+            .eq("id", id as string)
             .maybeSingle();
           
           if (error) {
@@ -60,10 +51,12 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
             return;
           }
           
-          if (companyData) {
+          // Check if data exists and has the expected properties
+          if (companyData && typeof companyData === 'object' && 'name' in companyData) {
+            const company = companyData as any;
             form.reset({
-              name: companyData.name || "",
-              active: companyData.active ?? true,
+              name: company.name || "",
+              active: company.active ?? true,
             });
           }
         } catch (error) {
@@ -109,7 +102,7 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
     }
   };
 
-  const isSubmitting = createMutation.isPending || updateMutation.isPending || companyLoading;
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
   const isReadOnly = mode === "view";
 
   return (

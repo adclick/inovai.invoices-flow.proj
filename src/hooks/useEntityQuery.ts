@@ -38,11 +38,12 @@ export const useEntityQuery = ({
 
       // Single item query
       if (id) {
-        const { data, error } = await query.eq("id", id).maybeSingle();
+        const { data, error } = await query.eq("id", id as string).maybeSingle();
         if (error) {
           console.error(`Error fetching ${entityName}:`, error.message);
           throw error;
         }
+        // Return the data directly, which could be null if not found
         return data;
       }
 
