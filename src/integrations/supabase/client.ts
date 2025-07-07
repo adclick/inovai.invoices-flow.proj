@@ -16,9 +16,7 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
   );
 }
 
-// Import the supabase client like this:
-// import { supabase } from "@/integrations/supabase/client";
-
+// Production-ready Supabase client configuration
 export const supabase = createClient<Database>(
   SUPABASE_URL, 
   SUPABASE_PUBLISHABLE_KEY,
@@ -26,6 +24,48 @@ export const supabase = createClient<Database>(
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-    }
+      detectSessionInUrl: true,
+      // Security: Only allow redirects to same origin in production
+      redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+    },
+    // Add security headers and proper configuration
+    global: {
+      headers: {
+        'X-Client-Info': 'invoicesflow-web@1.0.0',
+      },
+    },
+    // Enable real-time with proper authentication
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
+      },
+    },
   }
 );
+
+// Security: Log critical auth events for audit trail
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session?.user) {
+    // Log successful authentication
+    supabase.rpc('log_security_event', {
+      p_action: 'user_signed_in',
+      p_resource_type: 'authentication',
+      p_details: { 
+        user_id: session.user.id,
+        provider: session.user.app_metadata?.provider || 'email'
+      }
+    }).catch(console.error);
+  } else if (event === 'SIGNED_OUT') {
+    // Log sign out
+    supabase.rpc('log_security_event', {
+      p_action: 'user_signed_out',
+      p_resource_type: 'authentication'
+    }).catch(console.error);
+  } else if (event === 'TOKEN_REFRESHED') {
+    // Log token refresh for security monitoring
+    supabase.rpc('log_security_event', {
+      p_action: 'token_refreshed',
+      p_resource_type: 'authentication'
+    }).catch(console.error);
+  }
+});

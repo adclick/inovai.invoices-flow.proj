@@ -16,6 +16,7 @@ interface AuthContextType {
   roles: UserRoles;
   signOut: () => Promise<void>;
   checkHasRole: (role: string) => boolean;
+  isAuthenticated: boolean;
 }
 
 const defaultRoles: UserRoles = {
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
   roles: defaultRoles,
   signOut: async () => {},
   checkHasRole: () => false,
+  isAuthenticated: false,
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -40,26 +42,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const [roles, setRoles] = useState<UserRoles>(defaultRoles);
 
-  // Fetch user roles from the database
+  // Enhanced security: Server-side role verification
   const fetchUserRoles = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId);
+      // Use server-side RPC function for secure role checking
+      const { data: isAdmin, error: adminError } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin'
+      });
 
-      if (error) {
-        throw error;
+      const { data: isSuperAdmin, error: superAdminError } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'super_admin'
+      });
+
+      if (adminError || superAdminError) {
+        console.error('Error fetching user roles:', adminError || superAdminError);
+        setRoles(defaultRoles);
+        return;
       }
-
-      const userRoles = data || [];
       
       setRoles({
-        isAdmin: userRoles.some(r => r.role === 'admin'),
-        isSuperAdmin: userRoles.some(r => r.role === 'super_admin'),
+        isAdmin: Boolean(isAdmin),
+        isSuperAdmin: Boolean(isSuperAdmin),
       });
+
+      // Log role verification for security audit
+      setTimeout(async () => {
+        await supabase.rpc('log_security_event', {
+          p_action: 'roles_verified',
+          p_resource_type: 'authentication',
+          p_details: { 
+            user_id: userId,
+            is_admin: Boolean(isAdmin),
+            is_super_admin: Boolean(isSuperAdmin)
+          }
+        });
+      }, 0);
+
     } catch (error: any) {
-      console.error('Error fetching user roles:', error.message);
+      console.error('Security error - failed to verify user roles:', error.message);
+      setRoles(defaultRoles);
     }
   };
 
@@ -73,24 +96,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Defer fetching user roles with setTimeout to avoid deadlock
         if (session?.user) {
-					setTimeout(() => {
-						fetchUserRoles(session.user.id);
+          setTimeout(() => {
+            fetchUserRoles(session.user.id);
           }, 0);
         } else {
           setRoles(defaultRoles);
         }
         
-        // Show toast notifications for auth events
-        if (event === 'SIGNED_IN' && !session?.user?.user_metadata?.hasSeenSignInToast) {
-          toast.success('Signed in successfully');
-          // Mark that we've shown the toast for this session
-          if (session?.user) {
-            supabase.auth.updateUser({
-              data: { hasSeenSignInToast: true }
-			});
+        // Enhanced security: More restrictive toast notifications
+        if (event === 'SIGNED_IN' && session?.user) {
+          // Only show toast once per session
+          const hasSeenToast = sessionStorage.getItem(`signin_toast_${session.user.id}`);
+          if (!hasSeenToast) {
+            toast.success('Signed in successfully');
+            sessionStorage.setItem(`signin_toast_${session.user.id}`, 'true');
           }
         } else if (event === 'SIGNED_OUT') {
+          // Clear session storage on sign out
+          sessionStorage.clear();
           toast.info('Signed out successfully');
+        } else if (event === 'TOKEN_REFRESHED') {
+          console.log('Security: Token refreshed successfully');
         }
       }
     );
@@ -113,9 +139,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error(`Error signing out: ${error.message}`);
+    try {
+      // Log sign out attempt for security audit
+      if (user) {
+        await supabase.rpc('log_security_event', {
+          p_action: 'signout_initiated',
+          p_resource_type: 'authentication',
+          p_details: { user_id: user.id }
+        });
+      }
+
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+        toast.error(`Error signing out: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Unexpected error during sign out:', error);
+      toast.error('An unexpected error occurred during sign out');
     }
   };
 
@@ -137,6 +178,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     roles,
     signOut,
     checkHasRole,
+    isAuthenticated: Boolean(session && user),
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
