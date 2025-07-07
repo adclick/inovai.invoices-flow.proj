@@ -15,15 +15,20 @@ export const useJobFormData = (
       const loadJob = async () => {
         try {
           // Fetch job data
-          const { data: jobData } = await supabase
+          const { data: jobData, error: jobError } = await supabase
             .from("jobs")
             .select("*")
             .eq("id", id)
-            .single();
+            .maybeSingle();
+          
+          if (jobError) {
+            console.error("Error loading job:", jobError);
+            return;
+          }
           
           if (jobData) {
             // Fetch associated line items with all the necessary data
-            const { data: jobLineItems } = await supabase
+            const { data: jobLineItems, error: lineItemsError } = await supabase
               .from("job_line_items")
               .select(`
                 *,
@@ -31,13 +36,17 @@ export const useJobFormData = (
               `)
               .eq("job_id", id);
             
+            if (lineItemsError) {
+              console.error("Error loading line items:", lineItemsError);
+            }
+            
             // Convert line items to form format
             const lineItems = jobLineItems?.map((item: any) => ({
-              year: item.year.toString(),
-              month: item.month.toString(),
+              year: item.year?.toString() || "",
+              month: item.month?.toString() || "",
               company_id: item.company_id || "",
               client_id: item.campaigns?.client_id || "",
-              campaign_id: item.campaign_id,
+              campaign_id: item.campaign_id || "",
               job_type_id: item.job_type_id || "",
               value: item.value || 0,
             })) || [];
@@ -47,7 +56,7 @@ export const useJobFormData = (
               company_id: jobData.company_id || "",
               provider_id: jobData.provider_id || "",
               manager_id: jobData.manager_id || "",
-              status: jobData.status,
+              status: jobData.status || "draft",
               due_date: jobData.due_date || "",
               payment_date: jobData.payment_date || "",
               public_notes: jobData.public_notes || "",

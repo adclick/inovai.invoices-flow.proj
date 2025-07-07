@@ -7,11 +7,11 @@ import { z } from "zod";
 import { BaseEntityFormProps } from "../common/EntityModal";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { useEntityMutation } from "@/hooks/useEntityMutation";
 import { useEntityQuery } from "@/hooks/useEntityQuery";
 import RequiredTextField from "@/components/common/form/RequiredTextField";
 import ActiveSwitchField from "../common/ActiveSwitchField";
+import { supabase } from "@/integrations/supabase/client";
 
 const companySchema = z.object({
   name: z.string().min(1, "companies.nameRequired"),
@@ -49,17 +49,21 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
     if (isEditMode && id) {
       const loadCompany = async () => {
         try {
-          const { supabase } = await import("@/integrations/supabase/client");
-          const { data: companyData } = await supabase
+          const { data: companyData, error } = await supabase
             .from("companies")
             .select("*")
             .eq("id", id)
-            .single();
+            .maybeSingle();
+          
+          if (error) {
+            console.error("Error loading company:", error);
+            return;
+          }
           
           if (companyData) {
             form.reset({
-              name: companyData.name,
-              active: companyData.active,
+              name: companyData.name || "",
+              active: companyData.active ?? true,
             });
           }
         } catch (error) {

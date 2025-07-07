@@ -32,11 +32,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             .from("profiles")
             .select("language")
             .eq("id", user.id)
-            .single();
+            .maybeSingle();
 
-          if (error) throw error;
-          
-          if (data && data.language) {
+          if (error) {
+            console.error("Error fetching user language:", error);
+          } else if (data && data.language) {
             await i18n.changeLanguage(data.language);
             setCurrentLanguage(data.language);
           }
@@ -64,7 +64,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           .update({ language: lang })
           .eq("id", user.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error updating user language:", error);
+        }
       }
     } catch (error) {
       console.error("Error changing language:", error);

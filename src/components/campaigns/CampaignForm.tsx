@@ -75,23 +75,27 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
   // Load campaign data into form when fetched
   React.useEffect(() => {
     if (isEditMode && id) {
-      // This will be handled by the useEntityQuery hook
       const loadCampaign = async () => {
         try {
-          const { data } = await supabase
+          const { data, error } = await supabase
             .from("campaigns")
             .select("*")
             .eq("id", id)
-            .single();
+            .maybeSingle();
+          
+          if (error) {
+            console.error("Error loading campaign:", error);
+            return;
+          }
           
           if (data) {
             form.reset({
-              name: data.name,
-              client_id: data.client_id,
-              duration: data.duration,
+              name: data.name || "",
+              client_id: data.client_id || "",
+              duration: data.duration || 1,
               estimated_cost: data.estimated_cost || undefined,
               revenue: data.revenue || undefined,
-              active: data.active,
+              active: data.active ?? true,
             });
           }
         } catch (error) {

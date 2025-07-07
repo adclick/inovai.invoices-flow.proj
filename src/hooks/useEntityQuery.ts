@@ -38,7 +38,7 @@ export const useEntityQuery = ({
 
       // Single item query
       if (id) {
-        const { data, error } = await query.eq("id", id).single();
+        const { data, error } = await query.eq("id", id).maybeSingle();
         if (error) {
           console.error(`Error fetching ${entityName}:`, error.message);
           throw error;
