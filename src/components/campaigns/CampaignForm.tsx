@@ -71,7 +71,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           const { data, error } = await supabase
             .from("campaigns")
             .select("*")
-            .eq("id", id as string)
+            .eq("id", id)
             .maybeSingle();
           
           if (error) {
@@ -80,7 +80,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           }
           
           // Check if data exists and has the expected properties
-          if (data && typeof data === 'object' && 'name' in data) {
+          if (data && typeof data === 'object' && data !== null && 'name' in data) {
             const campaignData = data as any;
             form.reset({
               name: campaignData.name || "",

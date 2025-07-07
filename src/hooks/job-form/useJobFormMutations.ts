@@ -24,14 +24,15 @@ export const useJobFormMutations = (
         job_id: jobId,
         campaign_id: item.campaign_id,
         job_type_id: item.job_type_id,
-        year: item.year,
+        year: parseInt(item.year),
         month: parseInt(item.month),
         value: item.value,
+        company_id: item.company_id || null,
       }));
       
       const { error } = await supabase
         .from("job_line_items")
-        .insert(jobLineItemInserts);
+        .insert(jobLineItemInserts as any);
 
       if (error) {
         console.error("Error creating job line items:", error);

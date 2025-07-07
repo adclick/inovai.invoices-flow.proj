@@ -29,7 +29,7 @@ export const useJobFormSubmit = (
       job_type_id: firstLineItem?.job_type_id || null,
       value: totalValue,
       status: values.status,
-      year: firstLineItem?.year || null,
+      year: firstLineItem ? parseInt(firstLineItem.year) : null,
       month: firstLineItem ? parseInt(firstLineItem.month) : null,
       months: [],
       due_date: values.due_date || null,
@@ -63,14 +63,15 @@ export const useJobFormSubmit = (
             job_id: id,
             campaign_id: item.campaign_id,
             job_type_id: item.job_type_id,
-            year: item.year,
+            year: parseInt(item.year),
             month: parseInt(item.month),
             value: item.value,
+            company_id: item.company_id || null,
           }));
           
           await supabase
             .from("job_line_items")
-            .insert(jobLineItemInserts);
+            .insert(jobLineItemInserts as any);
         }
       } catch (error) {
         console.error("Error updating job line items:", error);
@@ -80,7 +81,7 @@ export const useJobFormSubmit = (
         // Create job
         const { data: newJob, error } = await supabase
           .from("jobs")
-          .insert(submitData)
+          .insert(submitData as any)
           .select()
           .single();
 

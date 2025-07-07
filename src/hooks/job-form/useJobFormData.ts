@@ -18,7 +18,7 @@ export const useJobFormData = (
           const { data: jobData, error: jobError } = await supabase
             .from("jobs")
             .select("*")
-            .eq("id", id as string)
+            .eq("id", id)
             .maybeSingle();
           
           if (jobError) {
@@ -26,7 +26,7 @@ export const useJobFormData = (
             return;
           }
           
-          if (jobData && typeof jobData === 'object' && 'id' in jobData) {
+          if (jobData && typeof jobData === 'object' && jobData !== null && 'id' in jobData) {
             const job = jobData as any;
             
             // Fetch associated line items with all the necessary data
@@ -36,7 +36,7 @@ export const useJobFormData = (
                 *,
                 campaigns(id, name, client_id)
               `)
-              .eq("job_id", id as string);
+              .eq("job_id", id);
             
             if (lineItemsError) {
               console.error("Error loading line items:", lineItemsError);
