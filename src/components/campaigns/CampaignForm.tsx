@@ -71,7 +71,7 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
           const { data, error } = await supabase
             .from("campaigns")
             .select("*")
-            .eq("id", id)
+            .eq("id", id as any)
             .maybeSingle();
           
           if (error) {
@@ -79,18 +79,20 @@ const CampaignForm: React.FC<BaseEntityFormProps> = ({
             return;
           }
           
-          // Check if data exists and has the expected properties
-          if (data && typeof data === 'object' && data !== null && 'name' in data) {
-            const campaignData = data as any;
-            form.reset({
-              name: campaignData.name || "",
-              client_id: campaignData.client_id || "",
-              duration: campaignData.duration || 1,
-              estimated_cost: campaignData.estimated_cost || undefined,
-              revenue: campaignData.revenue || undefined,
-              active: campaignData.active ?? true,
-            });
+          if (!data) {
+            return;
           }
+          
+          // Now data is guaranteed to be non-null
+          const campaignData = data as any;
+          form.reset({
+            name: campaignData.name || "",
+            client_id: campaignData.client_id || "",
+            duration: campaignData.duration || 1,
+            estimated_cost: campaignData.estimated_cost || undefined,
+            revenue: campaignData.revenue || undefined,
+            active: campaignData.active ?? true,
+          });
         } catch (error) {
           console.error("Error loading campaign:", error);
         }
