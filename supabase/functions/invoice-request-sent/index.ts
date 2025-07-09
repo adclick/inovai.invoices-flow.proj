@@ -1,10 +1,9 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': process.env.APP_URL || 'https://lovable.dev',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Origin': Deno.env.get('APP_URL') || 'https://lovable.dev',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-api-key',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
@@ -25,17 +24,32 @@ serve(async (req) => {
   }
 
   try {
-    // Verify authentication
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
-    }
+    // Check for API key first (for third-party access)
+    const apiKey = req.headers.get('x-api-key')
+    let userId: string | null = null
+
+		// Validate API key against environment variable
+		const validApiKey = Deno.env.get('API_KEY')
+		if (apiKey !== validApiKey) {
+			return new Response(
+				JSON.stringify({ error: 'Invalid API key' }),
+				{ 
+					status: 401, 
+					headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+				}
+			)
+		}
+		// For API key access, use a system user ID or get from query params
+		userId = req.url ? new URL(req.url).searchParams.get('user_id') : null
+		if (!userId) {
+			return new Response(
+				JSON.stringify({ error: 'user_id parameter required for API key access' }),
+				{ 
+					status: 400, 
+					headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+				}
+			)
+		}
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -48,42 +62,30 @@ serve(async (req) => {
       }
     )
 
-    // Verify JWT token and get user
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
-    
-    if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid authentication' }),
-        { 
-          status: 401, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
+    // Check if user has admin privileges (only for JWT authentication)
+    if (!apiKey) {
+      const { data: hasAdminRole } = await supabaseClient.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin'
+      })
+
+      const { data: hasSuperAdminRole } = await supabaseClient.rpc('has_role', {
+        _user_id: userId,
+        _role: 'super_admin'
+      })
+
+      if (!hasAdminRole && !hasSuperAdminRole) {
+        return new Response(
+          JSON.stringify({ error: 'Insufficient privileges' }),
+          { 
+            status: 403, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          }
+        )
+      }
     }
 
-    // Check if user has admin privileges
-    const { data: hasAdminRole } = await supabaseClient.rpc('has_role', {
-      _user_id: user.id,
-      _role: 'admin'
-    })
-
-    const { data: hasSuperAdminRole } = await supabaseClient.rpc('has_role', {
-      _user_id: user.id,
-      _role: 'super_admin'
-    })
-
-    if (!hasAdminRole && !hasSuperAdminRole) {
-      return new Response(
-        JSON.stringify({ error: 'Insufficient privileges' }),
-        { 
-          status: 403, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
-    }
-
-    const { jobId } = await req.json()
+    const { jobId, invoiceReference } = await req.json()
 
     // Validate input
     if (!jobId) {
@@ -101,7 +103,7 @@ serve(async (req) => {
       p_action: 'invoice_request_sent',
       p_resource_type: 'job',
       p_resource_id: jobId,
-      p_details: { user_id: user.id }
+      p_details: { user_id: userId }
     })
 
     // Update job status and provider email sent date
@@ -110,6 +112,7 @@ serve(async (req) => {
       .update({
         status: 'pending_invoice',
         provider_email_sent: new Date().toISOString().split('T')[0],
+				invoice_reference: invoiceReference,
         updated_at: new Date().toISOString()
       })
       .eq('id', jobId)
