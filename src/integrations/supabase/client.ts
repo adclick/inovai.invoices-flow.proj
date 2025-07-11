@@ -54,18 +54,30 @@ supabase.auth.onAuthStateChange((event, session) => {
         user_id: session.user.id,
         provider: session.user.app_metadata?.provider || 'email'
       }
-    }).catch(console.error);
+    }).match((result) => {
+      if (result.error) {
+        console.error('Failed to log sign in event:', result.error);
+      }
+    });
   } else if (event === 'SIGNED_OUT') {
     // Log sign out
     supabase.rpc('log_security_event', {
       p_action: 'user_signed_out',
       p_resource_type: 'authentication'
-    }).catch(console.error);
+    }).match((result) => {
+      if (result.error) {
+        console.error('Failed to log sign out event:', result.error);
+      }
+    });
   } else if (event === 'TOKEN_REFRESHED') {
     // Log token refresh for security monitoring
     supabase.rpc('log_security_event', {
       p_action: 'token_refreshed',
       p_resource_type: 'authentication'
-    }).catch(console.error);
+    }).match((result) => {
+      if (result.error) {
+        console.error('Failed to log token refresh event:', result.error);
+      }
+    });
   }
 });

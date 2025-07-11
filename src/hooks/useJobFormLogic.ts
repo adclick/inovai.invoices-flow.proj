@@ -2,7 +2,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
-import { useEntityQuery } from "@/hooks/useEntityQuery";
 import { jobSchema, JobFormValues, UseJobFormLogicProps } from "./job-form/types";
 import { getJobFormDefaults } from "./job-form/useJobFormDefaults";
 import { useJobFormCalculations } from "./job-form/useJobFormCalculations";
@@ -22,17 +21,8 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
   // Use calculations hook
   const { totalValue, hasLineItems } = useJobFormCalculations(form.watch);
 
-  // Fetch job data if in edit mode
-  const { isLoading: jobLoading } = useEntityQuery({
-    tableName: "jobs",
-    entityName: "job",
-    id,
-    enabled: isEditMode && !!id,
-    select: "*",
-  });
-
-  // Load job data into form when fetched
-  useJobFormData(id, isEditMode, form.reset);
+  // Load job data into form when fetched - this handles both data fetching and form reset
+  const { isLoading: jobDataLoading } = useJobFormData(id, isEditMode, form.reset);
 
   // Form submission handler
   const { onSubmit, isSubmitting } = useJobFormSubmit(id, isEditMode, onClose, onSuccess);
@@ -45,7 +35,7 @@ export const useJobFormLogic = ({ id, mode, onClose, onSuccess, campaigns }: Use
     onSubmit(values, true); // Close modal
   };
 
-  const finalIsSubmitting = isSubmitting || jobLoading;
+  const finalIsSubmitting = isSubmitting || jobDataLoading;
 
   return {
     form,

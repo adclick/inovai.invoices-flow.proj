@@ -9,17 +9,24 @@ export const useJobFormData = (
   isEditMode?: boolean,
   reset?: UseFormReset<JobFormValues>
 ) => {
+  const [isLoading, setIsLoading] = React.useState(false);
+
   // Load job data into form when fetched
   React.useEffect(() => {
     if (isEditMode && id && reset) {
       const loadJob = async () => {
+        setIsLoading(true);
         try {
           // Fetch job data
-          const { data: jobData, error: jobError } = await supabase
-            .from("jobs")
+           
+          const { data: jobData, error: jobError } = await (supabase
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .from("jobs" as any)
             .select("*")
-            .eq("id", id)
-            .maybeSingle();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .eq("id", id as any)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .maybeSingle() as any);
           
           if (jobError) {
             console.error("Error loading job:", jobError);
@@ -27,22 +34,27 @@ export const useJobFormData = (
           }
           
           if (jobData && typeof jobData === 'object' && jobData !== null && 'id' in jobData) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const job = jobData as any;
             
             // Fetch associated line items with all the necessary data
-            const { data: jobLineItems, error: lineItemsError } = await supabase
-              .from("job_line_items")
+             
+            const { data: jobLineItems, error: lineItemsError } = await (supabase
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .from("job_line_items" as any)
               .select(`
                 *,
                 campaigns(id, name, client_id)
               `)
-              .eq("job_id", id);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .eq("job_id", id as any) as any);
             
             if (lineItemsError) {
               console.error("Error loading line items:", lineItemsError);
             }
             
             // Convert line items to form format
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const lineItems = jobLineItems?.map((item: any) => ({
               year: item.year?.toString() || "",
               month: item.month?.toString() || "",
@@ -69,9 +81,15 @@ export const useJobFormData = (
           }
         } catch (error) {
           console.error("Error loading job:", error);
+        } finally {
+          setIsLoading(false);
         }
       };
       loadJob();
+    } else {
+      setIsLoading(false);
     }
   }, [isEditMode, id, reset]);
+
+  return { isLoading };
 };
