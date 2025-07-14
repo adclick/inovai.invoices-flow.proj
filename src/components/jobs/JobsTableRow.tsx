@@ -6,7 +6,7 @@ import { FileSymlink, Trash2, Edit, ChevronDown, ChevronRight } from "lucide-rea
 import { Job } from "@/types/job";
 import { formatCurrency } from "@/hooks/useJobsData";
 import { Badge } from "@/components/ui/badge";
-import JobStatusBadge from "./JobStatusBadge";
+import { JobStatusBadge } from "./JobStatusBadge";
 import JobExpandedDetails from "./JobExpandedDetails";
 import { formatDate } from "@/utils/jobsListUtils";
 

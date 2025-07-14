@@ -1,25 +1,36 @@
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { STATUS_BADGE_CONFIG } from "@/utils/jobsListConstants";
+import { useTranslation } from "react-i18next";
 
 interface JobStatusBadgeProps {
-  status: string;
-  t: (key: string) => string;
+  status: "active" | "closed";
+  className?: string;
 }
 
-const JobStatusBadge: React.FC<JobStatusBadgeProps> = ({ status, t }) => {
-  const config = STATUS_BADGE_CONFIG[status as keyof typeof STATUS_BADGE_CONFIG];
-  
-  if (!config) {
-    return <Badge variant="outline">{status}</Badge>;
-  }
+export const JobStatusBadge: React.FC<JobStatusBadgeProps> = ({ status, className }) => {
+  const { t } = useTranslation();
+
+  const statusConfig = {
+    active: {
+      label: t("jobs.status.active"),
+      variant: "default" as const,
+      className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    },
+    closed: {
+      label: t("jobs.status.closed"),
+      variant: "secondary" as const,
+      className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+    },
+  };
+
+  const config = statusConfig[status];
 
   return (
-    <Badge variant={config.variant} className={config.className}>
-      {t(`jobs.${status}`)}
+    <Badge 
+      variant={config.variant} 
+      className={`${config.className} ${className || ""}`}
+    >
+      {config.label}
     </Badge>
   );
 };
-
-export default JobStatusBadge;

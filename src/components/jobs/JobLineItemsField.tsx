@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Control } from "react-hook-form";
+import { Control, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { JobFormValues } from "@/hooks/useJobFormLogic";

@@ -15,6 +15,8 @@ interface JobLineItemProps {
   control: Control<JobFormValues>;
   clients: EntitySelectOption[];
   campaigns: { id: string; name: string; client_id: string }[];
+  managers: EntitySelectOption[];
+  providers: EntitySelectOption[];
   jobTypes: { id: string; name: string }[];
   onRemove: () => void;
   canRemove: boolean;
@@ -26,6 +28,8 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
   control,
   clients,
   campaigns,
+  managers,
+  providers,
   jobTypes,
   onRemove,
   canRemove,
