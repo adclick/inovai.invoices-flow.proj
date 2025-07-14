@@ -24,10 +24,16 @@ export const useJobFormMutations = (
         job_id: jobId,
         campaign_id: item.campaign_id,
         job_type_id: item.job_type_id,
-        year: parseInt(item.year),
+        year: item.year,
         month: parseInt(item.month),
-        value: item.value,
-        company_id: item.company_id || null,
+        value: item.value || null,
+        manager_id: item.manager_id || null,
+        provider_id: item.provider_id || null,
+        payment_date: item.payment_date || null,
+        status: item.status || 'in_progress',
+        documents: item.documents || null,
+        private_notes: item.private_notes || null,
+        public_notes: item.public_notes || null,
       }));
       
       const { error } = await supabase

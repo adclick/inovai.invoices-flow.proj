@@ -111,33 +111,54 @@ export type Database = {
           campaign_id: string
           company_id: string | null
           created_at: string
+          documents: string[] | null
           id: string
           job_id: string
           job_type_id: string | null
+          manager_id: string | null
           month: number
-          value: number
+          payment_date: string | null
+          private_notes: string | null
+          provider_id: string | null
+          public_notes: string | null
+          status: Database["public"]["Enums"]["line_item_status"]
+          value: number | null
           year: number
         }
         Insert: {
           campaign_id: string
           company_id?: string | null
           created_at?: string
+          documents?: string[] | null
           id?: string
           job_id: string
           job_type_id?: string | null
+          manager_id?: string | null
           month: number
-          value?: number
+          payment_date?: string | null
+          private_notes?: string | null
+          provider_id?: string | null
+          public_notes?: string | null
+          status?: Database["public"]["Enums"]["line_item_status"]
+          value?: number | null
           year: number
         }
         Update: {
           campaign_id?: string
           company_id?: string | null
           created_at?: string
+          documents?: string[] | null
           id?: string
           job_id?: string
           job_type_id?: string | null
+          manager_id?: string | null
           month?: number
-          value?: number
+          payment_date?: string | null
+          private_notes?: string | null
+          provider_id?: string | null
+          public_notes?: string | null
+          status?: Database["public"]["Enums"]["line_item_status"]
+          value?: number | null
           year?: number
         }
         Relationships: [
@@ -169,6 +190,20 @@ export type Database = {
             referencedRelation: "job_types"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "job_line_items_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "managers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_line_items_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       job_types: {
@@ -195,7 +230,7 @@ export type Database = {
       jobs: {
         Row: {
           campaign_id: string | null
-          company_id: string | null
+          company_id: string
           created_at: string
           currency: Database["public"]["Enums"]["currency_type"]
           documents: string[] | null
@@ -213,13 +248,14 @@ export type Database = {
           provider_message: string | null
           public_notes: string | null
           status: Database["public"]["Enums"]["job_status"]
+          unique_invoice: boolean
           updated_at: string
           value: number
           year: number | null
         }
         Insert: {
           campaign_id?: string | null
-          company_id?: string | null
+          company_id: string
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]
           documents?: string[] | null
@@ -237,13 +273,14 @@ export type Database = {
           provider_message?: string | null
           public_notes?: string | null
           status?: Database["public"]["Enums"]["job_status"]
+          unique_invoice?: boolean
           updated_at?: string
           value: number
           year?: number | null
         }
         Update: {
           campaign_id?: string | null
-          company_id?: string | null
+          company_id?: string
           created_at?: string
           currency?: Database["public"]["Enums"]["currency_type"]
           documents?: string[] | null
@@ -261,6 +298,7 @@ export type Database = {
           provider_message?: string | null
           public_notes?: string | null
           status?: Database["public"]["Enums"]["job_status"]
+          unique_invoice?: boolean
           updated_at?: string
           value?: number
           year?: number | null
@@ -519,15 +557,13 @@ export type Database = {
     Enums: {
       app_role: "super_admin" | "admin" | "finance"
       currency_type: "euro" | "usd" | "gbp"
-      job_status:
-        | "draft"
-        | "active"
-        | "pending_invoice"
-        | "pending_validation"
-        | "pending_payment"
-        | "paid"
-        | "closed"
+      job_status: "active" | "closed"
       language_enum: "en" | "pt" | "es"
+      line_item_status:
+        | "in_progress"
+        | "waiting_invoice"
+        | "waiting_payment"
+        | "closed"
       month_type:
         | "january"
         | "february"
@@ -670,16 +706,14 @@ export const Constants = {
     Enums: {
       app_role: ["super_admin", "admin", "finance"],
       currency_type: ["euro", "usd", "gbp"],
-      job_status: [
-        "draft",
-        "active",
-        "pending_invoice",
-        "pending_validation",
-        "pending_payment",
-        "paid",
+      job_status: ["active", "closed"],
+      language_enum: ["en", "pt", "es"],
+      line_item_status: [
+        "in_progress",
+        "waiting_invoice",
+        "waiting_payment",
         "closed",
       ],
-      language_enum: ["en", "pt", "es"],
       month_type: [
         "january",
         "february",

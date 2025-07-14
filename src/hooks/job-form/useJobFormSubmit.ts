@@ -16,36 +16,26 @@ export const useJobFormSubmit = (
 
   const onSubmit = async (values: JobFormValues, shouldClose: boolean = true) => {
     const hasLineItems = values.line_items && values.line_items.length > 0;
-    const totalValue = hasLineItems ? values.line_items.reduce((sum, item) => sum + item.value, 0) : 0;
+    const totalLineItemValue = hasLineItems 
+      ? values.line_items.reduce((sum, item) => sum + (item.value || 0), 0) 
+      : 0;
     
-    // For backward compatibility with main jobs table
-    const firstLineItem = hasLineItems ? values.line_items[0] : null;
-    
-    const submitData = {
-      campaign_id: firstLineItem?.campaign_id || null,
-      provider_id: values.provider_id || null,
-      manager_id: values.manager_id || null,
-      company_id: values.company_id || null,
-      job_type_id: firstLineItem?.job_type_id || null,
-      value: totalValue,
-      status: values.status,
-      year: firstLineItem ? parseInt(firstLineItem.year) : null,
-      month: firstLineItem ? parseInt(firstLineItem.month) : null,
-      months: [],
-      due_date: values.due_date || null,
-      payment_date: values.payment_date || null,
-      provider_message: values.provider_message || null,
-      public_notes: values.public_notes || null,
-      private_notes: values.private_notes || null,
-      invoice_reference: values.invoice_reference || null,
-      documents: values.documents || [],
+    const jobData = {
+      company_id: values.company_id,
+      unique_invoice: values.unique_invoice,
+      value: totalLineItemValue,
+      months: [], // This will be populated from line items if needed
+      year: null,
+      status: 'active' as const, // Jobs start as active
+      currency: "euro" as const,
+      documents: values.documents,
     };
 
     if (isEditMode && id) {
       // Update job
       updateMutation.mutate({ 
         id, 
-        values: submitData,
+        values: jobData,
         shouldClose 
       });
       
@@ -55,7 +45,8 @@ export const useJobFormSubmit = (
         await supabase
           .from("job_line_items")
           .delete()
-          .eq("job_id", id);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .eq("job_id", id as any);
         
         // Insert new line items if they exist
         if (hasLineItems) {
@@ -63,10 +54,16 @@ export const useJobFormSubmit = (
             job_id: id,
             campaign_id: item.campaign_id,
             job_type_id: item.job_type_id,
-            year: parseInt(item.year),
+            year: item.year,
             month: parseInt(item.month),
-            value: item.value,
-            company_id: item.company_id || null,
+            value: item.value || null,
+            manager_id: item.manager_id || null,
+            provider_id: item.provider_id || null,
+            payment_date: item.payment_date || null,
+            status: item.status || 'in_progress',
+            documents: item.documents || null,
+            private_notes: item.private_notes || null,
+            public_notes: item.public_notes || null,
           }));
           
           await supabase
@@ -79,23 +76,43 @@ export const useJobFormSubmit = (
     } else {
       try {
         // Create job
-        const { data: newJob, error } = await supabase
+        const { data: jobResult, error: jobError } = await supabase
           .from("jobs")
-          .insert(submitData as any)
-          .select()
+          .insert(jobData as any)
+          .select('id')
           .single();
 
-        if (error) {
-          console.error("Error creating job:", error);
+        if (jobError) {
+          console.error("Error creating job:", jobError);
           return;
         }
 
-        if (newJob && hasLineItems) {
-          // Create job line items only if they exist
-          await createJobLineItemsMutation.mutateAsync({
-            jobId: newJob.id,
-            lineItems: values.line_items
-          });
+        // Create line items (required to have at least 1)
+        if (jobResult && values.line_items && values.line_items.length > 0) {
+          const { error: lineItemError } = await supabase
+            .from("job_line_items")
+            .insert(
+              values.line_items.map((item) => ({
+                job_id: jobResult.id,
+                campaign_id: item.campaign_id,
+                job_type_id: item.job_type_id,
+                year: item.year,
+                month: parseInt(item.month),
+                value: item.value || null,
+                manager_id: item.manager_id || null,
+                provider_id: item.provider_id || null,
+                payment_date: item.payment_date || null,
+                status: item.status || 'in_progress',
+                documents: item.documents || null,
+                private_notes: item.private_notes || null,
+                public_notes: item.public_notes || null,
+              }))
+            );
+
+          if (lineItemError) {
+            console.error("Error creating line items:", lineItemError);
+            return;
+          }
         }
 
         // Call onSuccess and onClose based on shouldClose parameter

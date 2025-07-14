@@ -56,27 +56,40 @@ export const useJobFormData = (
             // Convert line items to form format
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const lineItems = jobLineItems?.map((item: any) => ({
-              year: item.year?.toString() || "",
+              year: item.year || new Date().getFullYear(),
               month: item.month?.toString() || "",
-              company_id: item.company_id || "",
               client_id: item.campaigns?.client_id || "",
               campaign_id: item.campaign_id || "",
               job_type_id: item.job_type_id || "",
-              value: item.value || 0,
-            })) || [];
+              value: item.value || undefined,
+              manager_id: item.manager_id || "",
+              provider_id: item.provider_id || "",
+              payment_date: item.payment_date || "",
+              status: item.status || "in_progress",
+              documents: item.documents || [],
+              private_notes: item.private_notes || "",
+              public_notes: item.public_notes || "",
+            })) || [{
+              year: new Date().getFullYear(),
+              month: "",
+              client_id: "",
+              campaign_id: "",
+              job_type_id: "",
+              value: undefined,
+              manager_id: "",
+              provider_id: "",
+              payment_date: "",
+              status: "in_progress",
+              documents: [],
+              private_notes: "",
+              public_notes: "",
+            }];
             
             reset({
-              line_items: lineItems,
               company_id: job.company_id || "",
-              provider_id: job.provider_id || "",
-              manager_id: job.manager_id || "",
-              status: job.status || "draft",
-              due_date: job.due_date || "",
-              payment_date: job.payment_date || "",
-              public_notes: job.public_notes || "",
-              private_notes: job.private_notes || "",
-              invoice_reference: job.invoice_reference || "",
+              unique_invoice: job.unique_invoice || false,
               documents: job.documents || [],
+              line_items: lineItems,
             });
           }
         } catch (error) {
