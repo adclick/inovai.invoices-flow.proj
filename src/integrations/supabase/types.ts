@@ -526,6 +526,7 @@ export type Database = {
         | "pending_validation"
         | "pending_payment"
         | "paid"
+        | "closed"
       language_enum: "en" | "pt" | "es"
       month_type:
         | "january"
@@ -676,6 +677,7 @@ export const Constants = {
         "pending_validation",
         "pending_payment",
         "paid",
+        "closed",
       ],
       language_enum: ["en", "pt", "es"],
       month_type: [
