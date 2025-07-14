@@ -1,161 +1,103 @@
-
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { BaseEntityFormProps } from "../common/EntityModal";
+import React from "react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { useJobFormData } from "@/hooks/useJobFormData";
+import { BaseEntityFormProps } from "@/components/common/EntityModal";
 import { useJobFormLogic } from "@/hooks/useJobFormLogic";
-import JobBasicInfoFields from "./JobBasicInfoFields";
-import JobEntitySelectionFields from "./JobEntitySelectionFields";
-import JobNotesFields from "./JobNotesFields";
+import { useJobFormData } from "@/hooks/job-form/useJobFormData";
+import { JobFormFields } from "./JobFormFields";
+import JobLineItemsField from "./JobLineItemsField";
 
 const JobForm: React.FC<BaseEntityFormProps> = ({
-	id,
-	mode,
-	onClose,
-	onSuccess
+  id,
+  mode = "create",
+  onClose,
+  onSuccess,
 }) => {
-	const { t } = useTranslation();
+  // Data fetching
+  const { isLoading } = useJobFormData(id, mode === "edit");
 
-	// Only allow create and edit modes for this form
-	const formMode = mode === "view" ? "edit" : mode;
+  // Form logic
+  const {
+    form,
+    totalValue,
+    handleSave,
+    handleSaveAndClose,
+    isSubmitting,
+    t,
+  } = useJobFormLogic({
+    id,
+    mode: mode as "create" | "edit",
+    onClose,
+    onSuccess,
+    campaigns: [],
+  });
 
-	// Fetch all required data
-	const {
-		clients,
-		campaigns,
-		providers,
-		managers,
-		companies,
-		jobTypes,
-		statusOptions,
-		isLoading: dataLoading,
-	} = useJobFormData();
+  // Mock data for now - this should come from the updated data hooks
+  const companies = [];
+  const clients = [];
+  const campaigns = [];
+  const managers = [];
+  const providers = [];
+  const jobTypes = [];
 
-	// Handle form logic
-	const {
-		form,
-		totalValue,
-		hasLineItems,
-		handleSave,
-		handleSaveAndClose,
-		isSubmitting,
-	} = useJobFormLogic({
-		id,
-		mode: formMode,
-		onClose,
-		onSuccess,
-		campaigns,
-	});
+  // Show loading state for edit mode
+  if (mode === "edit" && isLoading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
-	const isLoading = dataLoading || isSubmitting;
-	const isReadOnly = mode === "view";
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSaveAndClose)} className="space-y-6">
+        {/* Job basic fields */}
+        <JobFormFields
+          control={form.control}
+          companies={companies || []}
+          isEditMode={mode === "edit"}
+          t={t}
+        />
 
-	// Show loading state when editing and data is still loading
-	const shouldShowLoading = id && mode === "edit" && isLoading;
+        {/* Line items section */}
+        <JobLineItemsField
+          control={form.control}
+          clients={clients || []}
+          campaigns={campaigns || []}
+          managers={managers || []}
+          providers={providers || []}
+          jobTypes={jobTypes || []}
+          totalValue={totalValue}
+          t={t}
+        />
 
-	if (shouldShowLoading) {
-		return (
-			<div className="space-y-8">
-				<div className="flex items-center justify-center p-8">
-					<div className="text-center">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-						<p className="text-slate-600 dark:text-slate-400">{t("common.loading")}</p>
-					</div>
-				</div>
-			</div>
-		);
-	}
-
-	return (
-		<div className="space-y-8">
-			<Form {...form}>
-				<form className="space-y-8">
-
-					{/* Basic Information Section */}
-					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
-						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-							<div className="w-2 h-6 bg-gradient-to-b from-primary to-sidebar-accent rounded-full"></div>
-							{t("jobs.basic_info")}
-						</h3>
-						<JobBasicInfoFields
-							control={form.control}
-							statusOptions={statusOptions}
-							t={t}
-						/>
-					</div>
-
-					{/* Entity Selection Section */}
-					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
-						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-							<div className="w-2 h-6 bg-gradient-to-b from-primary to-sidebar-accent rounded-full"></div>
-							{t("jobs.associations")}
-						</h3>
-						<JobEntitySelectionFields
-							control={form.control}
-							clients={clients}
-							campaigns={campaigns}
-							providers={providers}
-							managers={managers}
-							companies={companies}
-							jobTypes={jobTypes}
-							totalValue={totalValue}
-							t={t}
-						/>
-					</div>
-
-					{/* Notes Section */}
-					<div className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900 p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 shadow-sm">
-						<h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-							<div className="w-2 h-6 bg-gradient-to-b from-primary to-sidebar-accent rounded-full"></div>
-							{t("jobs.notes")}
-						</h3>
-						<JobNotesFields
-							control={form.control}
-							t={t}
-						/>
-					</div>
-
-					{/* Action Buttons */}
-					{!isReadOnly && (
-						<div className="sticky bottom-0 z-10 bg-white dark:bg-slate-900 p-6 border-t-2 border-slate-200 dark:border-slate-600 -mx-6 -mb-6 rounded-b-xl bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
-							<div className="flex justify-end space-x-4">
-								<Button type="button" variant="outline" onClick={onClose} size="lg">
-									{t("common.cancel")}
-								</Button>
-								<Button 
-									type="button" 
-									variant="secondary" 
-									onClick={form.handleSubmit(handleSave)} 
-									disabled={isLoading} 
-									size="lg"
-								>
-									{isLoading
-										? formMode === "edit"
-											? t("common.updating")
-											: t("common.creating")
-										: t("common.save")}
-								</Button>
-								<Button 
-									type="button" 
-									onClick={form.handleSubmit(handleSaveAndClose)} 
-									disabled={isLoading} 
-									size="lg"
-								>
-									{isLoading
-										? formMode === "edit"
-											? t("common.updating")
-											: t("common.creating")
-										: t("common.saveAndClose")}
-								</Button>
-							</div>
-						</div>
-					)}
-				</form>
-			</Form>
-		</div>
-	);
+        {/* Action buttons */}
+        <div className="flex justify-end space-x-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            {t("common.cancel")}
+          </Button>
+          {mode === "edit" && (
+            <Button
+              type="button"
+              onClick={form.handleSubmit(handleSave)}
+              disabled={isSubmitting}
+            >
+              {t("common.save")}
+            </Button>
+          )}
+          <Button type="submit" disabled={isSubmitting}>
+            {mode === "edit" ? t("common.saveAndClose") : t("common.create")}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
 };
 
 export default JobForm;

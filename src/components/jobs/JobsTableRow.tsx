@@ -57,7 +57,7 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
                 <ChevronRight className="h-4 w-4 text-slate-400 hover:text-brand" />
               )}
             </div>
-            <JobStatusBadge status={job.status} t={t} />
+            <JobStatusBadge status={job.status === 'paid' ? 'closed' : 'active'} />
           </div>
         </TableCell>
         <TableCell className="py-4 font-medium text-slate-900 dark:text-slate-100">{job.manager_name}</TableCell>

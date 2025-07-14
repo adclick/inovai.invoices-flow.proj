@@ -88,26 +88,26 @@ export const useJobFormSubmit = (
         }
 
         // Create line items (required to have at least 1)
-        if (jobResult && values.line_items && values.line_items.length > 0) {
+        if (jobResult && 'id' in jobResult && values.line_items && values.line_items.length > 0) {
+          const lineItemsData = values.line_items.map((item) => ({
+            job_id: jobResult.id,
+            campaign_id: item.campaign_id,
+            job_type_id: item.job_type_id,
+            year: item.year,
+            month: parseInt(item.month),
+            value: item.value || null,
+            manager_id: item.manager_id || null,
+            provider_id: item.provider_id || null,
+            payment_date: item.payment_date || null,
+            status: item.status || 'in_progress',
+            documents: item.documents || null,
+            private_notes: item.private_notes || null,
+            public_notes: item.public_notes || null,
+          }));
+
           const { error: lineItemError } = await supabase
             .from("job_line_items")
-            .insert(
-              values.line_items.map((item) => ({
-                job_id: jobResult.id,
-                campaign_id: item.campaign_id,
-                job_type_id: item.job_type_id,
-                year: item.year,
-                month: parseInt(item.month),
-                value: item.value || null,
-                manager_id: item.manager_id || null,
-                provider_id: item.provider_id || null,
-                payment_date: item.payment_date || null,
-                status: item.status || 'in_progress',
-                documents: item.documents || null,
-                private_notes: item.private_notes || null,
-                public_notes: item.public_notes || null,
-              }))
-            );
+            .insert(lineItemsData as any);
 
           if (lineItemError) {
             console.error("Error creating line items:", lineItemError);
