@@ -15,7 +15,7 @@ export const useClientsData = () => {
       if (error) {
         throw new Error(error.message);
       }
-      return data as Client[];
+      return data as unknown as Client[];
     }
   });
 };

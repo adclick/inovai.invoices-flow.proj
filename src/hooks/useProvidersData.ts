@@ -15,7 +15,7 @@ export const useProvidersData = () => {
       if (error) {
         throw new Error(error.message);
       }
-      return data as Provider[];
+      return data as unknown as Provider[];
     }
   });
 };

@@ -13,7 +13,7 @@ export const useCompaniesData = () => {
         .order("name", { ascending: true });
 
       if (error) throw error;
-      return companies as Company[];
+      return companies as unknown as Company[];
     },
   });
 };
@@ -29,11 +29,11 @@ export const useCompanyById = (companyId: string) => {
       const { data: company, error } = await supabase
         .from("companies")
         .select("*")
-        .eq("id", companyId)
+        .eq("id", companyId as any)
         .single();
 
       if (error) throw error;
-      return company as Company;
+      return company as unknown as Company;
     },
     enabled: !!companyId,
   });

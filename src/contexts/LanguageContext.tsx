@@ -28,11 +28,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const fetchUserLanguage = async () => {
       if (user) {
         try {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("language")
-            .eq("id", user.id)
-            .maybeSingle();
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("language")
+          .eq("id", user.id as any)
+          .maybeSingle();
 
           if (error) {
             console.error("Error fetching user language:", error);
@@ -65,7 +65,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const { error } = await supabase
           .from("profiles")
           .update({ language: lang } as any)
-          .eq("id", user.id);
+          .eq("id", user.id as any);
 
         if (error) {
           console.error("Error updating user language:", error);

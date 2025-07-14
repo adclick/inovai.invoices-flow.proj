@@ -18,7 +18,7 @@ export const useProviderDeletion = () => {
       const { error } = await supabase
         .from("providers")
         .delete()
-        .eq("id", providerId);
+        .eq("id", providerId as any);
 
       if (error) {
         throw new Error(error.message);

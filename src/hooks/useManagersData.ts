@@ -15,7 +15,7 @@ export const useManagersData = () => {
       if (error) {
         throw new Error(error.message);
       }
-      return data as Manager[];
+      return data as unknown as Manager[];
     }
   });
 };

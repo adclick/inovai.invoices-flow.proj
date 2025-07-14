@@ -19,7 +19,7 @@ export const useJobTypeDeletion = () => {
       const { error } = await supabase
         .from("job_types")
         .delete()
-        .eq("id", id);
+        .eq("id", id as any);
 
       if (error) {
         throw error;

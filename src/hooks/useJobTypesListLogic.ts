@@ -27,7 +27,7 @@ export const useJobTypesListLogic = () => {
         console.error("Error fetching job types:", error.message);
         throw error;
       }
-      return data as JobType[];
+      return data as unknown as JobType[];
     },
   });
 

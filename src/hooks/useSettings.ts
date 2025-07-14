@@ -20,7 +20,7 @@ export const useSettings = () => {
         .order("name");
 
       if (error) throw error;
-      return data as Setting[];
+      return data as unknown as Setting[];
     },
   });
 
@@ -32,8 +32,8 @@ export const useSettings = () => {
       
       const { data, error } = await supabase
         .from("settings")
-        .update({ value })
-        .eq("name", name)
+        .update({ value } as any)
+        .eq("name", name as any)
         .select();
 
       if (error) throw error;
@@ -70,8 +70,8 @@ export const useSettings = () => {
         const { name, value } = update;
         const { data, error } = await supabase
           .from("settings")
-          .update({ value })
-          .eq("name", name)
+          .update({ value } as any)
+          .eq("name", name as any)
           .select();
           
         if (error) throw error;

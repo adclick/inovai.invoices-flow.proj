@@ -50,12 +50,12 @@ export const useJobsData = () => {
         .select("id, name");
 
       // Create lookup tables for entity names
-      const providerMap = providers?.reduce((acc: Record<string, string>, provider) => {
+      const providerMap = providers?.reduce((acc: Record<string, string>, provider: any) => {
         acc[provider.id] = provider.name;
         return acc;
       }, {}) || {};
 
-      const managerMap = managers?.reduce((acc: Record<string, string>, manager) => {
+      const managerMap = managers?.reduce((acc: Record<string, string>, manager: any) => {
         acc[manager.id] = manager.name;
         return acc;
       }, {}) || {};
@@ -137,26 +137,26 @@ export const useJobById = (jobId: string) => {
           ),
           companies(id, name, active)
         `)
-        .eq("id", jobId)
+        .eq("id", jobId as any)
         .single();
 
       if (jobError) throw jobError;
 
-      // Get provider and manager information
+      // Get provider and manager information  
       const { data: provider } = await supabase
         .from("providers")
         .select("name")
-        .eq("id", job.provider_id)
+        .eq("id", (job as any).provider_id)
         .single();
 
       const { data: manager } = await supabase
         .from("managers")
         .select("name")
-        .eq("id", job.manager_id)
+        .eq("id", (job as any).manager_id)
         .single();
 
       // Transform job with line items information
-      const jobLineItems = job.job_line_items || [];
+      const jobLineItems = (job as any).job_line_items || [];
       const campaigns = jobLineItems.map((item: any) => item.campaigns).filter(Boolean);
       const clients = campaigns.map((c: any) => c.clients).filter(Boolean);
       
@@ -183,12 +183,12 @@ export const useJobById = (jobId: string) => {
       }));
 
       return {
-        ...job,
+        ...(job as any),
         campaign_name: campaigns[0]?.name || "Unknown Campaign",
         client_name: uniqueClients[0]?.name || "Unknown Client",
-        provider_name: provider?.name || "Unknown Provider",
-        manager_name: manager?.name || "Unknown Manager",
-        company_name: job.companies?.name || jobLineItems[0]?.companies?.name || "No Company",
+        provider_name: (provider as any)?.name || "Unknown Provider",
+        manager_name: (manager as any)?.name || "Unknown Manager",
+        company_name: (job as any).companies?.name || jobLineItems[0]?.companies?.name || "No Company",
         campaign_ids: campaigns.map((c: any) => c.id),
         campaign_names: campaigns.map((c: any) => c.name),
         client_ids: uniqueClients.map((c: any) => c.id),

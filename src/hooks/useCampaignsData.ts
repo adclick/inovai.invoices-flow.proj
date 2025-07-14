@@ -37,13 +37,13 @@ export const useCampaignsData = () => {
       if (clientsError) throw clientsError;
 
       // Create a lookup table for client names
-      const clientMap = clients.reduce((acc: Record<string, string>, client) => {
+      const clientMap = clients.reduce((acc: Record<string, string>, client: any) => {
         acc[client.id] = client.name;
         return acc;
       }, {});
 
       // Add client names to campaigns
-      return campaigns.map((campaign: Campaign) => ({
+      return campaigns.map((campaign: any) => ({
         ...campaign,
         client_name: clientMap[campaign.client_id] || t("campaigns.unknownClient")
       }));

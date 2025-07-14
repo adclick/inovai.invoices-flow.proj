@@ -69,7 +69,7 @@ export const useEntityMutation = ({
       const { data, error } = await supabase
         .from(tableName as any)
         .update(updateData)
-        .eq("id", id)
+        .eq("id", id as any)
         .select()
         .single();
 
@@ -105,7 +105,7 @@ export const useEntityMutation = ({
       const { error } = await supabase
         .from(tableName as any)
         .delete()
-        .eq("id", id);
+        .eq("id", id as any);
 
       if (error) {
         console.error(`Error deleting ${entityName}:`, error.message);

@@ -43,7 +43,7 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
           const { data: companyData, error } = await supabase
             .from("companies")
             .select("*")
-            .eq("id", id)
+            .eq("id", id as any)
             .maybeSingle();
           
           if (error) {

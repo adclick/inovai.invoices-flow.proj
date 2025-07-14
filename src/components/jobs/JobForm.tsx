@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import { BaseEntityFormProps } from "@/components/common/EntityModal";
 import { useJobFormLogic } from "@/hooks/useJobFormLogic";
 import { useJobFormData } from "@/hooks/job-form/useJobFormData";
+import { useCompaniesData } from "@/hooks/useCompaniesData";
+import { useClientsData } from "@/hooks/useClientsData";
+import { useCampaignsData } from "@/hooks/useCampaignsData";
+import { useManagersData } from "@/hooks/useManagersData";
+import { useProvidersData } from "@/hooks/useProvidersData";
+import { useJobTypesData } from "@/hooks/useJobTypesData";
 import { JobFormFields } from "./JobFormFields";
 import JobLineItemsField from "./JobLineItemsField";
 
@@ -32,13 +38,13 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
     campaigns: [],
   });
 
-  // Mock data for now - this should come from the updated data hooks
-  const companies = [];
-  const clients = [];
-  const campaigns = [];
-  const managers = [];
-  const providers = [];
-  const jobTypes = [];
+  // Fetch data using hooks
+  const { data: companies = [] } = useCompaniesData();
+  const { data: clients = [] } = useClientsData();
+  const { data: campaigns = [] } = useCampaignsData();
+  const { data: managers = [] } = useManagersData();
+  const { data: providers = [] } = useProvidersData();
+  const { data: jobTypes = [] } = useJobTypesData();
 
   // Show loading state for edit mode
   if (mode === "edit" && isLoading) {
@@ -55,7 +61,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
         {/* Job basic fields */}
         <JobFormFields
           control={form.control}
-          companies={companies || []}
+          companies={companies}
           isEditMode={mode === "edit"}
           t={t}
         />
@@ -63,11 +69,11 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
         {/* Line items section */}
         <JobLineItemsField
           control={form.control}
-          clients={clients || []}
-          campaigns={campaigns || []}
-          managers={managers || []}
-          providers={providers || []}
-          jobTypes={jobTypes || []}
+          clients={clients}
+          campaigns={campaigns}
+          managers={managers}
+          providers={providers}
+          jobTypes={jobTypes}
           totalValue={totalValue}
           t={t}
         />
