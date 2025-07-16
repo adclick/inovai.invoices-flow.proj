@@ -47,8 +47,7 @@ export const useJobFormSubmit = (
         await supabase
           .from("job_line_items")
           .delete()
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .eq("job_id", id as any);
+          .eq("job_id", id);
         
         // Insert new line items if they exist
         if (hasLineItems) {
@@ -70,7 +69,7 @@ export const useJobFormSubmit = (
           
           await supabase
             .from("job_line_items")
-            .insert(jobLineItemInserts as any);
+            .insert(jobLineItemInserts);
         }
       } catch (error) {
         console.error("Error updating job line items:", error);
@@ -80,7 +79,7 @@ export const useJobFormSubmit = (
         // Create job
         const { data: jobResult, error: jobError } = await supabase
           .from("jobs")
-          .insert(jobData as any)
+          .insert(jobData)
           .select('id')
           .single();
 
@@ -109,7 +108,7 @@ export const useJobFormSubmit = (
 
           const { error: lineItemError } = await supabase
             .from("job_line_items")
-            .insert(lineItemsData as any);
+            .insert(lineItemsData);
 
           if (lineItemError) {
             console.error("Error creating line items:", lineItemError);

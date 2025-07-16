@@ -38,7 +38,7 @@ export const useJobFormMutations = (
       
       const { error } = await supabase
         .from("job_line_items")
-        .insert(jobLineItemInserts as any);
+        .insert(jobLineItemInserts);
 
       if (error) {
         console.error("Error creating job line items:", error);
