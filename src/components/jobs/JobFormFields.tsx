@@ -2,11 +2,18 @@ import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
 import { JobStatusBadge } from "./JobStatusBadge";
-import RequiredTextField from "@/components/common/form/RequiredTextField";
 import EntitySelectField from "@/components/common/form/EntitySelectField";
 import DocumentsField from "@/components/common/form/DocumentsField";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EntitySelectOption } from "@/utils/formConstants";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 interface JobFormFieldsProps {
   control: Control<JobFormValues>;
@@ -36,11 +43,26 @@ export const JobFormFields: React.FC<JobFormFieldsProps> = ({
       )}
 
       {/* Job Name field - required */}
-      <RequiredTextField
+      <FormField
         control={control}
         name="name"
-        label={t("jobs.name")}
-        placeholder={t("jobs.enterJobName")}
+        render={({ field }) => (
+          <FormItem className="space-y-3">
+            <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-2">
+              {t("jobs.name")}
+              <span className="text-red-500">*</span>
+            </FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder={t("jobs.enterJobName")}
+                className="border-2 border-slate-200 dark:border-slate-600 focus:border-primary dark:focus:border-sidebar-accent focus:ring-2 focus:ring-primary/20 transition-all duration-200 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400"
+                {...field}
+              />
+            </FormControl>
+            <FormMessage className="text-red-600 dark:text-red-400 text-xs font-medium" />
+          </FormItem>
+        )}
       />
 
       {/* Company field - required */}
