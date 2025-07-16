@@ -2,7 +2,9 @@
 import { JobFormValues } from "./types";
 
 export const getJobFormDefaults = (): JobFormValues => ({
+  name: "",
   company_id: "",
+  manager_id: "",
   unique_invoice: false,
   documents: [],
   line_items: [{

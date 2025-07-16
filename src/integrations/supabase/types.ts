@@ -241,6 +241,7 @@ export type Database = {
           manager_id: string
           month: number | null
           months: Database["public"]["Enums"]["month_type"][]
+          name: string | null
           payment_date: string | null
           private_notes: string | null
           provider_email_sent: string | null
@@ -266,6 +267,7 @@ export type Database = {
           manager_id: string
           month?: number | null
           months: Database["public"]["Enums"]["month_type"][]
+          name?: string | null
           payment_date?: string | null
           private_notes?: string | null
           provider_email_sent?: string | null
@@ -291,6 +293,7 @@ export type Database = {
           manager_id?: string
           month?: number | null
           months?: Database["public"]["Enums"]["month_type"][]
+          name?: string | null
           payment_date?: string | null
           private_notes?: string | null
           provider_email_sent?: string | null

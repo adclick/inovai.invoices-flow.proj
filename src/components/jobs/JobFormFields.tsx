@@ -2,6 +2,7 @@ import React from "react";
 import { Control } from "react-hook-form";
 import { JobFormValues } from "@/hooks/useJobFormLogic";
 import { JobStatusBadge } from "./JobStatusBadge";
+import RequiredTextField from "@/components/common/form/RequiredTextField";
 import EntitySelectField from "@/components/common/form/EntitySelectField";
 import DocumentsField from "@/components/common/form/DocumentsField";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -33,6 +34,14 @@ export const JobFormFields: React.FC<JobFormFieldsProps> = ({
           <JobStatusBadge status={currentStatus} />
         </div>
       )}
+
+      {/* Job Name field - required */}
+      <RequiredTextField
+        control={control}
+        name="name"
+        label={t("jobs.name")}
+        placeholder={t("jobs.enterJobName")}
+      />
 
       {/* Company field - required */}
       <EntitySelectField

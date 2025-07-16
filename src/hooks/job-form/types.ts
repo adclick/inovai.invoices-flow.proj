@@ -1,4 +1,3 @@
-
 import { z } from "zod";
 
 // Line item schema with expanded fields
@@ -21,6 +20,7 @@ export const lineItemSchema = z.object({
 
 // Simplified job form schema - company required, at least 1 line item
 export const jobSchema = z.object({
+  name: z.string().min(1, "jobs.nameRequired"),
   company_id: z.string().min(1, "jobs.selectCompany"),
   manager_id: z.string().min(1, "jobs.selectManager"),
   unique_invoice: z.boolean().default(false),

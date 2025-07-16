@@ -21,6 +21,7 @@ export const useJobFormSubmit = (
       : 0;
     
     const jobData = {
+      name: values.name,
       company_id: values.company_id,
       manager_id: values.manager_id,
       unique_invoice: values.unique_invoice,
