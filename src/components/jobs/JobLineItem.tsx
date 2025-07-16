@@ -159,6 +159,14 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
             type="number"
             step="0.01"
           />
+
+					<EntitySelectField
+						control={control}
+						name={`line_items.${index}.status` as const}
+						label={t("jobs.status")}
+						placeholder={t("jobs.selectStatus")}
+						options={LINE_ITEM_STATUS_OPTIONS.map(status => ({ id: status.value, name: status.label }))}
+					/>
         </div>
 
         {/* Additional Fields - Collapsible */}

@@ -1,6 +1,7 @@
 
 export type Job = {
   id: string;
+  name: string;
   campaign_id: string; // Keep for backward compatibility
   provider_id: string;
   manager_id: string;

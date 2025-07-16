@@ -60,8 +60,7 @@ const JobsTableRow: React.FC<JobsTableRowProps> = ({
             <JobStatusBadge status={job.status === 'paid' ? 'closed' : 'active'} />
           </div>
         </TableCell>
-        <TableCell className="py-4 font-medium text-slate-900 dark:text-slate-100">{job.manager_name}</TableCell>
-        <TableCell className="py-4 font-medium text-slate-900 dark:text-slate-100">{job.provider_name}</TableCell>
+        <TableCell className="py-4 font-semibold text-slate-900 dark:text-slate-100">{job.name}</TableCell>
         <TableCell className="py-4 font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(job.value, job.currency)}</TableCell>
         <TableCell className="py-4 text-slate-600 dark:text-slate-300 font-mono text-sm">{new Date(job.created_at).toISOString().split('T')[0]} {new Date(job.created_at).toLocaleTimeString()}</TableCell>
         <TableCell className="text-right py-4">
