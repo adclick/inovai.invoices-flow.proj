@@ -28,12 +28,12 @@ const Profile: React.FC = () => {
           const { data, error } = await supabase
             .from("profiles")
             .select("full_name")
-            .eq("id", user.id)
+            .eq("id", user.id as any)
             .single();
 
           if (error) throw error;
           if (data) {
-            setFullName(data.full_name);
+            setFullName((data as any).full_name);
           }
         } catch (error) {
           console.error(t("profile.errorFetchingProfile"), error);

@@ -57,6 +57,14 @@ export const CURRENCY_OPTIONS = [
   { value: "gbp", label: "common.gbp" },
 ];
 
+// Line item status options
+export const LINE_ITEM_STATUS_OPTIONS = [
+  { value: "in_progress", label: "jobs.inProgress" },
+  { value: "waiting_invoice", label: "jobs.waitingInvoice" },
+  { value: "waiting_payment", label: "jobs.waitingPayment" },
+  { value: "closed", label: "jobs.closed" },
+];
+
 // Form field types for reusability
 export type SelectOption = {
   value: string;

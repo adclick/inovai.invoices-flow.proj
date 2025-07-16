@@ -21,62 +21,26 @@ const Dashboard: React.FC = () => {
   const { data: stats, isLoading: isStatsLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      // Get new jobs count
-      const { data: draftJobs, error: draftJobsError } = await supabase
-        .from("jobs")
-        .select("id", { count: "exact" })
-        .eq("status", "draft")
-
-      if (draftJobsError) throw draftJobsError;
-
       // Get active jobs count
-      const { data: activeJobs, error: activeJobsError } = await supabase
+      const { count: activeCount, error: activeJobsError } = await supabase
         .from("jobs")
-        .select("id", { count: "exact" })
-        .eq("status", "active")
+        .select("*", { count: "exact" })
+        .eq("status", "active" as any);
 
       if (activeJobsError) throw activeJobsError;
 
-      // Get pending invoice jobs count
-      const { count: pendingInvoiceCount, error: pendingInvoiceError } = await supabase
+      // Get closed jobs count
+      const { count: closedCount, error: closedJobsError } = await supabase
         .from("jobs")
         .select("*", { count: "exact" })
-        .eq("status", "pending_invoice");
+        .eq("status", "closed" as any);
 
-      if (pendingInvoiceError) throw pendingInvoiceError;
-
-      // Get pending validation jobs count
-      const { count: pendingValidationCount, error: pendingValidationError } = await supabase
-        .from("jobs")
-        .select("*", { count: "exact" })
-        .eq("status", "pending_validation");
-
-      if (pendingValidationError) throw pendingValidationError;
-
-      // Get approved jobs count (Pending Payment)
-      const { count: pendingPaymentCount, error: pendingPaymentError } = await supabase
-        .from("jobs")
-        .select("*", { count: "exact" })
-        .eq("status", "pending_payment");
-
-      if (pendingPaymentError) throw pendingPaymentError;
-
-      // Get paid jobs count
-      const { count: paidCount, error: paidError } = await supabase
-        .from("jobs")
-        .select("*", { count: "exact" })
-        .eq("status", "paid");
-
-      if (paidError) throw paidError;
+      if (closedJobsError) throw closedJobsError;
 
       return {
-        new: draftJobs?.length || 0,
-        active: activeJobs?.length || 0,
-				working: activeJobs?.length + draftJobs?.length || 0,
-        pendingInvoice: pendingInvoiceCount || 0,
-        pendingValidation: pendingValidationCount || 0,
-        pendingPayment: pendingPaymentCount || 0,
-        paid: paidCount || 0
+        active: activeCount || 0,
+        closed: closedCount || 0,
+        working: activeCount || 0,
       };
     },
     // Don't refetch on window focus to reduce API calls
@@ -102,13 +66,11 @@ const Dashboard: React.FC = () => {
 
       if (error) throw error;
       
-      // Transform the data to ensure client name is always available
-      // This avoids the type error with SelectQueryError on client.name
       return data?.map(item => ({
-        ...item,
-        client: {
-          name: item.campaign?.client?.name || t("dashboard.unknownClient") // Use translated fallback name
-        }
+        ...item as any,
+        campaign: (item as any).campaign?.[0] || null,
+        provider: (item as any).provider?.[0] || null,
+        manager: (item as any).manager?.[0] || null,
       })) || [];
     },
   });
@@ -128,22 +90,18 @@ const Dashboard: React.FC = () => {
             status
           )
         `)
-        .eq("active", true)
+        .eq("active", true as any)
         .order("name");
 
       if (error) throw error;
-      return data;
+      return data as any;
     },
   });
 
   // Prepare chart data
   const chartData = [
-    { name: t('dashboard.draft'), value: stats?.new || 0 },
     { name: t('dashboard.active'), value: stats?.active || 0 },
-    { name: t('dashboard.pendingInvoice'), value: stats?.pendingInvoice || 0 },
-    { name: t('dashboard.pendingValidation'), value: stats?.pendingValidation || 0 },
-    { name: t('dashboard.pendingPayment'), value: stats?.pendingPayment || 0 },
-    { name: t('dashboard.paid'), value: stats?.paid || 0 }
+    { name: t('dashboard.closed'), value: stats?.closed || 0 }
   ];
 
   if (isLoading) {
@@ -158,7 +116,7 @@ const Dashboard: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const pendingActionJobs = stats ? stats.pendingInvoice + stats.pendingValidation + stats.pendingPayment : 0;
+  const pendingActionJobs = 0;
 
   return (
     <DashboardLayout>
@@ -170,7 +128,7 @@ const Dashboard: React.FC = () => {
         <StatsCards 
           workingJobs={stats?.working || 0}
           pendingActionJobs={pendingActionJobs}
-          completedJobs={stats?.paid || 0}
+          completedJobs={stats?.closed || 0}
           isLoading={isStatsLoading}
         />
 

@@ -52,7 +52,7 @@ const CompanyForm: React.FC<BaseEntityFormProps> = ({
           }
           
           // Check if data exists and has the expected properties
-          if (companyData && typeof companyData === 'object' && companyData !== null && 'name' in companyData) {
+          if (companyData && typeof companyData === 'object' && 'name' in companyData) {
             const company = companyData as any;
             form.reset({
               name: company.name || "",

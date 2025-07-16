@@ -25,8 +25,6 @@ export const supabase = createClient<Database>(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      // Security: Only allow redirects to same origin in production
-      redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
     },
     // Add security headers and proper configuration
     global: {
