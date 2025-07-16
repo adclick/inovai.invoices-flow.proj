@@ -87,6 +87,7 @@ export const useJobFormData = (
             
             reset({
               company_id: job.company_id || "",
+              manager_id: job.manager_id || "",
               unique_invoice: job.unique_invoice || false,
               documents: job.documents || [],
               line_items: lineItems,
