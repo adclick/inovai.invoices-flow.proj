@@ -22,6 +22,7 @@ export const useJobFormSubmit = (
     
     const jobData = {
       company_id: values.company_id,
+      manager_id: values.manager_id,
       unique_invoice: values.unique_invoice,
       value: totalLineItemValue,
       months: [], // This will be populated from line items if needed

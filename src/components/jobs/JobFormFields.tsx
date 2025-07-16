@@ -10,6 +10,7 @@ import { EntitySelectOption } from "@/utils/formConstants";
 interface JobFormFieldsProps {
   control: Control<JobFormValues>;
   companies: EntitySelectOption[];
+  managers: EntitySelectOption[];
   currentStatus?: "active" | "closed";
   isEditMode?: boolean;
   t: (key: string) => string;
@@ -18,6 +19,7 @@ interface JobFormFieldsProps {
 export const JobFormFields: React.FC<JobFormFieldsProps> = ({
   control,
   companies,
+  managers,
   currentStatus,
   isEditMode,
   t,
@@ -39,6 +41,15 @@ export const JobFormFields: React.FC<JobFormFieldsProps> = ({
         label={t("jobs.company")}
         placeholder={t("jobs.selectCompany")}
         options={companies}
+      />
+
+      {/* Manager field - required */}
+      <EntitySelectField
+        control={control}
+        name="manager_id"
+        label={t("jobs.manager")}
+        placeholder={t("jobs.selectManager")}
+        options={managers}
       />
 
       {/* Unique invoice checkbox */}

@@ -62,6 +62,7 @@ const JobForm: React.FC<BaseEntityFormProps> = ({
         <JobFormFields
           control={form.control}
           companies={companies}
+          managers={managers}
           isEditMode={mode === "edit"}
           t={t}
         />
