@@ -30,7 +30,7 @@ export const useJobFormSubmit = (
       months: [], // This will be populated from line items if needed
       year: null,
       status: 'active' as Database['public']['Enums']['job_status'], // Jobs start as active
-      currency: "euro" as const,
+      currency: "euro" as Database['public']['Enums']['currency_type'],
       documents: values.documents,
     };
 
