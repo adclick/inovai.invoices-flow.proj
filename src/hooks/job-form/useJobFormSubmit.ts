@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 import { JobFormValues } from "./types";
 import { useJobFormMutations } from "./useJobFormMutations";
 
@@ -28,7 +29,7 @@ export const useJobFormSubmit = (
       value: totalLineItemValue,
       months: [], // This will be populated from line items if needed
       year: null,
-      status: 'active' as const, // Jobs start as active
+      status: 'active' as Database['public']['Enums']['job_status'], // Jobs start as active
       currency: "euro" as const,
       documents: values.documents,
     };
@@ -61,7 +62,7 @@ export const useJobFormSubmit = (
             manager_id: item.manager_id || null,
             provider_id: item.provider_id || null,
             payment_date: item.payment_date || null,
-            status: item.status || 'in_progress',
+            status: (item.status || 'in_progress') as Database['public']['Enums']['line_item_status'],
             documents: item.documents || null,
             private_notes: item.private_notes || null,
             public_notes: item.public_notes || null,
@@ -100,7 +101,7 @@ export const useJobFormSubmit = (
             manager_id: item.manager_id || null,
             provider_id: item.provider_id || null,
             payment_date: item.payment_date || null,
-            status: item.status || 'in_progress',
+            status: (item.status || 'in_progress') as Database['public']['Enums']['line_item_status'],
             documents: item.documents || null,
             private_notes: item.private_notes || null,
             public_notes: item.public_notes || null,

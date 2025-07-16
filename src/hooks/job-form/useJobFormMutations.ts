@@ -1,6 +1,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 import { useEntityMutation } from "@/hooks/useEntityMutation";
 import { LineItemFormValues } from "./types";
 
@@ -30,7 +31,7 @@ export const useJobFormMutations = (
         manager_id: item.manager_id || null,
         provider_id: item.provider_id || null,
         payment_date: item.payment_date || null,
-        status: item.status || 'in_progress',
+        status: (item.status || 'in_progress') as Database['public']['Enums']['line_item_status'],
         documents: item.documents || null,
         private_notes: item.private_notes || null,
         public_notes: item.public_notes || null,
