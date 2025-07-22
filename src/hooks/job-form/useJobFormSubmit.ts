@@ -91,9 +91,6 @@ export const useJobFormSubmit = (
 
         // Create line items (required to have at least 1)
         if (jobResult && 'id' in jobResult && values.line_items && values.line_items.length > 0) {
-          console.log("Creating line items for job:", jobResult.id);
-          console.log("Line items data:", values.line_items);
-          
           const lineItemsData = values.line_items.map((item) => ({
             job_id: jobResult.id,
             campaign_id: item.campaign_id,
@@ -110,8 +107,6 @@ export const useJobFormSubmit = (
             public_notes: item.public_notes || null,
           }));
 
-          console.log("Prepared line items data:", lineItemsData);
-
           const { error: lineItemError } = await supabase
             .from("job_line_items")
             .insert(lineItemsData);
@@ -120,8 +115,6 @@ export const useJobFormSubmit = (
             console.error("Error creating line items:", lineItemError);
             return;
           }
-          
-          console.log("Line items created successfully");
         }
 
         // Call onSuccess and onClose based on shouldClose parameter
