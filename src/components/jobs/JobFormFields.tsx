@@ -84,15 +84,23 @@ export const JobFormFields: React.FC<JobFormFieldsProps> = ({
       />
 
       {/* Unique invoice checkbox */}
-      <div className="flex items-center space-x-2">
-        <Checkbox 
-          id="unique_invoice"
-          {...(control as any).register("unique_invoice")}
-        />
-        <label htmlFor="unique_invoice" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-          {t("jobs.uniqueInvoiceDescription")}
-        </label>
-      </div>
+      <FormField
+        control={control}
+        name="unique_invoice"
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <FormLabel className="font-normal cursor-pointer">
+              {t("jobs.uniqueInvoiceDescription")}
+            </FormLabel>
+          </FormItem>
+        )}
+      />
 
       {/* Documents field */}
       <DocumentsField

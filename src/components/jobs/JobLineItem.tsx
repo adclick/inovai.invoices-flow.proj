@@ -98,7 +98,7 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
 
       <CardContent className="pt-0">
         {/* Core Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 gap-4 mb-4">
           {/* Year Field */}
           <OptionalSelectField
             control={control}
@@ -167,17 +167,9 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
 						placeholder={t("jobs.selectStatus")}
 						options={LINE_ITEM_STATUS_OPTIONS.map(status => ({ id: status.value, name: status.label }))}
 					/>
-        </div>
 
-        {/* Additional Fields - Collapsible */}
-        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <CollapsibleContent className="space-y-4">
-            <div className="border-t pt-4">
-              <h5 className="text-sm font-medium text-gray-600 mb-3">{t("jobs.additionalDetails")}</h5>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                {/* Manager Field */}
-                <OptionalEntitySelectField
+					{/* Manager Field */}
+					<OptionalEntitySelectField
                   control={control}
                   name={`line_items.${index}.manager_id` as const}
                   label={t("jobs.manager")}
@@ -194,16 +186,6 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
                   options={providers}
                 />
 
-                {/* Status Field */}
-                <OptionalSelectField
-                  control={control}
-                  name={`line_items.${index}.status` as const}
-                  label={t("jobs.status")}
-                  placeholder={t("jobs.selectStatus")}
-                  options={LINE_ITEM_STATUS_OPTIONS}
-                  t={t}
-                />
-
                 {/* Payment Date Field */}
                 <OptionalDateField
                   control={control}
@@ -211,6 +193,16 @@ const JobLineItem: React.FC<JobLineItemProps> = ({
                   label={t("jobs.paymentDate")}
                   placeholder={t("jobs.selectPaymentDate")}
                 />
+        </div>
+
+        {/* Additional Fields - Collapsible */}
+        <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+          <CollapsibleContent className="space-y-4">
+            <div className="border-t pt-4">
+              <h5 className="text-sm font-medium text-gray-600 mb-3">{t("jobs.additionalDetails")}</h5>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                
               </div>
 
               <div className="grid grid-cols-1 gap-4">
